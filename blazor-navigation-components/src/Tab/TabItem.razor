@@ -1,0 +1,11 @@
+@namespace Syncfusion.Blazor.Navigations
+@inherits SfOwningComponentBase
+
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    internal string UniqueID { get; set; }
+    internal bool IsContentRendered { get; set; }
+}

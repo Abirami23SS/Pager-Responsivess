@@ -1,0 +1,19 @@
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfContextMenu @ref="ContextMenu" TValue="MenuItem" HtmlAttributes="@HtmlAttributes">
+    <MenuItems>
+        <MenuItem Text="Cut"></MenuItem>
+        <MenuItem Text="Copy"></MenuItem>
+    </MenuItems>
+</SfContextMenu>
+
+@code {
+    public SfContextMenu<MenuItem> ContextMenu { get; set; }
+    
+    private Dictionary<string, object> HtmlAttributes = new Dictionary<string, object>
+    {
+        { "aria-label", "custom-aria-label" }
+    };
+}

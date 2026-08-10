@@ -1,0 +1,1207 @@
+window.sfBlazor = window.sfBlazor || {};
+window.sfBlazor.DropDownTree = (function () {
+    'use strict';
+
+    var PARENTITEM = 'e-list-parent';
+    var INPUTFOCUS = 'e-input-focus';
+    var ICONANIMATION = 'e-icon-anim';
+    var DDTHIDEICON = 'e-ddt-icon-hide';
+    var DROPDOWN = 'e-dropdown';
+    var NODATA = 'e-no-data';
+    var HIDEICON = 'e-icon-hide';
+    var SHOW_CLEAR = 'e-show-clear';
+    var OVERFLOW_VIEW = '.e-overflow';
+    var SHOW_TEXT = 'e-show-text';
+    var CHIP_WRAPPER = '.e-chips-wrapper';
+    var SHOW_CHIP = 'e-show-chip';
+    var CHIP_INPUT = 'e-chip-input';
+    var FOOTER = 'e-ddt-footer';
+    var HEADER = 'e-ddt-header';
+    var CHIP_CLOSE = 'e-chips-close';
+    var CHECKALLPARENT = 'e-selectall-parent';
+    var CHECKBOXWRAP = 'e-checkbox-wrapper';
+    var CHECKBOXFRAME = 'e-frame';
+    var CHECKBOXLABEL = 'e-label';
+    var ALLTEXT = 'e-all-text';
+    var FILTERWRAP = 'e-filter-wrap';
+    var SfDropDownTree = /** @class */ (function () {
+        function SfDropDownTree(dataId, containerElement, dotnetRef, options, uniqueID) {
+            window.sfBlazor = window.sfBlazor;
+            this.dataId = dataId;
+            this.inputWrapper = containerElement;
+            this.element = sf.base.select('.e-dropdowntree', containerElement);
+            this.options = options;
+            window.sfBlazor.setCompInstance(this);
+            this.dotNetRef = dotnetRef;
+            this.uniqueID = uniqueID;
+        }
+        SfDropDownTree.prototype.initialize = function () {
+            this.keyConfigs = {
+                escape: 'escape',
+                altUp: 'alt+uparrow',
+                altDown: 'alt+downarrow',
+                tab: 'tab',
+                shiftTab: 'shift+tab',
+                space: 'space',
+                moveDown: 'downarrow'
+            };
+            this.checkInputValueAvailable();
+            if (this.options.showClearButton) {
+                this.overAllClear = sf.base.select('.e-clear-icon', this.inputWrapper);
+            }
+            this.createOverFlowWrapper();
+            this.setDisable();
+            this.wireEvents();
+        };
+        SfDropDownTree.prototype.checkInputValueAvailable = function () {
+            if (!sf.base.isNullOrUndefined(this.inputWrapper.querySelector('.e-input-value'))) {
+                this.valueTemplateContainer = this.inputWrapper.querySelector('.e-input-value');
+            }
+        };
+        SfDropDownTree.prototype.createOverFlowWrapper = function () {
+            if (this.options.allowMultiSelection || this.options.showCheckBox) {
+                if (this.options.mode !== 'Delimiter') {
+                    this.createChip();
+                }
+                if (!this.options.textWrap && this.options.mode !== 'Custom') {
+                    this.overFlowWrapper = sf.base.select(OVERFLOW_VIEW + ':not(.e-input-value)', this.inputWrapper);
+                    this.inputWrapper.insertBefore(this.overFlowWrapper, this.element);
+                    if (this.options.mode !== 'Box') {
+                        sf.base.addClass([this.overFlowWrapper], SHOW_TEXT);
+                    }
+                }
+            }
+        };
+        SfDropDownTree.prototype.renderPopup = function () {
+            sf.base.addClass([this.inputWrapper], [ICONANIMATION]);
+            this.popupEle = sf.base.select('#' + this.element.id + '_options_' + this.uniqueID);
+            this.keyboardModule = new sf.base.KeyboardEvents(this.popupEle, {
+                keyAction: this.popupKeyActionHandler.bind(this),
+                keyConfigs: this.keyConfigs,
+                eventName: 'keydown'
+            });
+            document.body.appendChild(this.popupEle);
+            this.createPopup(this.popupEle);
+            if ((this.options.allowMultiSelection || this.options.showCheckBox) && this.options.mode !== 'Delimiter') {
+                this.createChip();
+            }
+            sf.base.removeClass([this.popupEle], DDTHIDEICON);
+            if (this.options.allowFiltering) {
+                this.filterContainer = sf.base.select('.' + FILTERWRAP, this.popupEle);
+            }
+            if (this.options.showCheckBox && this.options.showSelectAll && (!this.popupDiv.classList.contains(NODATA))) {
+                this.checkAllParent = sf.base.select('.' + CHECKALLPARENT);
+                this.checkBoxElement = sf.base.select('.' + CHECKBOXWRAP, this.checkAllParent);
+            }
+            sf.base.attributes(this.element, { 'aria-expanded': 'true' });
+            this.popupObj.show(null, (this.options.zIndex === 1000) ? this.element : null);
+            sf.base.removeClass([this.popupEle], DDTHIDEICON);
+            this.updatePopupHeight();
+            this.popupObj.refreshPosition();
+            var treeItems = this.popupDiv.querySelectorAll('li');
+            if (!(this.options.showCheckBox && this.options.showSelectAll) && (!this.popupDiv.classList.contains(NODATA)
+                && treeItems.length > 0)) {
+                var focusedElement = this.popupDiv.querySelector('li');
+                focusedElement.focus();
+            }
+            if (this.options.allowFiltering) {
+                sf.base.removeClass([this.inputWrapper], [INPUTFOCUS]);
+                this.filterInputEle = sf.base.select('#' + this.element.id + '_filter_' + this.uniqueID, this.filterContainer);
+                this.filterInputEle.focus();
+            }
+        };
+        SfDropDownTree.prototype.removeChip = function (e) {
+            var value = e.target.parentElement ? e.target.parentElement.getAttribute('data-value') : '';
+            this.dotNetRef.invokeMethodAsync('RemoveChip', value);
+        };
+        SfDropDownTree.prototype.updateView = function () {
+            if (this.options.mode === 'Custom' || this.inputFocus) {
+                return;
+            }
+            if (this.options.mode !== 'Box') {
+                sf.base.addClass([this.inputWrapper, this.overFlowWrapper], SHOW_TEXT);
+            }
+            else {
+                sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+            }
+            if (this.options.value && this.options.value.length !== 0) {
+                if (this.inputWrapper.contains(this.chipWrapper)) {
+                    this.chipWrapper.style.display = '';
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                }
+                sf.base.addClass([this.element], CHIP_INPUT);
+                this.updateOverFlowView();
+                this.ensurePlaceHolder();
+            }
+            else {
+                this.overFlowWrapper.innerHTML = '';
+                sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                sf.base.removeClass([this.element], CHIP_INPUT);
+            }
+        };
+        SfDropDownTree.prototype.updateOverFlowView = function () {
+            this.overFlowWrapper.classList.remove('e-total-count');
+            sf.base.removeClass([this.overFlowWrapper], HIDEICON);
+            var clearIconWidth;
+            if (this.options.showClearButton) {
+                clearIconWidth = sf.base.select('.e-clear-icon', this.inputWrapper).offsetWidth;
+                if (clearIconWidth === 0) {
+                    sf.base.removeClass([this.overAllClear], ['e-icon-hide', 'e-clear-icon-hide']);
+                    clearIconWidth = this.overAllClear.offsetWidth;
+                    sf.base.addClass([this.overAllClear], ['e-icon-hide', 'e-clear-icon-hide']);
+                }
+            }
+            if (this.options.value && this.options.value.length) {
+                var data = '';
+                var overAllContainer = void 0;
+                var temp = void 0;
+                var tempData = void 0;
+                var templateTempData = [];
+                var tempIndex = 1;
+                var wrapperleng = void 0;
+                var templateWrapperLength = void 0;
+                var remaining = void 0;
+                var downIconWidth = 0;
+                this.overFlowWrapper.innerHTML = '';
+                var remainElement = sf.base.createElement('span', { className: 'e-remain' });
+                var remainContent = '+${count} more..';
+                var totalContent = '${count} selected';
+                this.overFlowWrapper.appendChild(remainElement);
+                remainElement.innerText = remainContent.replace('${count}', this.options.value.length.toString());
+                var remainSize = remainElement.offsetWidth;
+                sf.base.remove(remainElement);
+                downIconWidth = sf.base.select('.' + 'e-ddt-icon', this.inputWrapper).offsetWidth;
+                if (!sf.base.isNullOrUndefined(this.options.value)) {
+                    if (this.options.mode !== 'Box') {
+                        if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                            sf.base.addClass([this.valueTemplateContainer], HIDEICON);
+                            var clonedElement = this.valueTemplateContainer.cloneNode(true);
+                            var chips = Array.prototype.slice.call(clonedElement.children);
+                            for (var i = 0; i < chips.length; i++) {
+                                this.overFlowWrapper.appendChild(chips[i]);
+                                templateWrapperLength = this.overFlowWrapper.offsetWidth;
+                                overAllContainer = this.inputWrapper.offsetWidth;
+                                if (templateWrapperLength + downIconWidth + clearIconWidth > overAllContainer) {
+                                    if (templateTempData !== undefined && templateTempData[i] !== '') {
+                                        i = tempIndex + 1;
+                                    }
+                                    while (this.overFlowWrapper.firstChild) {
+                                        this.overFlowWrapper.removeChild(this.overFlowWrapper.firstChild);
+                                    }
+                                    for (var j = 0; j < templateTempData.length; j++) {
+                                        this.overFlowWrapper.appendChild(templateTempData[j]);
+                                    }
+                                    remaining = this.options.value.length - i;
+                                    templateWrapperLength = this.overFlowWrapper.offsetWidth;
+                                    while (templateWrapperLength + remainSize + downIconWidth + clearIconWidth >= overAllContainer &&
+                                        wrapperleng !== 0 &&
+                                        this.overFlowWrapper.firstChild) {
+                                        this.overFlowWrapper.removeChild(this.overFlowWrapper.lastChild);
+                                        remaining++;
+                                        templateWrapperLength = this.overFlowWrapper.offsetWidth;
+                                    }
+                                    break;
+                                }
+                                else if (templateWrapperLength + remainSize + downIconWidth + clearIconWidth <= overAllContainer) {
+                                    templateTempData.push(chips[i]);
+                                    tempIndex = i;
+                                }
+                                else if (i === 0) {
+                                    templateTempData = null;
+                                    tempIndex = -1;
+                                }
+                            }
+                            if (remaining > 0) {
+                                this.overFlowWrapper.appendChild(this.updateRemainTemplate(remainElement, remaining, remainContent, totalContent));
+                            }
+                            if (this.options.mode === 'Box' && !this.overFlowWrapper.classList.contains('e-total-count')) {
+                                sf.base.addClass([remainElement], 'e-wrap-count');
+                            }
+                            return;
+                        }
+                        var textArray = this.element.value.split(this.options.delimiterChar + ' ');
+                        for (var index = 0; !sf.base.isNullOrUndefined(textArray[index]); index++) {
+                            data += (index === 0) ? '' : this.options.delimiterChar + ' ';
+                            temp = textArray[index];
+                            data += temp;
+                            temp = this.overFlowWrapper.innerHTML;
+                            this.overFlowWrapper.innerHTML = data;
+                            wrapperleng = this.overFlowWrapper.offsetWidth;
+                            overAllContainer = this.inputWrapper.offsetWidth;
+                            if ((wrapperleng + downIconWidth + clearIconWidth) > overAllContainer) {
+                                if (tempData !== undefined && tempData !== '') {
+                                    temp = tempData;
+                                    index = tempIndex + 1;
+                                }
+                                this.overFlowWrapper.innerHTML = temp;
+                                remaining = this.options.value.length - index;
+                                wrapperleng = this.overFlowWrapper.offsetWidth;
+                                while (((wrapperleng + remainSize + downIconWidth + clearIconWidth) >= overAllContainer)
+                                    && wrapperleng !== 0 && this.overFlowWrapper.innerHTML !== '') {
+                                    var textArr = this.overFlowWrapper.innerHTML.split(this.options.delimiterChar);
+                                    textArr.pop();
+                                    this.overFlowWrapper.innerHTML = textArr.join(this.options.delimiterChar);
+                                    remaining++;
+                                    wrapperleng = this.overFlowWrapper.offsetWidth;
+                                }
+                                break;
+                            }
+                            else if ((wrapperleng + remainSize + downIconWidth + clearIconWidth) <= overAllContainer) {
+                                tempData = data;
+                                tempIndex = index;
+                            }
+                            else if (index === 0) {
+                                tempData = '';
+                                tempIndex = -1;
+                            }
+                        }
+                    }
+                    else {
+                        sf.base.addClass([this.chipWrapper], HIDEICON);
+                        sf.base.addClass([this.overFlowWrapper], 'e-chip-list');
+                        var ele = this.chipWrapper.cloneNode(true);
+                        var chips = sf.base.selectAll('.' + 'e-chips', ele);
+                        for (var i = 0; i < chips.length; i++) {
+                            temp = this.overFlowWrapper.innerHTML;
+                            this.overFlowWrapper.appendChild(chips[i]);
+                            data = this.overFlowWrapper.innerHTML;
+                            wrapperleng = this.overFlowWrapper.offsetWidth;
+                            overAllContainer = this.inputWrapper.offsetWidth;
+                            if ((wrapperleng + downIconWidth + clearIconWidth) > overAllContainer) {
+                                if (tempData !== undefined && tempData !== '') {
+                                    temp = tempData;
+                                    i = tempIndex + 1;
+                                }
+                                this.overFlowWrapper.innerHTML = temp;
+                                remaining = this.options.value.length - i;
+                                wrapperleng = this.overFlowWrapper.offsetWidth;
+                                while (((wrapperleng + remainSize + downIconWidth + clearIconWidth) >= overAllContainer)
+                                    && wrapperleng !== 0 && this.overFlowWrapper.innerHTML !== '') {
+                                    this.overFlowWrapper.removeChild(this.overFlowWrapper.lastChild);
+                                    remaining++;
+                                    wrapperleng = this.overFlowWrapper.offsetWidth;
+                                }
+                                break;
+                            }
+                            else if ((wrapperleng + remainSize + downIconWidth + clearIconWidth) <= overAllContainer) {
+                                tempData = data;
+                                tempIndex = i;
+                            }
+                            else if (i === 0) {
+                                tempData = '';
+                                tempIndex = -1;
+                            }
+                        }
+                        var finalChips = sf.base.selectAll('.e-chips', this.overFlowWrapper);
+                        for (var i = 0; i < finalChips.length; i++) {
+                            var deleteIcon = sf.base.select('.e-chips-close', finalChips[i]);
+                            sf.base.EventHandler.add(deleteIcon, 'mousedown', this.removeChip, this);
+                        }
+                    }
+                }
+                if (remaining > 0) {
+                    this.overFlowWrapper.appendChild(this.updateRemainTemplate(remainElement, remaining, remainContent, totalContent));
+                }
+                if (this.options.mode === 'Box' && !this.overFlowWrapper.classList.contains('e-total-count')) {
+                    sf.base.addClass([remainElement], 'e-wrap-count');
+                }
+            }
+            else {
+                this.overFlowWrapper.innerHTML = '';
+                sf.base.addClass([this.overFlowWrapper], HIDEICON);
+            }
+        };
+        SfDropDownTree.prototype.updateRemainTemplate = function (remainElement, remaining, remainContent, totalContent) {
+            if (this.overFlowWrapper.firstChild && this.overFlowWrapper.firstChild.nodeType === 3 &&
+                this.overFlowWrapper.firstChild.nodeValue === '') {
+                this.overFlowWrapper.removeChild(this.overFlowWrapper.firstChild);
+            }
+            remainElement.innerHTML = '';
+            remainElement.innerText = (this.overFlowWrapper.firstChild && (this.overFlowWrapper.firstChild.nodeType === 3 || this.options.mode === 'Box') || !sf.base.isNullOrUndefined(this.valueTemplateContainer)) ?
+                remainContent.replace('${count}', remaining.toString()) : totalContent.replace('${count}', remaining.toString());
+            if (this.overFlowWrapper.firstChild && (this.overFlowWrapper.firstChild.nodeType === 3 || this.options.mode === 'Box')) {
+                sf.base.removeClass([this.overFlowWrapper], 'e-total-count');
+            }
+            else {
+                sf.base.addClass([this.overFlowWrapper], 'e-total-count');
+                sf.base.removeClass([this.overFlowWrapper], 'e-wrap-count');
+            }
+            return remainElement;
+        };
+        SfDropDownTree.prototype.setDisable = function () {
+            if (!this.options.disabled) {
+                this.element.setAttribute('aria-disabled', 'false');
+            }
+            else {
+                if (this.isPopupOpen) {
+                    this.invokePopupEvent();
+                }
+                if (this.inputWrapper && this.inputWrapper.classList.contains(INPUTFOCUS)) {
+                    sf.base.removeClass([this.inputWrapper], [INPUTFOCUS]);
+                }
+                this.element.setAttribute('aria-disabled', 'true');
+            }
+        };
+        SfDropDownTree.prototype.createChip = function () {
+            if (!this.inputWrapper.contains(this.chipWrapper)) {
+                this.chipWrapper = sf.base.select(CHIP_WRAPPER, this.inputWrapper);
+                this.inputWrapper.insertBefore(this.chipWrapper, this.element);
+                sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                var isValid = this.getValidMode();
+                if (isValid && this.options.value !== null && (this.options.value && this.options.value.length !== 0)) {
+                    sf.base.addClass([this.element], CHIP_INPUT);
+                }
+                else if (this.options.value === null || (this.options.value && this.options.value.length === 0) || this.checkBoxElement) {
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                }
+            }
+        };
+        SfDropDownTree.prototype.getValidMode = function () {
+            if (this.options.allowMultiSelection || this.options.showCheckBox) {
+                return this.options.mode === 'Box' ? true : (this.options.mode === 'Default' && this.inputFocus) ? true : false;
+            }
+            else {
+                return false;
+            }
+        };
+        SfDropDownTree.prototype.createPopup = function (element) {
+            var _this = this;
+            this.popupObj = new sf.popups.Popup(element, {
+                width: this.setWidth(),
+                targetType: 'relative',
+                collision: { X: 'flip', Y: 'flip' },
+                relateTo: this.inputWrapper,
+                zIndex: this.options.zIndex,
+                enableRtl: !sf.base.isNullOrUndefined(sf.base.select('.e-rtl')),
+                position: { X: 'left', Y: 'bottom' },
+                close: function () {
+                    _this.isPopupOpen = false;
+                    _this.dotNetRef.invokeMethodAsync('UpdatePopupState', _this.isPopupOpen);
+                },
+                open: function () {
+                    _this.isPopupOpen = true;
+                    _this.dotNetRef.invokeMethodAsync('UpdatePopupState', _this.isPopupOpen);
+                },
+                targetExitViewport: function () {
+                    if (!sf.base.Browser.isDevice) {
+                        _this.invokePopupEvent();
+                    }
+                }
+            });
+        };
+        SfDropDownTree.prototype.getHeight = function () {
+            var height = sf.base.formatUnit(this.options.popupHeight);
+            if (height.indexOf('%') > -1) {
+                // Will set the height of the popup according to the view port height
+                height = (document.documentElement.clientHeight * parseFloat(height) / 100).toString() + 'px';
+            }
+            return height;
+        };
+        SfDropDownTree.prototype.updatePopupHeight = function () {
+            var popupHeight = this.getHeight();
+            this.popupEle.style.maxHeight = popupHeight;
+            var header = sf.base.select('.e-ddt-header', this.popupEle);
+            var footer = sf.base.select('.e-ddt-footer', this.popupEle);
+            if (this.options.allowFiltering) {
+                var height = Math.round(this.filterContainer.getBoundingClientRect().height);
+                popupHeight = sf.base.formatUnit(parseInt(popupHeight, 10) - height + 'px');
+            }
+            if (header) {
+                var height = Math.round(header.getBoundingClientRect().height);
+                popupHeight = sf.base.formatUnit(parseInt(popupHeight, 10) - height + 'px');
+            }
+            if (this.options.showCheckBox && this.options.showSelectAll && (!this.popupDiv.classList.contains(NODATA))) {
+                var height = Math.round(this.checkAllParent.getBoundingClientRect().height);
+                popupHeight = sf.base.formatUnit(parseInt(popupHeight, 10) - height + 'px');
+            }
+            if (footer) {
+                var height = Math.round(footer.getBoundingClientRect().height);
+                popupHeight = sf.base.formatUnit(parseInt(popupHeight, 10) - height + 'px');
+            }
+            var border = parseInt(window.getComputedStyle(this.popupEle).borderTopWidth, 10);
+            border = border + parseInt(window.getComputedStyle(this.popupEle).borderBottomWidth, 10);
+            popupHeight = sf.base.formatUnit(parseInt(popupHeight, 10) - border + 'px');
+            this.popupDiv.style.maxHeight = popupHeight;
+        };
+        SfDropDownTree.prototype.setWidth = function () {
+            var width = sf.base.formatUnit(this.options.popupWidth);
+            if (width.indexOf('%') > -1) {
+                width = (this.inputWrapper.offsetWidth * parseFloat(width) / 100).toString() + 'px';
+            }
+            return width;
+        };
+        SfDropDownTree.prototype.onDocumentClick = function (e) {
+            var target = e.target;
+            var isTree = sf.base.closest(target, '.' + PARENTITEM);
+            var isFilter = sf.base.closest(target, '.' + FILTERWRAP);
+            var isHeader = sf.base.closest(target, '.' + HEADER);
+            var isFooter = sf.base.closest(target, '.' + FOOTER);
+            var isScroller = target.classList.contains(DROPDOWN) ? true :
+                (sf.base.matches(target, '.e-ddt .e-popup') || sf.base.matches(target, '.e-ddt .e-treeview'));
+            if (this.overAllClear && target === this.overAllClear || target.classList.contains('e-chips-close')) {
+                this.isClearIconClick = true;
+            }
+            if ((this.isPopupOpen && ((!sf.base.isNullOrUndefined(this.inputWrapper) && this.inputWrapper.contains(target)) || isTree
+                || isScroller || isHeader || isFooter)) || ((this.options.allowMultiSelection || this.options.showCheckBox) &&
+                (this.isPopupOpen && target.classList.contains(CHIP_CLOSE) || (this.isPopupOpen && (target.classList.contains(CHECKALLPARENT) ||
+                    target.classList.contains(ALLTEXT) || target.classList.contains(CHECKBOXFRAME) || target.classList.contains(CHECKBOXLABEL)))))) {
+                e.preventDefault();
+            }
+            else if (!sf.base.isNullOrUndefined(this.inputWrapper) && !this.inputWrapper.contains(target) && this.inputFocus) {
+                this.focusOut(e, !sf.base.isNullOrUndefined(isFilter));
+            }
+        };
+        SfDropDownTree.prototype.wireEvents = function () {
+            sf.base.EventHandler.add(this.inputWrapper, 'focus', this.focusIn, this);
+            sf.base.EventHandler.add(this.inputWrapper, 'blur', this.focusOut, this);
+            document.addEventListener('mousedown', this.onDocumentClick.bind(this));
+            this.keyboardModule = new sf.base.KeyboardEvents(this.inputWrapper, {
+                keyAction: this.inputKeyActionHandler.bind(this),
+                keyConfigs: this.keyConfigs,
+                eventName: 'keydown'
+            });
+            window.addEventListener('resize', this.onWindowResize.bind(this));
+        };
+        SfDropDownTree.prototype.unWireEvents = function () {
+            sf.base.EventHandler.remove(this.inputWrapper, 'focus', this.focusIn);
+            sf.base.EventHandler.remove(this.inputWrapper, 'blur', this.focusOut);
+            document.removeEventListener('mousedown', this.onDocumentClick.bind(this));
+            window.removeEventListener('resize', this.onWindowResize.bind(this));
+            if (this.keyboardModule) {
+                this.keyboardModule.destroy();
+            }
+        };
+        SfDropDownTree.prototype.onWindowResize = function () {
+            if (this.isPopupOpen) {
+                this.popupObj.setProperties({ width: this.setWidth() });
+                this.popupObj.refreshPosition();
+            }
+        };
+        SfDropDownTree.prototype.inputKeyActionHandler = function (e) {
+            switch (e.action) {
+                case 'escape':
+                case 'altUp':
+                    if (this.isPopupOpen) {
+                        this.invokePopupEvent();
+                    }
+                    break;
+                case 'shiftTab':
+                case 'tab':
+                    if (this.isPopupOpen) {
+                        this.invokePopupEvent();
+                    }
+                    if (this.inputFocus) {
+                        this.focusOut(e);
+                    }
+                    break;
+                case 'altDown':
+                    if (!this.isPopupOpen) {
+                        this.dotNetRef.invokeMethodAsync('InvokePopupEvent', null);
+                        e.preventDefault();
+                    }
+                    break;
+                case 'moveDown':
+                    if (this.options.showSelectAll && this.options.showCheckBox) {
+                        this.checkAllParent.focus();
+                    }
+                    break;
+            }
+        };
+        SfDropDownTree.prototype.popupKeyActionHandler = function (e) {
+            switch (e.target) {
+                case this.filterInputEle:
+                    this.filterAction(e);
+                    break;
+                case this.checkAllParent:
+                    this.checkAllAction(e);
+                    break;
+                default:
+                    if (this.popupDiv.contains(e.target)) {
+                        this.treeAction(e);
+                    }
+                    break;
+            }
+        };
+        SfDropDownTree.prototype.checkAllAction = function (e) {
+            switch (e.action) {
+                case 'space':
+                    this.dotNetRef.invokeMethodAsync('OnSelectAllClick');
+                    break;
+                case 'moveDown': {
+                    var focusedElement = this.popupDiv.querySelector('li');
+                    focusedElement.focus();
+                    break;
+                }
+                case 'shiftTab':
+                    e.preventDefault();
+                    if (this.options.allowFiltering) {
+                        this.filterInputEle.focus();
+                    }
+                    else {
+                        this.inputWrapper.focus();
+                    }
+            }
+        };
+        SfDropDownTree.prototype.treeAction = function (e) {
+            switch (e.action) {
+                case 'escape':
+                case 'altUp':
+                    this.inputWrapper.focus();
+                    e.preventDefault();
+                    if (this.isPopupOpen) {
+                        this.invokePopupEvent();
+                    }
+                    break;
+                case 'tab':
+                    if (this.isPopupOpen) {
+                        this.invokePopupEvent();
+                    }
+                    break;
+                case 'shiftTab':
+                    e.preventDefault();
+                    if (this.options.showSelectAll && this.options.showCheckBox) {
+                        this.checkAllParent.focus();
+                    }
+                    else if (this.options.allowFiltering) {
+                        this.filterInputEle.focus();
+                    }
+                    else {
+                        this.inputWrapper.focus();
+                    }
+                    break;
+            }
+        };
+        SfDropDownTree.prototype.filterAction = function (e) {
+            switch (e.action) {
+                case 'escape':
+                case 'altUp':
+                    this.inputWrapper.focus();
+                    e.preventDefault();
+                    if (this.isPopupOpen) {
+                        this.invokePopupEvent();
+                    }
+                    break;
+                case 'shiftTab':
+                    this.inputFocus = false;
+                    e.preventDefault();
+                    this.inputWrapper.focus();
+                    break;
+                case 'tab':
+                    if (this.options.showSelectAll && this.options.showCheckBox) {
+                        this.checkAllParent.focus();
+                    }
+                    else {
+                        var focusedElement = this.popupDiv.querySelector('li');
+                        focusedElement.focus();
+                        e.preventDefault();
+                    }
+                    break;
+            }
+        };
+        SfDropDownTree.prototype.showPopup = function () {
+            if (this.options.disabled || this.isPopupOpen) {
+                return;
+            }
+            this.focusIn();
+            this.renderPopup();
+        };
+        SfDropDownTree.prototype.updateInputElement = function () {
+            sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+            sf.base.addClass([this.element], CHIP_INPUT);
+        };
+        SfDropDownTree.prototype.focusIn = function (e) {
+            if (this.options.disabled || this.inputFocus || this.isClearIconClick) {
+                this.isClearIconClick = false;
+                return;
+            }
+            this.inputFocus = true;
+            sf.base.addClass([this.inputWrapper], [INPUTFOCUS]);
+            if (this.options.allowMultiSelection || this.options.showCheckBox) {
+                if (this.options.mode !== 'Delimiter' && this.inputFocus) {
+                    if (this.chipWrapper && (this.options.value && this.options.value.length !== 0)) {
+                        sf.base.removeClass([this.chipWrapper], HIDEICON);
+                        sf.base.addClass([this.element], CHIP_INPUT);
+                    }
+                    sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                }
+                if (!this.options.textWrap && this.options.mode !== 'Custom') {
+                    if (this.inputWrapper.contains(this.overFlowWrapper)) {
+                        sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                    }
+                    if (this.options.mode === 'Delimiter') {
+                        if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                            this.updateInputElement();
+                            this.showOrHideValueTemplate(true);
+                        }
+                        else {
+                            sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                            sf.base.removeClass([this.element], CHIP_INPUT);
+                        }
+                    }
+                    else {
+                        sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                    }
+                    sf.base.removeClass([this.inputWrapper], SHOW_TEXT);
+                    this.ensurePlaceHolder();
+                }
+                else if (this.options.textWrap && !sf.base.isNullOrUndefined(this.valueTemplateContainer) && this.options.mode !== 'Delimiter') {
+                    sf.base.addClass([this.valueTemplateContainer], HIDEICON);
+                }
+                if (this.popupObj) {
+                    this.popupObj.refreshPosition();
+                }
+            }
+            else {
+                if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                    sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                    if (this.options.mode !== 'Box' && this.options.value && this.options.value.length !== 0) {
+                        sf.base.addClass([this.element], CHIP_INPUT);
+                    }
+                }
+                else {
+                    sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                    sf.base.removeClass([this.element], CHIP_INPUT);
+                }
+            }
+        };
+        SfDropDownTree.prototype.focusOut = function (e, isFilter) {
+            if (this.options.disabled || !this.inputFocus) {
+                return;
+            }
+            if ((sf.base.Browser.isIE || sf.base.Browser.info.name === 'edge') && (e.target === this.inputWrapper)) {
+                return;
+            }
+            if (e.target !== this.inputWrapper || !this.isPopupOpen) {
+                this.onFocusOut(isFilter);
+            }
+        };
+        SfDropDownTree.prototype.onFocusOut = function (isFilter) {
+            if (isFilter === void 0) { isFilter = false; }
+            this.inputFocus = isFilter;
+            if (this.isPopupOpen && !isFilter) {
+                this.invokePopupEvent();
+            }
+            if (this.overAllClear && !this.overAllClear.classList.contains(HIDEICON)) {
+                sf.base.addClass([this.overAllClear], HIDEICON);
+                sf.base.removeClass([this.inputWrapper], SHOW_CLEAR);
+            }
+            sf.base.removeClass([this.inputWrapper], [INPUTFOCUS]);
+            if ((this.options.allowMultiSelection || this.options.showCheckBox)) {
+                if (this.options.mode !== 'Delimiter' && this.options.mode !== 'Custom') {
+                    if (this.chipWrapper && (this.options.mode === 'Default')) {
+                        this.chipWrapper.style.display = '';
+                        sf.base.addClass([this.chipWrapper], HIDEICON);
+                        sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                        sf.base.removeClass([this.element], CHIP_INPUT);
+                    }
+                }
+                if (!this.options.textWrap && this.options.value && this.options.value.length) {
+                    this.updateView();
+                }
+                else if (this.options.textWrap && !sf.base.isNullOrUndefined(this.valueTemplateContainer) && this.options.mode !== 'Box') {
+                    sf.base.addClass([this.element], CHIP_INPUT);
+                    this.ensurePlaceHolder();
+                    sf.base.removeClass([this.valueTemplateContainer], HIDEICON);
+                }
+            }
+        };
+        SfDropDownTree.prototype.invokePopupEvent = function () {
+            var popupArgs = {
+                offsetX: this.popupObj.offsetX, offsetY: this.popupObj.offsetY, targetType: this.popupObj.targetType,
+                collision: { X: this.popupObj.collision.X, Y: this.popupObj.collision.Y },
+                position: { X: this.popupObj.position.X, Y: this.popupObj.position.Y }
+            };
+            this.dotNetRef.invokeMethodAsync('InvokePopupEvent', popupArgs);
+        };
+        SfDropDownTree.prototype.closePopup = function () {
+            this.inputWrapper.classList.remove(ICONANIMATION);
+            if (this.popupEle) {
+                sf.base.addClass([this.popupEle], DDTHIDEICON);
+            }
+            sf.base.attributes(this.element, { 'aria-expanded': 'false' });
+            if (this.popupObj && this.isPopupOpen) {
+                this.popupObj.hide();
+                this.popupObj.destroy();
+                this.popupObj = null;
+                if (this.inputFocus) {
+                    this.inputWrapper.focus();
+                    if (this.options.allowFiltering) {
+                        sf.base.addClass([this.inputWrapper], [INPUTFOCUS]);
+                    }
+                }
+            }
+        };
+        SfDropDownTree.prototype.showOverAllClear = function () {
+            if (this.options.disabled) {
+                return;
+            }
+            if (this.options.showClearButton) {
+                this.overAllClear = sf.base.select('.e-clear-icon', this.inputWrapper);
+            }
+            if (this.overAllClear) {
+                var isValue = this.options.value ? (this.options.value.length ? true : false) : false;
+                if (isValue && this.options.showClearButton) {
+                    sf.base.removeClass([this.overAllClear], [HIDEICON, 'e-clear-icon-hide']);
+                    sf.base.addClass([this.inputWrapper], SHOW_CLEAR);
+                }
+                else {
+                    sf.base.addClass([this.overAllClear], HIDEICON);
+                    sf.base.removeClass([this.inputWrapper], SHOW_CLEAR);
+                }
+            }
+        };
+        SfDropDownTree.prototype.onNodeSelected = function (value) {
+            this.options.value = value;
+            this.showOverAllClear();
+            if (!sf.base.isNullOrUndefined(this.popupObj)) {
+                this.invokePopupEvent();
+            }
+        };
+        SfDropDownTree.prototype.clearIconClick = function (value) {
+            this.options.value = value;
+            this.showOverAllClear();
+            this.showOrHideValueTemplate(false);
+            if (sf.base.isNullOrUndefined(this.options.value) || (this.options.value && this.options.value.length === 0)) {
+                sf.base.removeClass([this.element], CHIP_INPUT);
+                if (!this.options.textWrap && !sf.base.isNullOrUndefined(this.overFlowWrapper)) {
+                    sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                }
+                if (this.options.mode !== 'Delimiter' && !sf.base.isNullOrUndefined(this.chipWrapper)) {
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                    this.chipWrapper.style.display = '';
+                }
+            }
+            this.ensurePlaceHolder();
+            if ((this.options.allowMultiSelection || this.options.showCheckBox)) {
+                if (this.popupObj) {
+                    this.popupObj.refreshPosition();
+                }
+            }
+        };
+        SfDropDownTree.prototype.updateSelectedValue = function (setChipWrapper) {
+            this.checkInputValueAvailable();
+            var isValue = this.options.value ? (this.options.value.length ? true : false) : false;
+            if ((this.options.mode !== 'Delimiter') && (this.options.allowMultiSelection || this.options.showCheckBox) && isValue) {
+                sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                this.chipWrapper.style.display = 'block';
+            }
+            var isValid = this.getValidMode();
+            if (this.options.mode !== 'Custom' && this.options.mode !== 'Box' && !isValid) {
+                if ((this.options.allowMultiSelection || this.options.showCheckBox)) {
+                    if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                        this.updateInputElement();
+                        if (!this.options.textWrap) {
+                            sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                        }
+                        sf.base.removeClass([this.valueTemplateContainer], HIDEICON);
+                    }
+                    if (this.chipWrapper) {
+                        sf.base.addClass([this.chipWrapper], HIDEICON);
+                        sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                        this.chipWrapper.style.display = '';
+                    }
+                    this.showOrHideValueTemplate(true);
+                }
+                else {
+                    if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                        this.updateInputElement();
+                        sf.base.removeClass([this.valueTemplateContainer], HIDEICON);
+                    }
+                }
+            }
+            if (this.options.mode === 'Custom' && (this.options.allowMultiSelection || this.options.showCheckBox)) {
+                this.setCustomModeClass();
+            }
+            if (this.options.showClearButton && this.inputFocus) {
+                this.showOverAllClear();
+            }
+            if (setChipWrapper) {
+                this.setChipWrapperClass();
+            }
+            if ((this.options.allowMultiSelection || this.options.showCheckBox) && this.popupObj) {
+                this.popupObj.refreshPosition();
+            }
+            this.ensurePlaceHolder();
+        };
+        SfDropDownTree.prototype.updateValue = function (value) {
+            this.checkInputValueAvailable();
+            var isValid = this.getValidMode();
+            if (this.options.mode !== 'Custom' && this.options.mode !== 'Box' && !isValid) {
+                if (sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                    this.updateInputElement();
+                    sf.base.removeClass([this.valueTemplateContainer], HIDEICON);
+                }
+                this.showOrHideValueTemplate(true);
+            }
+            if (this.options.showClearButton && this.inputFocus) {
+                this.showOverAllClear();
+            }
+            this.closePopup();
+        };
+        SfDropDownTree.prototype.setCustomModeClass = function () {
+            if (sf.base.isNullOrUndefined(this.options.value)) {
+                return;
+            }
+            if (!this.inputWrapper.contains(this.chipWrapper)) {
+                this.createChip();
+            }
+            if (!this.inputWrapper.classList.contains(SHOW_CHIP)) {
+                sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+            }
+            if (!this.element.classList.contains(CHIP_INPUT)) {
+                sf.base.addClass([this.element], CHIP_INPUT);
+            }
+            if (this.chipWrapper.classList.contains(HIDEICON)) {
+                sf.base.removeClass([this.chipWrapper], HIDEICON);
+            }
+        };
+        SfDropDownTree.prototype.ensurePlaceHolder = function () {
+            if (sf.base.isNullOrUndefined(this.options.value) || (this.options.value && this.options.value.length === 0)) {
+                sf.base.removeClass([this.element], CHIP_INPUT);
+                if (this.chipWrapper) {
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                    this.chipWrapper.style.display = '';
+                }
+            }
+        };
+        SfDropDownTree.prototype.setChipWrapperClass = function () {
+            var checkSelection = this.options.allowMultiSelection ? true : (this.options.showCheckBox ? true : false);
+            if (this.inputWrapper.contains(this.chipWrapper) && !checkSelection) {
+                sf.base.removeClass([this.element], CHIP_INPUT);
+                sf.base.detach(this.chipWrapper);
+            }
+            var isValid = this.getValidMode();
+            if (isValid && this.options.value !== null) {
+                sf.base.addClass([this.element], CHIP_INPUT);
+                if (this.chipWrapper) {
+                    sf.base.removeClass([this.chipWrapper], HIDEICON);
+                }
+            }
+            var isValue = this.options.value ? (this.options.value.length ? true : false) : false;
+            if (this.chipWrapper && (this.options.mode === 'Box' && !isValue)) {
+                sf.base.addClass([this.chipWrapper], HIDEICON);
+                if (!this.options.textWrap) {
+                    sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                }
+                sf.base.removeClass([this.element], CHIP_INPUT);
+                this.chipWrapper.style.display = '';
+            }
+            if (!this.options.textWrap && this.inputWrapper.offsetWidth !== 0 &&
+                (this.options.allowMultiSelection || this.options.showCheckBox)) {
+                this.updateView();
+            }
+            else if (this.options.textWrap && !sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                sf.base.addClass([this.inputWrapper], SHOW_TEXT);
+            }
+        };
+        SfDropDownTree.prototype.updateOverflowWrapper = function (state) {
+            if (!state) {
+                if (!this.inputWrapper.contains(this.overFlowWrapper)) {
+                    this.overFlowWrapper = sf.base.select(OVERFLOW_VIEW + ':not(.e-input-value)', this.inputWrapper);
+                    this.inputWrapper.insertBefore(this.overFlowWrapper, this.element);
+                }
+            }
+            else if (this.inputWrapper.contains(this.overFlowWrapper) && state) {
+                while (this.overFlowWrapper.firstChild) {
+                    this.overFlowWrapper.removeChild(this.overFlowWrapper.firstChild);
+                }
+            }
+        };
+        SfDropDownTree.prototype.updateMode = function () {
+            if (!this.options.textWrap) {
+                var overFlow = sf.base.select(OVERFLOW_VIEW + ':not(.e-input-value)', this.inputWrapper);
+                if (overFlow) {
+                    while (overFlow.firstChild) {
+                        overFlow.removeChild(overFlow.firstChild);
+                    }
+                }
+            }
+            if (this.options.mode === 'Custom') {
+                return;
+            }
+            if (this.options.mode !== 'Delimiter') {
+                if (!this.inputWrapper.contains(this.chipWrapper)) {
+                    this.createChip();
+                }
+                var isValid = this.getValidMode();
+                if (this.chipWrapper.classList.contains(HIDEICON) && isValid) {
+                    sf.base.removeClass([this.chipWrapper], HIDEICON);
+                    this.showOrHideValueTemplate(false, true);
+                    sf.base.addClass([this.inputWrapper], SHOW_CHIP);
+                }
+                else if (!isValid) {
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                    sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                    this.showOrHideValueTemplate(true);
+                    this.chipWrapper.style.display = '';
+                }
+                var isValue = this.options.value !== null ? (this.options.value.length !== 0 ? true : false) : false;
+                if ((isValid && isValue) || !sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                    sf.base.addClass([this.element], CHIP_INPUT);
+                }
+                else {
+                    sf.base.removeClass([this.element], CHIP_INPUT);
+                }
+            }
+            else if (this.element.classList.contains(CHIP_INPUT)) {
+                sf.base.removeClass([this.element], CHIP_INPUT);
+                if (this.chipWrapper) {
+                    sf.base.addClass([this.chipWrapper], HIDEICON);
+                    if (!this.options.textWrap) {
+                        sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                    }
+                    sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                    this.chipWrapper.style.display = '';
+                    this.showOrHideValueTemplate(true);
+                }
+            }
+            if (!this.options.textWrap && (this.options.value && this.options.value.length !== 0)) {
+                this.updateOverFlowView();
+                sf.base.addClass([this.element], CHIP_INPUT);
+                if (this.options.mode === 'Box') {
+                    sf.base.removeClass([this.overFlowWrapper, this.inputWrapper], SHOW_TEXT);
+                }
+                else {
+                    sf.base.addClass([this.overFlowWrapper, this.inputWrapper], SHOW_TEXT);
+                }
+            }
+        };
+        SfDropDownTree.prototype.showOrHideValueTemplate = function (show, showChip) {
+            if (showChip === void 0) { showChip = false; }
+            if (!sf.base.isNullOrUndefined(this.valueTemplateContainer)) {
+                if (show) {
+                    sf.base.removeClass([this.valueTemplateContainer], HIDEICON);
+                    this.updateInputElement();
+                }
+                else {
+                    sf.base.addClass([this.valueTemplateContainer], HIDEICON);
+                    if (!showChip) {
+                        sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                        sf.base.removeClass([this.element], CHIP_INPUT);
+                    }
+                }
+            }
+        };
+        SfDropDownTree.prototype.updateProperties = function (options) {
+            for (var _i = 0, _a = Object.keys(options); _i < _a.length; _i++) {
+                var prop = _a[_i];
+                switch (prop) {
+                    case 'showSelectAll':
+                        this.options.showSelectAll = options.showSelectAll;
+                        break;
+                    case 'showCheckBox':
+                        this.options.showCheckBox = options.showCheckBox;
+                        this.createOverFlowWrapper();
+                        break;
+                    case 'popupHeight':
+                        this.options.popupHeight = options.popupHeight;
+                        if (this.popupObj) {
+                            this.popupObj.height = this.options.popupHeight;
+                            this.updatePopupHeight();
+                        }
+                        break;
+                    case 'popupWidth':
+                        this.options.popupWidth = options.popupWidth;
+                        if (this.popupObj) {
+                            this.popupObj.element.style.width = this.setWidth();
+                        }
+                        break;
+                    case 'zIndex':
+                        this.options.zIndex = options.zIndex;
+                        if (this.popupObj) {
+                            this.popupObj.zIndex = this.options.zIndex;
+                        }
+                        break;
+                    case 'allowFiltering':
+                        this.options.allowFiltering = options.allowFiltering;
+                        break;
+                    case 'allowMultiSelection':
+                        this.options.allowMultiSelection = options.allowMultiSelection;
+                        this.createOverFlowWrapper();
+                        break;
+                    case 'disabled':
+                        this.options.disabled = options.disabled;
+                        this.setDisable();
+                        break;
+                    case 'mode': {
+                        if (!this.options.showCheckBox && !this.options.allowMultiSelection) {
+                            return;
+                        }
+                        var oldMode = this.options.mode;
+                        this.options.mode = options.mode;
+                        if (this.options.mode === 'Custom') {
+                            if (this.overFlowWrapper) {
+                                sf.base.detach(this.overFlowWrapper);
+                            }
+                            if (this.chipWrapper) {
+                                sf.base.detach(this.chipWrapper);
+                            }
+                            this.setCustomModeClass();
+                        }
+                        else {
+                            if (oldMode === 'Custom') {
+                                this.updateOverflowWrapper(this.options.textWrap);
+                            }
+                            this.updateMode();
+                        }
+                        break;
+                    }
+                    case 'showClearButton':
+                        this.options.showClearButton = options.showClearButton;
+                        this.overAllClear = sf.base.select('.e-clear-icon', this.inputWrapper);
+                        break;
+                    case 'textWrap':
+                        this.options.textWrap = options.textWrap;
+                        this.updateOverflowWrapper(this.options.textWrap);
+                        if ((this.options.allowMultiSelection || this.options.showCheckBox) && !this.options.textWrap) {
+                            this.updateView();
+                        }
+                        else {
+                            sf.base.addClass([this.overFlowWrapper], HIDEICON);
+                            sf.base.removeClass([this.inputWrapper], SHOW_TEXT);
+                            if (this.chipWrapper && this.options.mode === 'Box') {
+                                sf.base.removeClass([this.chipWrapper], HIDEICON);
+                            }
+                            else {
+                                sf.base.removeClass([this.inputWrapper], SHOW_CHIP);
+                                sf.base.removeClass([this.element], CHIP_INPUT);
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+        SfDropDownTree.prototype.destroy = function () {
+            if (this.popupObj) {
+                this.popupObj.destroy();
+                this.popupObj = null;
+            }
+            this.popupDiv = null;
+            this.popupEle = null;
+            this.isPopupOpen = false;
+            this.unWireEvents();
+            this.overAllClear = null;
+            this.inputWrapper = null;
+            this.keyboardModule = null;
+            this.element = null;
+        };
+        return SfDropDownTree;
+    }());
+    var DropDownTree = {
+        initialize: function (dataId, containerElement, dotnetRef, options, uniqueID) {
+            var instance = new SfDropDownTree(dataId, containerElement, dotnetRef, options, uniqueID);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.initialize();
+            }
+        },
+        showPopup: function (dataId, value, args, popupContentElement) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.popupDiv = popupContentElement;
+                instance.options.value = value;
+                if ((instance.chipWrapper && instance.options.mode !== 'Delimiter') && instance.options.value && instance.options.value.length !== 0) {
+                    instance.chipWrapper.style.display = 'block';
+                    if (!sf.base.isNullOrUndefined(instance.overFlowWrapper) && !sf.base.isNullOrUndefined(instance.valueTemplateContainer) &&
+                        !instance.options.textWrap) {
+                        sf.base.addClass([instance.overFlowWrapper], HIDEICON);
+                    }
+                }
+                if (!sf.base.isNullOrUndefined(args)) {
+                    var target = document.elementFromPoint(args.clientX, args.clientY);
+                    if (target && target.classList.contains('e-chips-close')) {
+                        return;
+                    }
+                }
+                if (!instance.isPopupOpen && !(!sf.base.isNullOrUndefined(args) && args.button === 2)) {
+                    instance.showOverAllClear();
+                    instance.showPopup();
+                    instance.inputFocus = true;
+                }
+            }
+        },
+        invokePopupEvent: function (dataId, value, args) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.options.value = value;
+                if (!sf.base.isNullOrUndefined(args)) {
+                    var target = document.elementFromPoint(args.clientX, args.clientY);
+                    if (target && target.classList.contains('e-chips-close')) {
+                        return;
+                    }
+                }
+                if (instance.isPopupOpen) {
+                    instance.invokePopupEvent();
+                    instance.showOverAllClear();
+                }
+            }
+        },
+        closePopup: function (dataId) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.closePopup();
+            }
+        },
+        onNodeSelected: function (dataId, value) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.onNodeSelected(value);
+            }
+        },
+        updateValue: function (dataId, value) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.updateValue(value);
+            }
+        },
+        clearIconClick: function (dataId, value, removeFocus) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.clearIconClick(value);
+                if (removeFocus && instance.inputFocus) {
+                    instance.onFocusOut();
+                }
+            }
+        },
+        updateSelectedValue: function (dataId, value, setChipWrapper) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.options.value = value;
+                instance.updateSelectedValue(setChipWrapper);
+            }
+        },
+        getTreeItemsId: function (dataId) {
+            var items = [];
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                var li = sf.base.selectAll('li', instance.popupDiv);
+                var id = void 0;
+                for (var i = 0; i < li.length; i++) {
+                    id = li[i].getAttribute('data-uid').toString();
+                    items.push(id);
+                }
+            }
+            return items;
+        },
+        updateProperties: function (dataId, options) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.updateProperties(options);
+            }
+        },
+        refreshPosition: function (dataId) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance && instance.popupObj)) {
+                instance.popupObj.refreshPosition();
+            }
+        },
+        destroy: function (dataId) {
+            var instance = window.sfBlazor.getCompInstance(dataId);
+            if (!sf.base.isNullOrUndefined(instance)) {
+                instance.destroy();
+            }
+        }
+    };
+
+    return DropDownTree;
+
+})();

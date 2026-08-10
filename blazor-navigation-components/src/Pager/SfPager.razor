@@ -1,0 +1,221 @@
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Web;
+@using System.Globalization;
+@using System.ComponentModel
+@using System.Collections
+@using System.Text.Json.Serialization;
+@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Internal;
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Navigations.Internal;
+
+
+@inherits SfBaseComponent;
+@namespace Syncfusion.Blazor.Navigations
+@inject ISyncfusionStringLocalizer _localizer
+
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+@{
+    bool IsCurrentFocusNull = string.IsNullOrEmpty(CurrentFocus);
+}
+
+<div @ref="element" id="@ID" data-role="pager" aria-label="Pager Container" tabindex="@EnsurePagerTabIndex()" @onkeydown="(async (KeyboardEventArgs e) => await ProcessPagerKeyDown(e))" @onkeydown:preventDefault="true" class="@GetClassNames()">
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
+    @if (Template != null)
+    {
+        <div @onkeydown:stopPropagation=true>
+            @Template(new PagerTemplateContext() { CurrentPage = CurrentPage, PageSize = PageSize, TotalItemsCount = TotalItemsCount, TotalPages = TotalPages })
+        </div>
+    }    
+    else
+    {
+        string firstPageSetClass = enablePrevSet ? "e-firstpage e-pager-default" : "e-firstpagedisabled e-disable";
+        string firstPageClass = enablePrev ? "e-prevpage e-pager-default" : "e-prevpagedisabled e-disable";
+        string firstPageSetFocus = !IsCurrentFocusNull && CurrentFocus.Equals("FirstPage", StringComparison.Ordinal) ? "e-focus e-focused" : "";
+        string firstPageFocus = !IsCurrentFocusNull && CurrentFocus.Equals("PreviousPage", StringComparison.Ordinal) ? "e-focus e-focused" : "";
+        string mFirstPageSetFocus = !IsCurrentFocusNull && CurrentFocus.Equals("mFirstPage", StringComparison.Ordinal) ? "e-focus e-focused" : "";
+        string mPreviousPageSetFocus = !IsCurrentFocusNull && CurrentFocus.Equals("mPreviousPage", StringComparison.Ordinal) ? "e-focus e-focused" : "";
+        string lastPageSetClass = enableNextSet ? "e-lastpage e-pager-default" : "e-lastpagedisabled e-disable";
+        string lastPageClass = enableNext ? "e-nextpage e-pager-default" : "e-nextpagedisabled e-disable";
+        string lastPageSetFocus = !IsCurrentFocusNull && CurrentFocus.Equals("LastPage", StringComparison.Ordinal) ? "e-focus e-focused" : string.Empty;
+        string lastPageFocus = !IsCurrentFocusNull && CurrentFocus.Equals("NextPage", StringComparison.Ordinal) ? "e-focus e-focused" : string.Empty;
+        <div @onclick="@(async (MouseEventArgs args) => await FirstLastIconClickHandler("PreviousPage", args))"
+             @onblur="BlurHandler"
+             class=@($"e-mfirst e-icons e-icon-first {firstPageSetClass} {firstPageSetFocus} {mFirstPageSetFocus}")
+             title="@(_localizer.GetText("Pager_FirstPageTooltip"))"
+             tabindex= "0"
+             role="button"
+             aria-disabled="@(!enablePrevSet ? "true" : "false")"></div>
+
+        <div @onclick="@(async (MouseEventArgs args) => await PreviousNextIconClickHandler("PreviousPage", args))"
+             @onblur="BlurHandler"
+             class=@($"e-mprev e-icons e-icon-prev {firstPageClass} {firstPageFocus} {mPreviousPageSetFocus}")
+             title="@(_localizer.GetText("Pager_PreviousPageTooltip"))"
+             tabindex="@(lastPageClass.Contains("e-nextpagedisabled") ? "0": "-1" )"
+             role="button"
+             aria-disabled="@(!enablePrev ? "true" : "false")"></div>
+
+        <div class="e-pagercontainer" role="navigation">
+            <div @onclick="@(async (MouseEventArgs args) => await FirstLastIconClickHandler("PreviousPage", args))"
+                 @onblur="BlurHandler"               
+                 class=@($"e-first e-icons e-icon-first {firstPageSetClass} {firstPageSetFocus}")
+                 title="@(_localizer.GetText("Pager_FirstPageTooltip"))"
+                 role="button" tabindex="@(EnsureTabIndex(firstPageSetFocus))"
+                 aria-disabled="@(!enablePrevSet ? "true" : "false")"></div>
+
+            <div @onclick="@(async (MouseEventArgs args) => await PreviousNextIconClickHandler("PreviousPage", args))"
+                 @onblur="BlurHandler"                
+                 class=@($"e-prev e-icons e-icon-prev {firstPageClass} {firstPageFocus}")
+                 title="@(_localizer.GetText("Pager_PreviousPageTooltip"))"
+                 role="button"
+                 tabindex="@(EnsureTabIndex(firstPageFocus))"
+                 aria-disabled="@(!enablePrev ? "true" : "false")"></div>
+            @{
+                string prevnextClass = enableLeftDots ? "e-numericitem e-pager-default" : "e-nextprevitemdisabled e-disable";
+                string prevnextFocus = !IsCurrentFocusNull && CurrentFocus.Equals("PreviousPagerCount",StringComparison.Ordinal) ? "e-focus e-focused" : "";
+            }
+            @if (enableLeftDots)
+            {
+                <div @onclick="@(async (MouseEventArgs args) => await EllipsisButtonClickHandler(direction: "PreviousPage", args))">
+                    <a class=@($"e-link e-pp e-spacing {prevnextClass} {prevnextFocus}")
+                       title="@(_localizer.GetText("Pager_PreviousPagerTooltip"))"
+                       tabindex="@(EnsureTabIndex(prevnextFocus))" href="#">...</a>
+                </div>
+            }
+            <div class="e-numericcontainer">
+                @{
+                    int renderStartIndex = 1;
+                    int renderEndIndex = TotalPages;
+                    if (hasVisibleNumericRange && visibleNumericStartIndex > 0)
+                    {
+                        renderStartIndex = visibleNumericStartIndex;
+                        renderEndIndex = visibleNumericEndIndex;
+                    }
+                    for (int pageNumber = pageStart; pageNumber <= pageStart + numericCount; pageNumber++)
+                    {
+                        if (pageNumber > TotalPages)
+                        {
+                            break;
+                        }
+
+                        var activeClass = CurrentPage.Equals(pageNumber) ? ("e-currentitem e-active") : "e-pager-default";
+                        int.TryParse(CurrentFocus, out int CurrentPageFocus);
+                        var pagerFocus = pageNumber.Equals(CurrentPageFocus) && !suppressFocus ? "e-focus e-focused" : string.Empty;
+                        var isCurrentPage = CurrentPage.Equals(pageNumber);
+                        var visibilityClass = (!isCurrentPage && (pageNumber < renderStartIndex || pageNumber > renderEndIndex)) ? "e-hide" : string.Empty;
+                        var activePage = pageNumber;
+                        var pageNumberCount = Intl.GetNumericFormat<int>(pageNumber, "n0");
+
+                        <a @key="pageNumber" @onblur="BlurHandler" index="@pageNumber"
+                           @onclick="@(async (MouseEventArgs clickArgs) => await ItemClickHandler(clickArgs, activePage))"
+                           class="@($"e-link e-numericitem e-spacing {activeClass} {pagerFocus} {visibilityClass}")"
+                           tabindex=@((!showDropdown && pageNumber == pageStart + numericCount) ? "0" : EnsureTabIndex(pagerFocus))
+                           aria-label="@(_localizer.GetText("Pager_Page")) @pageNumber.ToString() @(_localizer.GetText("Pager_Of")) @TotalPages @(_localizer.GetText("Pager_Pages"))" href="#">@(string.IsNullOrEmpty(NumericItemPrefix) ? pageNumberCount.ToString() : $"{NumericItemPrefix}{pageNumberCount}")</a>
+                    }
+                }
+            </div>
+            @{
+                string nextprevClass = enableRightDots ? "e-numericitem e-pager-default" : "e-nextprevitemdisabled e-disable";
+                string nextprevFocus = !IsCurrentFocusNull && CurrentFocus.Equals("NextPagerCount", StringComparison.Ordinal) ? "e-focus e-focused" : string.Empty;
+            }
+            @if (enableRightDots)
+            {   
+                <div @onclick="@(async (MouseEventArgs args) => await EllipsisButtonClickHandler(direction: "NextPage", args))">
+                    <a class=@($"e-link e-np e-spacing {nextprevClass} {nextprevFocus}")
+                       title="@(_localizer.GetText("Pager_NextPagerTooltip"))"
+                       tabindex="@(EnsureTabIndex(nextprevFocus))" href="#">...</a>
+                </div>
+            }
+            
+            <div @onclick="@(async (MouseEventArgs args) => await PreviousNextIconClickHandler("NextPage", args))"
+                 @onblur="BlurHandler"
+                 class=@($"e-next e-icons e-icon-next {lastPageClass} {lastPageFocus}")
+                 title="@(_localizer.GetText("Pager_NextPageTooltip"))"
+                 role="button"
+                 tabindex="@(EnsureTabIndex(lastPageFocus))"
+                 aria-disabled="@(!enableNext ? "true" : "false")"></div>
+
+            <div @onclick="@(async (MouseEventArgs args) => await FirstLastIconClickHandler("NextPage", args))"
+                 @onblur="BlurHandler"
+                 @onkeydown="(async (KeyboardEventArgs e) => await HandleLastPageKeyDown(e))"
+                 @onkeydown:preventDefault="true"
+                 class=@($"e-last e-icons e-icon-last {lastPageSetClass} {lastPageSetFocus}")
+                 title="@(_localizer.GetText("Pager_LastPageTooltip"))"
+                 role="button"
+                 tabindex=@(!showDropdown && enableNextSet ? "0" : EnsureTabIndex(lastPageSetFocus))
+                 aria-disabled="@(!enableNextSet ? "true" : "false")"></div>
+        </div>
+		
+        @if (ShowPagerMessage)
+        {
+            var a = Intl.GetNumericFormat<int>(TotalItemsCount, "n0");
+            <div class="e-parentmsgbar">
+                <span class="e-pagenomsg e-rightalign">
+                     @{
+                        var zero = Intl.GetNumericFormat<int>(0, "n0");
+                        var currentPageNumber = Intl.GetNumericFormat<int>(CurrentPage, "n0");
+                        var totalPagesCount = Intl.GetNumericFormat<int>(TotalPages, "n0");
+                        var currentPageValue = TotalPages <= 0 ? zero : currentPageNumber;
+                      }
+                    @(adaptivePagerMessage ? (currentPageValue + " / " + totalPagesCount) : (string.Format(_localizer.GetText("Pager_CurrentPageInfo"), currentPageValue, totalPagesCount)))
+                </span>
+                <span class="e-pagecountmsg e-rightalign">
+                    @(string.Format(_localizer.GetText("Pager_TotalItemsInfo"), a))
+                </span>
+            </div>
+        }
+
+        string mNextPageSetFocus = !IsCurrentFocusNull && (CurrentFocus.Equals("mNextPage", StringComparison.Ordinal) || CurrentFocus.Equals("NextPage", StringComparison.Ordinal)) ? "e-focus e-focused" : "";
+        string mLastPageSetFocus = !IsCurrentFocusNull && CurrentFocus.Equals("mLastPage", StringComparison.Ordinal) ? "e-focus e-focused" : "";
+        <div @onclick="@(async (MouseEventArgs args) => await PreviousNextIconClickHandler("NextPage", args))"
+             @onblur="BlurHandler"
+             class=@($"e-mnext e-icons e-icon-next {lastPageClass} {mNextPageSetFocus}")
+             title="@(_localizer.GetText("Pager_NextPageTooltip"))"
+             tabindex="-1"
+             role="button"
+             aria-disabled="@(!enableNext ? "true" : "false")">
+        </div>
+
+        <div @onclick="@(async (MouseEventArgs args) => await FirstLastIconClickHandler("NextPage", args))"
+             @onblur="BlurHandler"
+             class=@($"e-mlast e-icons e-icon-last {lastPageSetClass} {mLastPageSetFocus}")
+             title="@(_localizer.GetText("Pager_LastPageTooltip"))"
+             tabindex="@(lastPageClass.Contains("e-nextpagedisabled") ? "-1": "0" )"
+             role="button"
+             aria-disabled="@(!enableNextSet ? "true" : "false")">
+        </div>
+
+        @if (showDropdown)
+        {
+            string dropClass = !IsCurrentFocusNull && CurrentFocus.Equals("DropDown", StringComparison.Ordinal) ? "e-input-focus" : string.Empty;
+            <div class="e-pagesizes">
+                <div class="e-pagerdropdown">
+                     <SfDropDownList aria-label="@(_localizer.GetText("Pager_PagerDropDownARIA"))" Placeholder="@(_localizer.GetText("Pager_PagerDropDownPlaceHolder"))" CssClass="@dropClass" TValue="int" TItem="PagerDropdownModel" DataSource="@dropdownData" @bind-Value="@dropdownValue" EnableRtl="EnableRtl">
+                        <DropDownListEvents TItem="PagerDropdownModel" ValueChange="PageSizeChangeHandler" TValue="int"></DropDownListEvents>
+                        <DropDownListFieldSettings Text="DisplayText" Value="Value"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="e-pagerconstant">
+                    <span class="e-constant">@(_localizer.GetText("Pager_PagerDropDown"))</span>
+                </div>
+            </div>
+        }
+
+        @if (ShowExternalMessage && !string.IsNullOrEmpty(ExternalMessage))
+        {
+            <div class="e-pagerexternalmsg" aria-label="@(_localizer.GetText("Pager_ExternalMessage"))">
+                @ExternalMessage
+            </div>
+        }
+    }
+</div>
+

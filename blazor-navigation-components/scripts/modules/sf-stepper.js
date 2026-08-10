@@ -1,0 +1,513 @@
+window.sfBlazor = window.sfBlazor || {};
+window.sfBlazor.Stepper = (function () {
+    'use strict';
+
+    var ITEMCONTAINER = 'e-step-container';
+    var ITEMLIST = 'e-stepper-steps';
+    var ICONCSS = 'e-indicator';
+    var TEXTCSS = 'e-step-text-container';
+    var STEPLABEL = 'e-step-label-container';
+    var SELECTED = 'e-step-selected';
+    var INPROGRESS = 'e-step-inprogress';
+    var NOTSTARTED = 'e-step-notstarted';
+    var FOCUS = 'e-step-focus';
+    var COMPLETED = 'e-step-completed';
+    var DISABLED = 'e-step-disabled';
+    var PROGRESSVALUE = '--progress-value';
+    var RTL = 'e-rtl';
+    var LABELAFTER = 'e-label-after';
+    var LABELBEFORE = 'e-label-before';
+    var HORIZSTEP = 'e-horizontal';
+    var STEPICON = 'e-step-item';
+    var STEPTEXT = 'e-step-text';
+    var LABEL = 'e-label';
+    var STEPINDICATOR = 'e-step-type-indicator';
+    var PREVSTEP = 'e-previous';
+    var NEXTSTEP = 'e-next';
+    var SfStepper = /** @class */ (function () {
+        function SfStepper(options) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            window.sfBlazor = window.sfBlazor;
+            this.dataId = options.dataId;
+            this.updateContext(options);
+            window.sfBlazor.setCompInstance(this);
+            this.stepperItemList = this.element.querySelector('.' + ITEMLIST);
+            this.progressValue = this.element.querySelector('.e-progressbar-value');
+            this.progressbar = this.element.querySelector('.e-stepper-progressbar');
+            this.getElements();
+            this.bindEvent();
+            this.renderProgressBar();
+            this.navigateToStep(this.activeStep, false, null);
+        }
+        SfStepper.prototype.updateContext = function (stepperObj) {
+            sf.base.extend(this, this, stepperObj);
+        };
+        SfStepper.prototype.getElements = function () {
+            this.liElements = this.element.querySelectorAll('.' + ITEMCONTAINER);
+        };
+        SfStepper.prototype.bindItemEvent = function (liElement, index) {
+            var _this = this;
+            sf.base.EventHandler.add(liElement, 'keydown', this.keyActionHandler.bind(this), this);
+            sf.base.EventHandler.add(liElement, 'click', function (e) { return _this.linearModeHandler(e, index); }, this);
+            sf.base.EventHandler.add(window, 'resize', function () { _this.resizeHandler(); }, this);
+        };
+        SfStepper.prototype.bindEvent = function () {
+            var _this = this;
+            sf.base.EventHandler.add(window, 'click', function () { _this.updateStepFocus(); }, this);
+            for (var i = 0; i < this.liElements.length; i++) {
+                this.bindItemEvent(this.liElements[parseInt(i.toString(), 10)], i);
+            }
+        };
+        SfStepper.prototype.unBindItemEvent = function (liElement, index) {
+            var _this = this;
+            sf.base.EventHandler.remove(liElement, 'keydown', this.keyActionHandler);
+            sf.base.EventHandler.remove(liElement, 'click', function (e) { return _this.linearModeHandler(e, index); });
+            sf.base.EventHandler.remove(window, 'resize', function () { _this.resizeHandler(); });
+        };
+        SfStepper.prototype.unBindEvent = function () {
+            var _this = this;
+            sf.base.EventHandler.remove(window, 'click', function () { _this.updateStepFocus(); });
+            for (var i = 0; i < this.liElements.length; i++) {
+                this.unBindItemEvent(this.liElements[parseInt(i.toString(), 10)], i);
+            }
+        };
+        SfStepper.prototype.linearModeHandler = function (e, index) {
+            if (this.linear) {
+                var linearModeValue = index - this.activeStep;
+                if (Math.abs(linearModeValue) === 1) {
+                    this.stepClickHandler(index, e);
+                }
+            }
+            else {
+                this.stepClickHandler(index, e);
+            }
+        };
+        SfStepper.prototype.resizeHandler = function () {
+            if (this.stepperItemList && this.progressbar && this.element.classList.contains(HORIZSTEP)) {
+                return this.renderProgressBar();
+            }
+        };
+        SfStepper.prototype.stepClickHandler = function (index, e) {
+            if (!this.readOnly) {
+                this.dotNetRef.invokeMethodAsync('StepClickHandler', this.activeStep, index);
+                this.navigateToStep(index, true, e);
+            }
+        };
+        SfStepper.prototype.updateStepFocus = function () {
+            if (this.isKeyNavFocus) {
+                this.isKeyNavFocus = false;
+                var isFocus = this.element.querySelector('.' + FOCUS);
+                if (isFocus) {
+                    isFocus.classList.remove(FOCUS);
+                    this.element.classList.remove('e-steps-focus');
+                }
+            }
+        };
+        SfStepper.prototype.renderProgressBar = function () {
+            if (this.element.classList.contains(HORIZSTEP)) {
+                var stepItemContainer = (this.element.querySelector('.' + ITEMCONTAINER));
+                var stepItemEle = stepItemContainer.firstChild;
+                var lastEle = this.stepperItemList.lastChild.firstChild;
+                var textEle = stepItemContainer.querySelector('.' + TEXTCSS);
+                var labelEle = stepItemContainer.querySelector('.' + STEPLABEL);
+                if ((!stepItemContainer.classList.contains(STEPICON)) && (textEle && !textEle.classList.contains('e-text') || labelEle && !labelEle.classList.contains('e-label'))) {
+                    var targetEle = textEle ? textEle.querySelector('.e-text') : labelEle.querySelector('.e-label');
+                    this.progressbar.style.setProperty('--progress-top-position', targetEle.offsetHeight / 2 + 5 + 'px');
+                }
+                else {
+                    var topPos = (this.element.classList.contains('e-label-before')) ?
+                        (this.stepperItemList.offsetHeight - (stepItemEle.offsetHeight / 2) - 1) :
+                        (stepItemEle.offsetHeight / 2);
+                    this.progressbar.style.setProperty('--progress-top-position', topPos + 'px');
+                }
+                if (this.element.classList.contains(RTL)) {
+                    var leftPost = ((stepItemEle.offsetLeft + stepItemEle.offsetWidth) - (this.stepperItemList).offsetWidth);
+                    this.progressbar.style.setProperty('--progress-left-position', Math.abs(leftPost) + 'px');
+                    this.progressbar.style.setProperty('--progress-bar-width', Math.abs(lastEle.offsetLeft - stepItemEle.offsetLeft) + 'px');
+                }
+                else {
+                    this.progressbar.style.setProperty('--progress-left-position', (stepItemEle.offsetLeft + 1) + 'px');
+                    this.progressbar.style.setProperty('--progress-bar-width', ((lastEle.offsetWidth + lastEle.offsetLeft - 2) - (stepItemEle.offsetLeft + 2)) + 'px');
+                }
+            }
+            else {
+                this.progressBarPosition = this.beforeLabelWidth = this.textEleWidth = 0;
+                var isBeforeLabel = (this.element.classList.contains(LABELBEFORE)) ? true : false;
+                for (var i = 0; i < this.liElements.length; i++) {
+                    var textEle = (this.liElements[parseInt(i.toString(), 10)].querySelector('.' + TEXTCSS));
+                    var iconOnly = (this.liElements[parseInt(i.toString(), 10)].classList.contains(STEPICON) && !this.liElements[parseInt(i.toString(), 10)].classList.contains(STEPTEXT) && !this.liElements[parseInt(i.toString(), 10)].classList.contains('e-step-label')) ? true : false;
+                    if (textEle) {
+                        this.textEleWidth = this.textEleWidth < textEle.offsetWidth ? textEle.offsetWidth : this.textEleWidth;
+                    }
+                    if (isBeforeLabel) {
+                        var itemWidth = void 0;
+                        var labelWidth = this.liElements[parseInt(i.toString(), 10)].querySelector('.' + LABEL).offsetWidth + 15;
+                        this.beforeLabelWidth = Math.max(this.beforeLabelWidth, labelWidth);
+                        if (this.element.querySelector('ol').lastChild.querySelector('.' + ICONCSS)) {
+                            itemWidth = (this.beforeLabelWidth + (this.liElements[parseInt(i.toString(), 10)].querySelector('.' + ICONCSS).offsetWidth / 2));
+                        }
+                        else if ((this.liElements[parseInt(i.toString(), 10)].querySelector('.' + TEXTCSS))) {
+                            itemWidth = (this.beforeLabelWidth + (this.liElements[parseInt(i.toString(), 10)].querySelector('.' + TEXTCSS).offsetWidth / 2));
+                        }
+                        this.progressBarPosition = Math.max(this.progressBarPosition, itemWidth);
+                    }
+                    else if (this.progressBarPosition < (iconOnly ? this.liElements[parseInt(i.toString(), 10)].offsetWidth : this.element.querySelector('ol').lastChild.firstChild.offsetWidth)) {
+                        this.progressBarPosition = iconOnly ? this.liElements[parseInt(i.toString(), 10)].offsetWidth : this.element.querySelector('ol').lastChild.firstChild.offsetWidth;
+                    }
+                }
+                var labelContainer = (this.element.querySelector('li').querySelector('.' + STEPLABEL));
+                if (this.element.classList.contains('e-label-bottom') || this.element.classList.contains('e-label-top')) {
+                    this.progressbar.style.setProperty('--progress-position', (this.stepperItemList.offsetWidth / 2) + 'px');
+                }
+                else {
+                    this.progressbar.style.setProperty('--progress-position', ((this.progressBarPosition / 2) - 1) + 'px');
+                }
+                if (labelContainer && (labelContainer.classList.contains(LABELBEFORE))) {
+                    var listItems = this.stepperItemList.querySelectorAll('.' + LABEL);
+                    for (var i = 0; i < listItems.length; i++) {
+                        var labelEle = listItems[parseInt((i).toString(), 10)];
+                        labelEle.style.setProperty('--label-width', (this.beforeLabelWidth) + 'px');
+                    }
+                    this.progressbar.style.setProperty('--progress-position', (((this.progressBarPosition) - 1)) + 'px');
+                }
+            }
+        };
+        SfStepper.prototype.updateStepperStatus = function () {
+            for (var i = 0; i < this.liElements.length; i++) {
+                if (this.stepperStatus && this.statusIndex === this.activeStep) {
+                    var itemElement = this.liElements[parseInt(i.toString(), 10)];
+                    itemElement.classList.remove(SELECTED, INPROGRESS, COMPLETED, NOTSTARTED);
+                    this.updateStatusClass(i, this.statusIndex, itemElement, this.stepperStatus.toLowerCase() === 'completed' ? null : this.stepperStatus.toLowerCase() === 'inprogress');
+                }
+            }
+        };
+        SfStepper.prototype.updateStatusClass = function (currentStep, index, ele, isInprogress) {
+            if (currentStep < index) {
+                ele.classList.add(COMPLETED);
+            }
+            else if (currentStep === index) {
+                if (isInprogress == null) {
+                    ele.classList.add(COMPLETED, SELECTED);
+                }
+                else if (isInprogress) {
+                    ele.classList.add(INPROGRESS, SELECTED);
+                }
+                else {
+                    ele.classList.add(NOTSTARTED);
+                }
+            }
+            else {
+                ele.classList.add(NOTSTARTED);
+            }
+        };
+        SfStepper.prototype.navigateToStep = function (index, isInteraction, e) {
+            var _this = this;
+            if (isInteraction !== false) {
+                var previousStep_1 = this.activeStep;
+                var stepperArgs = {
+                    cancel: false,
+                    isInteracted: true,
+                    previousStep: this.activeStep,
+                    activeStep: index,
+                    element: this.element,
+                    event: e
+                };
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore-start
+                this.dotNetRef.invokeMethodAsync('StepChangingHandler', stepperArgs).then(function (stepArgs) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore-end
+                    if (!stepArgs.cancel) {
+                        _this.navigationHandler(index);
+                        _this.updateStepperStatus();
+                        _this.dotNetRef.invokeMethodAsync('StepChangedHandler', isInteraction, previousStep_1, _this.activeStep);
+                    }
+                    else {
+                        _this.navigationHandler(_this.activeStep);
+                        _this.updateStepperStatus();
+                    }
+                });
+            }
+            else {
+                this.navigationHandler(index);
+                this.updateStepperStatus();
+            }
+        };
+        SfStepper.prototype.navigationHandler = function (index) {
+            if (index !== this.activeStep) {
+                this.progressValue.style.transitionDuration = this.duration + 'ms';
+            }
+            index = (index >= this.liElements.length - 1) ? this.liElements.length - 1 : index;
+            var Itemslength = this.liElements.length;
+            if (index >= 0 && index < Itemslength) {
+                index = this.liElements[parseInt(index.toString(), 10)].classList.contains(DISABLED) ?
+                    this.activeStep : index;
+            }
+            this.activeStep = index;
+            for (var i = 0; i < this.liElements.length; i++) {
+                var itemElement = this.liElements[parseInt(i.toString(), 10)];
+                itemElement.classList.remove(SELECTED, INPROGRESS, COMPLETED, NOTSTARTED);
+                if (i === this.activeStep) {
+                    itemElement.classList.add(SELECTED);
+                }
+                if (this.linear) {
+                    itemElement.classList.toggle(PREVSTEP, (i === this.activeStep - 1));
+                    itemElement.classList.toggle(NEXTSTEP, (i === this.activeStep + 1));
+                }
+                if (this.activeStep >= 0 && this.progressValue) {
+                    if (this.element.classList.contains(HORIZSTEP)) {
+                        this.calculateProgressbarPos();
+                    }
+                    else {
+                        this.progressValue.style.setProperty(PROGRESSVALUE, ((100 / (this.liElements.length - 1)) * index) + '%');
+                    }
+                }
+                else if (this.activeStep < 0 && this.progressValue) {
+                    this.progressValue.style.setProperty(PROGRESSVALUE, 0 + '%');
+                }
+                if (i === this.activeStep) {
+                    itemElement.classList.add(INPROGRESS);
+                }
+                else if (this.activeStep > 0 && i < this.activeStep) {
+                    itemElement.classList.add(COMPLETED);
+                }
+                else {
+                    itemElement.classList.add(NOTSTARTED);
+                }
+                if (itemElement.classList.contains(INPROGRESS)) {
+                    sf.base.attributes(itemElement, { 'tabindex': '0', 'aria-current': 'true' });
+                }
+                else {
+                    sf.base.attributes(itemElement, { 'tabindex': '-1', 'aria-current': 'false' });
+                }
+                if (this.element.classList.contains(STEPINDICATOR) && this.isDefaultStep && !itemElement.classList.contains('e-step-valid') && !itemElement.classList.contains('e-step-error')) {
+                    if (itemElement.classList.contains(COMPLETED)) {
+                        itemElement.firstChild.classList.remove('e-icons', 'e-step-indicator');
+                        itemElement.firstChild.classList.add(ICONCSS, 'e-icons', 'e-check');
+                    }
+                    else if (itemElement.classList.contains(INPROGRESS) || itemElement.classList.contains(NOTSTARTED)) {
+                        itemElement.firstChild.classList.remove(ICONCSS, 'e-icons', 'e-check');
+                        itemElement.firstChild.classList.add('e-icons', 'e-step-indicator');
+                    }
+                }
+            }
+            this.progressValue.style.transitionDuration = '0ms';
+        };
+        SfStepper.prototype.calculateProgressbarPos = function () {
+            if ((this.element.classList.contains(LABELBEFORE) || this.element.classList.contains(LABELAFTER)) && !this.element.classList.contains('e-step-type-indicator') &&
+                this.liElements[this.activeStep].classList.contains(STEPICON)) {
+                var selectedEle = this.liElements[this.activeStep].firstChild;
+                var value = this.activeStep === 0 ? 0 : (selectedEle.offsetLeft - this.progressbar.offsetLeft +
+                    (selectedEle.offsetWidth / 2)) / this.progressbar.offsetWidth * 100;
+                if (this.element.classList.contains(RTL)) {
+                    value = (this.progressbar.getBoundingClientRect().right - selectedEle.getBoundingClientRect().right +
+                        (selectedEle.offsetWidth / 2)) / this.progressbar.offsetWidth * 100;
+                }
+                this.progressValue.style.setProperty(PROGRESSVALUE, (value) + '%');
+            }
+            else {
+                var totalLiWidth = 0;
+                var activeLiWidth = 0;
+                for (var j = 0; j < this.liElements.length; j++) {
+                    totalLiWidth += this.liElements[parseInt(j.toString(), 10)].offsetWidth;
+                    if (j <= this.activeStep) {
+                        activeLiWidth += (j < this.activeStep) ? this.liElements[parseInt(j.toString(), 10)].offsetWidth :
+                            (j === this.activeStep && j !== 0) ? (this.liElements[parseInt(j.toString(), 10)].offsetWidth / 2) : 0;
+                    }
+                }
+                var spaceWidth = (this.stepperItemList.offsetWidth - totalLiWidth) / (this.liElements.length - 1);
+                var progressValue = ((activeLiWidth +
+                    (spaceWidth * this.activeStep)) / this.stepperItemList.offsetWidth) * 100;
+                this.progressValue.style.setProperty(PROGRESSVALUE, (progressValue) + '%');
+            }
+        };
+        SfStepper.prototype.keyActionHandler = function (e) {
+            if (this.readOnly) {
+                return;
+            }
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'ArrowDown':
+                case 'ArrowLeft':
+                case 'ArrowRight':
+                case 'Tab':
+                    this.handleNavigation(this.enableRtl && this.element.classList.contains(HORIZSTEP) ? (e.key === 'ArrowLeft' || (e.shiftKey && e.key === 'Tab') || e.key === 'ArrowUp') : (e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey) || e.key === 'ArrowDown'), e);
+                    break;
+                case ' ':
+                case 'Enter':
+                case 'Escape':
+                    this.handleNavigation(null, e);
+                    break;
+                case 'Home':
+                case 'End':
+                    this.handleNavigation(null, e, this.enableRtl);
+                    break;
+            }
+        };
+        SfStepper.prototype.handleNavigation = function (isNextStep, e, isRTL) {
+            this.isKeyNavFocus = true;
+            this.element.classList.add('e-steps-focus');
+            var focusedEle = this.element.querySelector('.' + FOCUS);
+            if (!focusedEle) {
+                focusedEle = this.element.querySelector('.' + SELECTED);
+            }
+            var stepItems = Array.prototype.slice.call(this.stepperItemList.children);
+            var index = stepItems.indexOf(focusedEle);
+            if (e.key === 'Tab' || e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === ' ' || e.key === 'Home' || e.key === 'End') {
+                if (((e.key === 'Tab' && !e.shiftKey) && index === stepItems.length - 1) || ((e.key === 'Tab' && e.shiftKey) && index === 0)) {
+                    if (focusedEle.classList.contains(FOCUS)) {
+                        this.updateStepFocus();
+                        return;
+                    }
+                }
+                else {
+                    e.preventDefault();
+                }
+            }
+            if (e.key === 'Escape') {
+                stepItems[parseInt(index.toString(), 10)].classList.remove(FOCUS);
+                this.element.classList.remove('e-steps-focus');
+            }
+            if (!(e.key === ' ' || e.key === 'Enter')) {
+                var prevIndex = index;
+                index = isNextStep ? index + 1 : index - 1;
+                while ((index >= 0 && index < stepItems.length) && stepItems[parseInt(index.toString(), 10)].classList.contains(DISABLED)) {
+                    index = isNextStep ? index + 1 : index - 1;
+                }
+                index = (index < 0) ? 0 : (index > stepItems.length - 1) ? stepItems.length - 1 : index;
+                if (stepItems[parseInt(prevIndex.toString(), 10)].classList.contains(FOCUS)) {
+                    stepItems[parseInt(prevIndex.toString(), 10)].classList.remove(FOCUS);
+                }
+                if ((e.key === 'Home' || e.key === 'End')) {
+                    index = e.key === 'Home' ? (isRTL ? stepItems.length - 1 : 0) : (isRTL ? 0 : stepItems.length - 1);
+                }
+                if (index >= 0 && index < stepItems.length) {
+                    stepItems[parseInt(index.toString(), 10)].classList.add(FOCUS);
+                }
+            }
+            else if ((e.key === ' ' || e.key === 'Enter')) {
+                var isupdateFocus = false;
+                if (this.linear) {
+                    var linearModeValue = this.activeStep - index;
+                    if (Math.abs(linearModeValue) === 1) {
+                        this.navigateToStep(index, true, null);
+                        isupdateFocus = true;
+                    }
+                }
+                else {
+                    this.navigateToStep(index, true, null);
+                    isupdateFocus = true;
+                }
+                if (isupdateFocus) {
+                    this.updateStepFocus();
+                    this.liElements[parseInt(index.toString(), 10)].focus();
+                }
+            }
+        };
+        SfStepper.prototype.updateLabelClass = function (showLabelClass) {
+            var removeCss = this.element.classList.value.match(/(e-label-[after|before|start|end|top|bottom]+)/g);
+            if (removeCss) {
+                sf.base.removeClass([this.element], removeCss);
+            }
+            this.element.classList.add(showLabelClass);
+        };
+        SfStepper.prototype.updateStepLength = function (isAdd, stepCountDiff) {
+            var prevStepCount = this.liElements.length;
+            if (!isAdd) {
+                for (var i = prevStepCount - stepCountDiff; i < prevStepCount; i++) {
+                    this.unBindItemEvent(this.liElements[parseInt(i.toString(), 10)], i);
+                }
+            }
+            this.getElements();
+            if (isAdd) {
+                for (var i = prevStepCount; i < this.liElements.length; i++) {
+                    this.bindItemEvent(this.liElements[parseInt(i.toString(), 10)], i);
+                }
+            }
+            this.navigationHandler(this.activeStep);
+        };
+        SfStepper.prototype.stepperPropsUpdate = function (options) {
+            this.updateContext(options);
+            this.getElements();
+            if (options.showLabelClass) {
+                this.updateLabelClass(options.showLabelClass);
+            }
+            if (options.stepNavigation) {
+                this.navigateToStep(options.activeStep, true, null);
+            }
+        };
+        SfStepper.prototype.stepperPropsDynamicUpdate = function (options) {
+            this.updateContext(options);
+            this.getElements();
+            if (options.showLabelClass) {
+                this.updateLabelClass(options.showLabelClass);
+            }
+            this.renderProgressBar();
+            this.navigateToStep(options.activeStep, true, null);
+        };
+        SfStepper.prototype.destroy = function () {
+            this.unBindEvent();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            window.sfBlazor.disposeWindowsInstance(this.dataId);
+            this.element = null;
+            this.progressValue = null;
+            this.stepperItemList = null;
+            this.progressbar = null;
+            this.liElements = null;
+        };
+        return SfStepper;
+    }());
+    var Stepper = {
+        initialize: function (options) {
+            if (options.dataId) {
+                if (options.showLabelClass) {
+                    options.element.classList.add(options.showLabelClass);
+                }
+                new SfStepper(options);
+            }
+        },
+        updateStepperProps: function (options) {
+            if (options.dataId) {
+                var stepper = window.sfBlazor.getCompInstance(options.dataId);
+                stepper.stepperPropsUpdate(options);
+            }
+        },
+        updateDynamicStepperProps: function (options) {
+            if (options.dataId) {
+                var stepper = window.sfBlazor.getCompInstance(options.dataId);
+                stepper.stepperPropsDynamicUpdate(options);
+            }
+        },
+        updateStepperValue: function (dataId, activeStep, isInteraction) {
+            if (dataId) {
+                window.sfBlazor.getCompInstance(dataId).navigateToStep(activeStep, isInteraction, null);
+            }
+        },
+        updateLinear: function (options) {
+            if (options.dataId) {
+                window.sfBlazor.getCompInstance(options.dataId).updateContext(options);
+            }
+        },
+        updateStepLength: function (dataId, isAdd, stepCountDiff) {
+            if (dataId && !sf.base.isNullOrUndefined(window.sfBlazor.getCompInstance(dataId))) {
+                window.sfBlazor.getCompInstance(dataId).updateStepLength(isAdd, stepCountDiff);
+            }
+        },
+        refreshProgressbar: function (dataId, activeStep) {
+            if (dataId) {
+                /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+                var stepper = window.sfBlazor.getCompInstance(dataId);
+                stepper.renderProgressBar();
+                stepper.navigateToStep(activeStep, false, null);
+            }
+        },
+        destroy: function (dataId) {
+            if (dataId) {
+                window.sfBlazor.getCompInstance(dataId).destroy();
+            }
+        }
+    };
+
+    return Stepper;
+
+})();

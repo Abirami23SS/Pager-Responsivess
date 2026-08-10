@@ -1,0 +1,54 @@
+﻿@page "/"
+
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.DropDowns
+
+<h2>With pageSize, pagerDropdown and record 500</h2>
+
+<SfGrid DataSource="@Employees" @ref="Grid" AllowPaging="true" Height="300">
+   <GridPageSettings PageSizes="true"></GridPageSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(EmployeeData.EmployeeID) TextAlign="TextAlign.Center" HeaderText="Employee ID" Width="120" IsPrimaryKey="true" Visible="true"></GridColumn>
+        <GridColumn Field=@nameof(EmployeeData.FirstName) HeaderText="First Name" ShowInColumnChooser="false" Width="130"></GridColumn>
+        <GridColumn Field=@nameof(EmployeeData.LastName) HeaderText="Last Name" Width="130"></GridColumn>
+        <GridColumn Field=@nameof(EmployeeData.Title) HeaderText="Title" Width="120" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+@code {
+
+
+    SfGrid<EmployeeData> Grid;
+
+    public List<EmployeeData> Employees { get; set; }
+
+    
+    protected override void OnInitialized()
+    {
+        List<EmployeeData> data = new List<EmployeeData>();
+        int count = 0;
+
+        for (int i = 0; i < 100; i++)
+        {
+            data.Add(new EmployeeData() { EmployeeID = count + 1, FirstName = "Vinet", LastName = "Davolio", HireDate = new DateTime(1995, 05, 15), Title = "Sales Representative" });
+            data.Add(new EmployeeData() { EmployeeID = count + 2, FirstName = "Andrew", LastName = "Fuller", HireDate = null, Title = "Sales Manager" });
+            data.Add(new EmployeeData() { EmployeeID = count + 3, FirstName = "Janet", LastName = "Leverling", HireDate = new DateTime(1993, 03, 10), Title = "Vice President, Sales" });
+            data.Add(new EmployeeData() { EmployeeID = count + 4, FirstName = "Margaret", LastName = "Peacock", HireDate = new DateTime(1992, 02, 14), Title = "Sales Manager" });
+            data.Add(new EmployeeData() { EmployeeID = count + 5, FirstName = "Steven", LastName = "Buchanan", HireDate = new DateTime(1991, 01, 18), Title = "Vice President, Sales" });
+            count += 5;
+        }
+        Employees = data;
+    }
+
+    public class EmployeeData
+    {
+        public int? EmployeeID { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Title { get; set; }
+        public DateTime? HireDate { get; set; }
+    }
+}

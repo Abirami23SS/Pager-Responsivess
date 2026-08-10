@@ -1,0 +1,111 @@
+﻿@inject NavigationManager NavigationManager
+
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfMenu Items="@data">
+    <MenuFieldSettings Text="Value" Children="Options" />
+    <MenuTemplates TValue="Category">
+           <Template>
+               @if (ItemTemplate == null)
+               {
+                    if (context.Value != null && context.Count == null && context.Url == null)
+                    {
+                        <div>@context.Value</div>
+                    }
+                    else if (context.Value != null)
+                    {
+                        <div>
+                            @{
+                                if (context.Url != null)
+                                {
+                                    <img class="e-avatar e-avatar-small" src="@NavigationManager.ToAbsoluteUri($"_content/common/images/menu-bar/{context.Url}.png")" />
+                                }
+                                <span>@context.Value</span>
+                                if (context.Count != null)
+                                {
+                                    <span class="e-badge e-badge-success">@context.Count</span>
+                                }
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="e-card">
+                            <div>
+                                @context.About
+                            </div>
+                            <div>
+                                <input type="button" class="e-btn e-outline" value="Read More" />
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @ItemTemplate
+                }
+            </Template>
+    </MenuTemplates>
+</SfMenu>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ItemTemplate { get; set; }
+
+    private List<Category> data = new List<Category>
+    {
+        new Category
+        {
+            Value = "Products",
+            Options = new List<Category>
+            {
+                new Category { Value= "JavaScript", Url= "javascript" },
+                new Category { Value= "Angular", Url= "angular" },
+                new Category { Value= "ASP.NET Core", Url= "core" },
+                new Category { Value= "ASP.NET MVC", Url= "mvc" }
+            }
+        },
+        new Category
+        {
+            Value = "Services",
+            Options = new List<Category>
+            {
+                new Category { Value= "Application Development", Count= "1200+" },
+                new Category { Value= "Maintenance & Support", Count= "3700+" },
+                new Category { Value= "Quality Assurance",
+                Options = new List<Category>
+                 {
+                 new Category { Value= "Application Development", Count= "1200+" }}
+                 },
+                new Category { Value= "Cloud Integration", Count= "900+" }
+            }
+        },
+        new Category
+        {
+            Value = "About Us",
+            Options =  new List<Category>
+            {
+                new Category
+                {
+                    Id = "about",
+                    About = "We are on a mission to provide."
+                }
+            }
+        },
+        new Category { Value = "Careers" },
+        new Category { Value = "Sign In" }
+    };
+
+    private class Category
+    {
+        public List<Category> Options { get; set; }
+        public string Value { get; set; }
+        public string Url { get; set; }
+        public string Count { get; set; }
+        public string About { get; set; }
+        public string Id { get; set; }
+    }
+}

@@ -1,0 +1,200 @@
+@using Syncfusion.Blazor.Navigations
+@using System.Reflection
+@inject IJSRuntime jsRuntime
+
+<div id="eventAggregatorOutput">
+    <h4>Event Aggregator Test</h4>
+    <span id="asyncHandlerResult">@AsyncHandlerResult</span>
+    <span id="notifyAsyncResult">@NotifyAsyncResult</span>
+    <span id="addAsyncCalled">@AddAsyncCalled</span>
+</div>
+
+@code {
+    private object eventAggregator;
+    private string AsyncHandlerResult = "Initial";
+    private string NotifyAsyncResult = "Initial";
+    private string AddAsyncCalled = "AddAsync: Not called";
+    private int handlerCallCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Create instance of internal EventAggregator using reflection
+            var typeName = "Syncfusion.Blazor.Navigations.Internal.EventAggregator";
+            var type = Type.GetType(typeName, false);
+            
+            if (type == null)
+            {
+                // Try searching in all loaded assemblies
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    type = assembly.GetType(typeName, false);
+                    if (type != null) break;
+                }
+            }
+            
+            if (type == null)
+            {
+                NotifyAsyncResult = "EventAggregator type not found";
+                return;
+            }
+
+            // Create instance of EventAggregator
+            eventAggregator = Activator.CreateInstance(type);
+
+            // Test 1: AddAsync method using reflection - methods are internal, so need to search both public and non-public
+            var addAsyncMethod = type.GetMethod("AddAsync", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (addAsyncMethod != null)
+            {
+                Func<Task, object, Task> asyncHandler = async (task, args) =>
+                {
+                    handlerCallCount++;
+                    AddAsyncCalled = $"AddAsync: Handler called {handlerCallCount} time(s)";
+                    await Task.CompletedTask;
+                };
+
+                try
+                {
+                    var result = addAsyncMethod.Invoke(eventAggregator, new object[] { "TestEvent", asyncHandler });
+                    if (result is Task task1)
+                    {
+                        await task1;
+                        AsyncHandlerResult = "AddAsync: Handler registered";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AsyncHandlerResult = $"AddAsync Error: {ex.InnerException?.Message ?? ex.Message}";
+                }
+            }
+            else
+            {
+                AsyncHandlerResult = "AddAsync method not found";
+            }
+
+            // Test 2: NotifyAsync method using reflection - methods are internal, so need to search non-public
+            var notifyAsyncMethod = type.GetMethod("NotifyAsync", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (notifyAsyncMethod != null)
+            {
+                try
+                {
+                    var eventArgs = new { Message = "Test notification" };
+                    var result = notifyAsyncMethod.Invoke(eventAggregator, new object[] { "TestEvent", eventArgs });
+                    if (result is Task task2)
+                    {
+                        await task2;
+                        NotifyAsyncResult = "NotifyAsync: Event triggered";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    NotifyAsyncResult = $"NotifyAsync Error: {ex.InnerException?.Message ?? ex.Message}";
+                }
+            }
+            else
+            {
+                NotifyAsyncResult = "NotifyAsync method not found";
+            }
+
+            // Test 3: Add second handler for same event
+            if (addAsyncMethod != null)
+            {
+                Func<Task, object, Task> asyncHandler2 = async (task, args) =>
+                {
+                    handlerCallCount++;
+                    AddAsyncCalled = $"AddAsync: Multiple handlers called {handlerCallCount} time(s)";
+                    await Task.CompletedTask;
+                };
+
+                try
+                {
+                    var result = addAsyncMethod.Invoke(eventAggregator, new object[] { "TestEvent", asyncHandler2 });
+                    if (result is Task task3)
+                    {
+                        await task3;
+                    }
+                }
+                catch { }
+            }
+
+            // Test 4: NotifyAsync with multiple handlers
+            if (notifyAsyncMethod != null)
+            {
+                try
+                {
+                    var eventArgs = new { Message = "Test notification" };
+                    var result = notifyAsyncMethod.Invoke(eventAggregator, new object[] { "TestEvent", eventArgs });
+                    if (result is Task task4)
+                    {
+                        await task4;
+                        NotifyAsyncResult = $"NotifyAsync: Event triggered, handler count: {handlerCallCount}";
+                    }
+                }
+                catch { }
+            }
+
+            // Test 5: Test AddAsync with new event name
+            if (addAsyncMethod != null)
+            {
+                Func<Task, object, Task> asyncHandler3 = async (task, args) =>
+                {
+                    await Task.CompletedTask;
+                };
+
+                try
+                {
+                    var result = addAsyncMethod.Invoke(eventAggregator, new object[] { "AnotherEvent", asyncHandler3 });
+                    if (result is Task task5)
+                    {
+                        await task5;
+                    }
+                }
+                catch { }
+            }
+
+            // Test 6: NotifyAsync with non-existent event (should not throw)
+            if (notifyAsyncMethod != null)
+            {
+                try
+                {
+                    var eventArgs = new { Message = "Test notification" };
+                    var result = notifyAsyncMethod.Invoke(eventAggregator, new object[] { "NonExistentEvent", eventArgs });
+                    if (result is Task task6)
+                    {
+                        await task6;
+                        NotifyAsyncResult = $"NotifyAsync: Non-existent event handled safely";
+                    }
+                }
+                catch { }
+            }
+
+            // Test 7: Verify internal event list
+            var eventListField = type.GetField("_eventAsyncList", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (eventListField != null)
+            {
+                try
+                {
+                    var eventList = eventListField.GetValue(eventAggregator) as System.Collections.ICollection;
+                    if (eventList != null && eventList.Count > 0)
+                    {
+                        NotifyAsyncResult = $"NotifyAsync: Events registered count = {eventList.Count}";
+                    }
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotifyAsyncResult = $"Error: {ex.Message}";
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

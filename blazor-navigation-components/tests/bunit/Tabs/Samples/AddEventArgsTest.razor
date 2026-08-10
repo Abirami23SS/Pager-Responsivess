@@ -1,0 +1,60 @@
+@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Tabs.Samples
+
+<div id="addEventTest">
+    <button id="addTabBtn" @onclick="@AddTabItem">Add Tab</button>
+    <SfTab @ref="tab" Items="@tabItems" Added="@OnTabAdded">
+    </SfTab>
+
+    <span id="addEventName">AddEventName: @addEventName</span>
+    <span id="addedItemCount">AddedItemCount: @addedItemCount</span>
+    <span id="addCancel">AddCancel: @addCancel</span>
+</div>
+
+@code {
+    public SfTab tab;
+    public List<TabItem> tabItems = new();
+
+    public string addEventName = "Pending";
+    public int addedItemCount = 0;
+    public bool addCancel = false;
+    public int tabCounter = 3;
+
+    protected override void OnInitialized()
+    {
+        // Create initial sample tab items
+        tabItems = new List<TabItem>
+        {
+            new TabItem { Header = new TabHeader { Text = "Tab 1" }, Content = "Content 1" },
+            new TabItem { Header = new TabHeader { Text = "Tab 2" }, Content = "Content 2" },
+            new TabItem { Header = new TabHeader { Text = "Tab 3" }, Content = "Content 3" }
+        };
+    }
+
+    private async Task AddTabItem()
+    {
+        // Add a new tab using the public AddTab method
+        var newItems = new List<TabItem>
+        {
+            new TabItem { Header = new TabHeader { Text = $"Tab {++tabCounter}" }, Content = $"Content {tabCounter}" }
+        };
+        
+        if (tab != null)
+        {
+            await tab.AddTab(newItems, tabItems.Count);
+            tabItems.AddRange(newItems);
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnTabAdded(AddEventArgs args)
+    {
+        // Access and store all AddEventArgs getter properties
+        // This covers: Name, AddedItems, Cancel
+        addEventName = args.Name ?? "TabAdded";
+        addedItemCount = args.AddedItems?.Count ?? 0;
+        addCancel = args.Cancel;
+
+        await Task.CompletedTask;
+    }
+}

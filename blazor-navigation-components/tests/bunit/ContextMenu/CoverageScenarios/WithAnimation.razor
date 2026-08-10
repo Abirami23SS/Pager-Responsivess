@@ -1,0 +1,20 @@
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfContextMenu @ref="ContextMenu" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Cut"></MenuItem>
+        <MenuItem Text="Copy"></MenuItem>
+        <MenuItem Text="Paste">
+            <MenuItems>
+                <MenuItem Text="Paste Text"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+    </MenuItems>
+    <MenuAnimationSettings Effect="MenuEffect.FadeIn" Duration="300"></MenuAnimationSettings>
+</SfContextMenu>
+
+@code {
+    public SfContextMenu<MenuItem> ContextMenu { get; set; }
+}

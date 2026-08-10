@@ -1,0 +1,79 @@
+@page "/Samples/Carousel/Methods"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+
+<SfCheckBox @bind-Checked="@AutoPlay" Label="AutoPlay"></SfCheckBox>
+<SfButton OnClick="Play" Content="Play slide change"></SfButton>
+<SfButton OnClick="Pause" Content="Pause slide change"></SfButton>
+<SfButton OnClick="Previous" Content="Previous slide"></SfButton>
+<SfButton OnClick="Next" Content="Next slide"></SfButton>
+<SfButton OnClick="Move" Content="Move to selected slide"></SfButton>
+
+<SfNumericTextBox @bind-Value="@indexValue" FloatLabelType="FloatLabelType.Always" Min="0" Max="4" Placeholder="Select Index" Width="125px"></SfNumericTextBox>
+
+<div class="carousel-container">
+    <SfCarousel @ref="@CarouselRef" ShowPlayButton="true" AutoPlay="@AutoPlay">
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/bridge.jpg" alt="brigde" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/trees.jpg" alt="trees" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/waterfall.jpg" alt="waterfall" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/sea.jpg" alt="sea" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/rocks.jpeg" alt="rocks" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+    </SfCarousel>
+</div>
+
+<style>
+    .carousel-container {
+        margin: 0 auto 2em;
+        max-width: 550px;
+        height: 350px;
+        margin-top: 15px;
+    }
+</style>
+
+@code{
+    public SfCarousel CarouselRef;
+    public int indexValue = 0;
+    public bool AutoPlay = false;
+    private void Play()
+    {
+        CarouselRef.Play();
+    }
+    private void Pause()
+    {
+        CarouselRef.Pause();
+    }
+    private async Task Previous()
+    {
+        await CarouselRef.PreviousAsync();
+    }
+    private async Task Next()
+    {
+        await CarouselRef.NextAsync();
+    }
+    private async Task Move()
+    {
+        await CarouselRef.MoveToAsync(indexValue);
+    }
+}

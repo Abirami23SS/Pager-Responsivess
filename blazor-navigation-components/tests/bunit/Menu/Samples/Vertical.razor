@@ -1,0 +1,16 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfMenu Orientation="Orientation" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text = "File"></MenuItem>
+        <MenuItem Text = "Edit"></MenuItem>
+        <MenuItem Text = "View"></MenuItem>
+    </MenuItems>
+</SfMenu>
+
+@code {
+    [Parameter]
+    public Orientation Orientation { get; set; } = Orientation.Vertical;
+}

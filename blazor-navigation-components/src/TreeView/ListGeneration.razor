@@ -1,0 +1,29 @@
+@inherits SfOwningComponentBase
+@typeparam TValue;
+@namespace Syncfusion.Blazor.Navigations.Internal
+@using Syncfusion.Blazor.Notifications
+@using System.Text.RegularExpressions
+
+@if (!Parent.IsDestroyed)
+{
+    @if (ListData != null && ListData.Any())
+    {
+        if(Parent.EnableVirtualization && !string.IsNullOrEmpty(Parent.Height))
+        {
+            string pattern = "auto|%|px|vh|em|vw|rem|in|cm|fr|mm|pt|pc|ch|ex|ms|deg|s|rad|grad|vmin|vmax";
+            int.TryParse( Regex.Replace(Parent.Height, pattern, string.Empty),out int height);
+            int count = height != 0 ? (height / 40) + 10: 30;
+            <div class="e-mask-parent">
+                @for (int i = 0; i < count; i++)
+                {
+                    <SfSkeleton CssClass="e-virtual-mask" Height="30px" Shape="SkeletonType.Text"></SfSkeleton>
+                }
+            </div>
+        }
+        <CreateListFromComplex TValue="TValue" ListData="@ListData"></CreateListFromComplex>
+    }
+    else
+    {
+        <ul class="e-list-parent e-ul" role="tree"></ul>
+    }
+}

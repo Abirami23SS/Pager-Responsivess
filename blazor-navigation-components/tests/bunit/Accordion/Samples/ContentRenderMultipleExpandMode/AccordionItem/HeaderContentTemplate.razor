@@ -1,0 +1,24 @@
+﻿@page "/ContentRenderMultipleExpandMode/AccordionItem/HeaderContentTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfAccordion LoadOnDemand="false">
+    <AccordionItems>
+        <AccordionItem Expanded="true">
+            <HeaderTemplate>
+                <div>Blazor Header template 1</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div>Blazor Content template 1</div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem Expanded="true">
+            <HeaderTemplate>
+                <div>Blazor Header template 2</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div>Blazor Content template 2</div>
+            </ContentTemplate>
+        </AccordionItem>
+    </AccordionItems>
+</SfAccordion>

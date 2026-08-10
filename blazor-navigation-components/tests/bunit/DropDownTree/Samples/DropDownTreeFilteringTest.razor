@@ -1,0 +1,84 @@
+@namespace Syncfusion.Blazor.Tests.DropDownTree.Samples
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.DropDowns
+
+<SfDropDownTree @ref="DropDownTreeRef" TValue="string" TItem="TreeData" AllowFiltering="AllowFiltering" FilterType="FilterType">
+    <DropDownTreeField TItem="TreeData" DataSource="DataSource" Id="Code" Text="Name" Expanded="Expanded" Child="Child" />
+</SfDropDownTree>
+
+@code {
+    public class TreeData
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public bool Expanded { get; set; }
+        public List<TreeData> Child { get; set; }
+    }
+
+    public SfDropDownTree<string, TreeData> DropDownTreeRef { get; set; }
+    public List<TreeData> DataSource { get; set; } = new();
+    public FilterType FilterType { get; set; } = Syncfusion.Blazor.DropDowns.FilterType.StartsWith;
+    public bool AllowFiltering { get; set; } = true;
+    public string FilteredResult { get; set; } = "";
+    public int FilteredCount { get; set; } = 0;
+
+    protected override void OnInitialized()
+    {
+        LoadHierarchicalData();
+    }
+
+    private void LoadHierarchicalData()
+    {
+        DataSource = new List<TreeData>
+        {
+            new TreeData
+            {
+                Code = "E001",
+                Name = "Electronics",
+                Expanded = true,
+                Child = new List<TreeData>
+                {
+                    new TreeData { Code = "S001", Name = "Smartphones" },
+                    new TreeData { Code = "L001", Name = "Laptops" },
+                    new TreeData { Code = "T001", Name = "Tablets" }
+                }
+            },
+            new TreeData
+            {
+                Code = "C001",
+                Name = "Clothing",
+                Expanded = false,
+                Child = new List<TreeData>
+                {
+                    new TreeData { Code = "M001", Name = "Men's" },
+                    new TreeData { Code = "W001", Name = "Women's" }
+                }
+            }
+        };
+    }
+
+    public void PerformFilter(string filterValue)
+    {
+        // Invoke the private HierarchicalFilter method
+        var method = typeof(SfDropDownTree<string, TreeData>)
+            .GetMethod("HierarchicalFilter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        
+        if (method != null && DropDownTreeRef != null)
+        {
+            var result = method.Invoke(DropDownTreeRef, new object[] { filterValue });
+            
+            if (result is List<TreeData> filteredList)
+            {
+                FilteredCount = filteredList.Count;
+                FilteredResult = string.Join(", ", filteredList.Select(x => x.Name));
+            }
+        }
+    }
+
+    public void ResetFilter()
+    {
+        FilteredResult = "";
+        FilteredCount = 0;
+    }
+}

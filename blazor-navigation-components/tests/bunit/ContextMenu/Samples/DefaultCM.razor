@@ -1,0 +1,47 @@
+﻿@using Syncfusion.Blazor.Buttons
+
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+@implements IDisposable
+
+<div class="control-section">
+    <div class="contextmenu-control">
+        <SfButton @onclick="OpenContextMenu">Open ContextMenu</SfButton>
+        <div id="contextmenutarget">Right click/Touch hold to open the ContextMenu</div>
+
+        <SfContextMenu @ref="contextMenuObj" Target="#contextmenutarget" TValue="MenuItem">
+            <MenuItems>
+                <MenuItem Text="Cut" IconCss="e-cm-icons e-cut"></MenuItem>
+                <MenuItem Text="Copy" IconCss="e-cm-icons e-copy"></MenuItem>
+                <MenuItem Text="Paste" IconCss="e-cm-icons e-paste">
+                    <MenuItems>
+                        <MenuItem Text="Paste Text" IconCss="e-cm-icons e-pastetext"></MenuItem>
+                        <MenuItem Text="Paste Special" IconCss="e-cm-icons e-pastespecial"></MenuItem>
+                    </MenuItems>
+                </MenuItem>
+                <MenuItem Separator="true"></MenuItem>
+                <MenuItem Text="Link" IconCss="e-cm-icons e-link"></MenuItem>
+                <MenuItem Text="New Comment" IconCss="e-cm-icons e-comment"></MenuItem>
+            </MenuItems> 
+        </SfContextMenu>
+        
+    </div>
+</div>
+
+@code{
+
+    public SfContextMenu<MenuItem> contextMenuObj;
+    private void OpenContextMenu(MouseEventArgs e)
+    {
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+    }
+
+    public void Dispose()
+    {
+        contextMenuObj = null;
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+}

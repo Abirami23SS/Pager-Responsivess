@@ -1,0 +1,27 @@
+@namespace Syncfusion.Blazor.Navigations.Internal
+@using Syncfusion.Blazor.Buttons;
+@inherits SfOwningComponentBase
+
+<div class="@ItemCss" id="@(string.IsNullOrEmpty(Item.Id) ? SfBaseUtils.GenerateID(TOOLBAR_ITEM) : Item.Id)" data-index="@Index" @attributes="@itemAttributes" @onclick="@((e) => OnItemClick(e))">
+    @if (Item.Template != null)
+    {
+        @Item.Template
+    }
+    else if (Item.Type == ItemType.Button)
+    {
+        <button @attributes="buttonAttributes" aria-disabled=@(Item.Disabled ? "true" : "false") class="@btnClass">
+            @if (!string.IsNullOrEmpty(ButtonIconCss) && (ButtonIconPosition == IconPosition.Left || ButtonIconPosition == IconPosition.Top))
+            {
+                <span class="@ButtonIconCss"></span>
+            }
+            @if (!string.IsNullOrEmpty(Item.Text))
+            {
+                <span class="e-tbar-btn-text">@Item.Text</span>
+            }
+            @if (!string.IsNullOrEmpty(ButtonIconCss) && (ButtonIconPosition == IconPosition.Right || ButtonIconPosition == IconPosition.Bottom))
+            {
+                <span class="@ButtonIconCss"></span>
+            }
+        </button>
+    }
+</div>

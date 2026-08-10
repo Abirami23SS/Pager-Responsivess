@@ -1,0 +1,50 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="control-section">
+    <div class="contextmenu-control">
+        <SfButton @onclick="OpenContextMenu">Open ContextMenu</SfButton>
+        <div id="contextmenutarget">Right click</div>
+        <SfContextMenu @ref="contextMenuObj"  Target="#contextmenutarget" TValue="MenuItem" EnableScrolling="@EnableScrolling" OpenActionEvents="click" CloseActionEvents="click" >
+            <MenuItems>
+                <MenuItem Text="Cut" IconCss="e-cm-icons e-cut"></MenuItem>
+                <MenuItem Text="Copy" IconCss="e-cm-icons e-copy"></MenuItem>
+                <MenuItem Text="Paste" IconCss="e-cm-icons e-paste"></MenuItem>
+            </MenuItems> 
+            <MenuEvents TValue="MenuItem" OnOpen="onOpen"></MenuEvents>
+        </SfContextMenu> 
+    </div>
+</div>
+
+@code {
+    SfContextMenu<MenuItem> contextMenuObj;
+
+    public double? top;
+    public double? left;
+    private bool EnableScrolling = true;
+    private async Task OpenContextMenu(MouseEventArgs e)
+    {
+        EnableScrolling = false;
+        await Task.Delay(100);
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+        await contextMenuObj.OpenAsync(e.ClientX, e.ClientY);
+    }
+
+    public async void onOpen(BeforeOpenCloseMenuEventArgs<MenuItem> args)
+    {
+        top = args.Top;
+        left = args.Left;
+        args.Cancel = true;
+        string ret = await GetLeisureHours();
+    }
+
+    async Task<string> GetLeisureHours()
+    {
+        await Task.Delay(1);
+        var today = await Task.FromResult<string>(DateTime.Now.DayOfWeek.ToString());
+        contextMenuObj.Open(top, left); // if you want to open the contextmenu
+        return today;
+    }
+}

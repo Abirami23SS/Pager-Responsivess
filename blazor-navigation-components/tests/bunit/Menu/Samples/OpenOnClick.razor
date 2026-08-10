@@ -1,0 +1,37 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="menu-control">
+    <SfMenu TValue="MenuItem" ShowItemOnClick=@ItemOnClick>
+        <MenuItems>
+            <MenuItem Text = "File">
+                <MenuItems>
+                    <MenuItem Text= "Open" HtmlAttributes="attributes"></MenuItem>
+                    <MenuItem Text= "Save"></MenuItem>
+                    <MenuItem Separator="true"></MenuItem>
+                    <MenuItem Text= "Exit"></MenuItem>
+                </MenuItems>
+            </MenuItem>
+            <MenuItem Text = "Edit">
+                <MenuItems>
+                    <MenuItem Text= "Cut"></MenuItem>
+                    <MenuItem Text= "Copy"></MenuItem>
+                    <MenuItem Text= "Paste"></MenuItem>
+                </MenuItems>
+            </MenuItem>
+            <MenuItem Text = "View"></MenuItem>
+            <MenuItem Text = "Tools"></MenuItem>
+            <MenuItem Text= "Help"></MenuItem>
+        </MenuItems>
+    </SfMenu>
+</div>
+
+@code{
+    [Parameter]
+    public bool ItemOnClick { get; set; } = true;
+    private Dictionary<string, object> attributes = new Dictionary<string, object>()
+    {
+        { "anchor", new Dictionary<string, object>() { { "target", "_blank" }}}
+    };
+}

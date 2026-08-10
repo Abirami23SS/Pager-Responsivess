@@ -1,0 +1,97 @@
+@page "/Samples/Carousel/HtmlAttributes"
+
+@using Syncfusion.Blazor.Navigations
+
+<div class="control-container">
+    <SfCarousel @ref="@CarouselRef" HtmlAttributes="carouselAttributes">
+        <CarouselItem @attributes="itemAttributes[0]">
+            <div class="slide-content">Slide 1</div>
+        </CarouselItem>
+        <CarouselItem @attributes="itemAttributes[1]">
+            <div class="slide-content">Slide 2</div>
+        </CarouselItem>
+        <CarouselItem @attributes="itemAttributes[2]">
+            <div class="slide-content">Slide 3</div>
+        </CarouselItem>
+        <CarouselItem @attributes="itemAttributes[3]">
+            <div class="slide-content">Slide 4</div>
+        </CarouselItem>
+        <CarouselItem @attributes="itemAttributes[4]">
+            <div class="slide-content">Slide 5</div>
+        </CarouselItem>
+    </SfCarousel>
+</div>
+
+<style>
+    .control-container {
+        background-color: #adb5bd;
+        height: 300px;
+        margin: 0 auto;
+        width: 500px;
+    }
+    .e-carousel .slide-content {
+        align-items: center;
+        display: flex;
+        font-size: 1.25rem;
+        height: 100%;
+        justify-content: center;
+    }
+    .carousel-custom-css {
+        border: 5px solid black;
+    }
+    .carousel-custom-css .carousel-item-first {
+        background-color: red;
+    }
+    .carousel-custom-css .carousel-item-second {
+        background-color: green;
+    }
+    .carousel-custom-css .carousel-item-third {
+        background-color: blue;
+    }
+    .carousel-custom-css .carousel-item-fourth {
+        background-color: yellow;
+    }
+    .carousel-custom-css .carousel-item-fifth {
+        background-color: gray;
+    }
+</style>
+
+@code {
+    private SfCarousel CarouselRef;
+    private bool shouldRender = true;
+    Dictionary<string, object> carouselAttributes = new Dictionary<string, object>()
+    {
+        { "class", "carousel-custom-css" },
+        { "id", "CarouselAttributes" },
+        { "aria-label", "Slide show of slides" },
+        { "role", "listbox" }
+    };
+    List<Dictionary<string, object>> itemAttributes = new List<Dictionary<string, object>>()
+    {
+        new Dictionary<string, object>
+        {
+            { "class", "carousel-item-first" },
+            { "id", "slide-1" }
+        },
+        new Dictionary<string, object>()
+        {
+            { "class", "carousel-item-second" },
+            { "id", "slide-2" }
+        },
+        new Dictionary<string, object>()
+        {
+            { "class", "carousel-item-third" },
+            { "id", "slide-3" }
+        },
+        new Dictionary<string, object>()
+        {
+            { "class", "carousel-item-fourth" },
+            { "id", "slide-4" }
+        },
+        new Dictionary<string, object>()
+        {
+            { "class", "carousel-item-fifth" },
+            { "id", "slide-5" }
+        }
+    };
+}

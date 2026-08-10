@@ -1,0 +1,36 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfBreadcrumb EnableNavigation="false" MaxItems=@max_items>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Items" Url="./breadcrumb/items"></BreadcrumbItem>
+        <BreadcrumbItem Text="OverflowMode" Url="./breadcrumb/overflowmode"></BreadcrumbItem>
+        <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"></BreadcrumbItem>
+        <BreadcrumbItem Text="Separator" Url="./breadcrumb/separatorandattribute"></BreadcrumbItem>
+        <BreadcrumbItem Text="BindToLocation" Url="./breadcrumb/bindtolocation"></BreadcrumbItem>
+        <BreadcrumbItem Text="Width" Url="./breadcrumb/width"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+<br />
+<SfBreadcrumb MaxItems="3" EnableNavigation="false" OverflowMode="mode">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Items" Url="./breadcrumb/items"></BreadcrumbItem>
+        <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"></BreadcrumbItem>
+        <BreadcrumbItem Text="Separator" Url="./breadcrumb/separatorandattribute"></BreadcrumbItem>
+        <BreadcrumbItem Text="OverflowMode" Url="./breadcrumb/overflowmode"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+@code {
+[Parameter]
+
+    public int max_items {get;set;}=4;
+    private BreadcrumbOverflowMode mode = BreadcrumbOverflowMode.None;
+}

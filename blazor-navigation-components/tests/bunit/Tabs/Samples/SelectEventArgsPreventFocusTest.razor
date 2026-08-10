@@ -1,0 +1,37 @@
+@page "/Tabs/SelectEventArgsPreventFocusTest"
+
+@using Syncfusion.Blazor.Navigations
+
+<div id="preventFocusTest">
+    <SfTab @ref="tab" Selected="@OnTabSelected">
+        <TabItems>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 1"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 1</ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 2"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 2</ContentTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+
+    <span id="preventFocusValue">PreventFocus: @preventFocusValue</span>
+</div>
+
+@code {
+    SfTab tab;
+    string preventFocusValue = "Initial: False";
+
+    private Task OnTabSelected(SelectEventArgs args)
+    {
+        // Test that PreventFocus setter works
+        args.PreventFocus = true;
+        preventFocusValue = $"PreventFocus: {args.PreventFocus}";
+        return Task.CompletedTask;
+    }
+}

@@ -1,0 +1,456 @@
+﻿@inherits TestComponentBase
+@namespace Syncfusion.Blazor.Tests.Navigations
+@using Syncfusion.Blazor.Navigations
+
+<SfFixture @ref="fixture" Test="BasicRendering" Description="Pager Dropdown Value Change">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSizes=@pagesizes PageSize="5" NumericItemsCount="3" ShowAllInPageSizes="true" PageSizeChanging="OnPageSizeChanging" PageSizeChanged="OnPageSizeChanged"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+
+@code {
+    SfFixture fixture { get; set; }
+    public List<int> pagesizes = new List<int> { 0, 5, 10, 12, 20 };
+    private async Task OnPageSizeChanging(PageSizeChangingArgs args)
+    {
+        await Task.CompletedTask;
+    }
+    private async Task OnPageSizeChanged(PageSizeChangedArgs args)
+    {
+        await Task.CompletedTask;
+    }
+    void BasicRendering(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.Equal(5, pageSize);
+
+        var pagerDropDown = cut.FindAll(".e-dropdownlist");
+        pagerDropDown[0].MouseDown();
+        Task.Delay(500).Wait();
+
+        //Select 0 in dropdown and check whether the page size is changed to 0 or not.
+        var changeDropdownValue = cut.Find("li[data-value=\"0\"]");
+        changeDropdownValue.Click();
+        Task.Delay(500).Wait();
+
+        pagerDropDown[0].MouseDown();
+        Task.Delay(500).Wait();
+
+        var changeDropdownValue1 = cut.Find("li[data-value=\"10\"]");
+        changeDropdownValue1.Click();
+        Task.Delay(500).Wait();     
+    }
+}
+
+<SfFixture @ref="fixture1" TestAsync="BasicRendering1" Description="Pager navigation via buttons">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3" PageChanging="OnPageChanging" PageChanged="OnPageChanged" ItemClick="OnItemClick"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    SfFixture fixture1 { get; set; }
+    bool pageChangingInvoked2 = false;
+    bool cancelNavigation2 = false;
+    private async Task OnPageChanging(PageChangingEventArgs args)
+    {
+        pageChangingInvoked2 = true;
+        args.Cancel = cancelNavigation2;
+        await Task.CompletedTask;
+    }
+
+    private async Task OnPageChanged(PageChangedEventArgs args)
+    {
+        await Task.CompletedTask;
+    }
+
+    private async Task OnItemClick(PagerItemClickEventArgs args)
+    {
+        await Task.CompletedTask;
+    }
+
+    public async Task BasicRendering1(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        //Go to Last page and check whether the current page is 15 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "FirstLastIconClickHandler", "NextPage", new MouseEventArgs());
+        Assert.Equal(15, cut.Instance.CurrentPage);
+
+        //Go to First page and check whether the current page is 1 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "FirstLastIconClickHandler", "PreviousPage", new MouseEventArgs());
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Go to Next page and check whether the current page is 2 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "PreviousNextIconClickHandler", "NextPage", new MouseEventArgs());
+        Assert.Equal(2, cut.Instance.CurrentPage);
+
+        //Go to Previous page and check whether the current page is 1 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "PreviousNextIconClickHandler", "PreviousPage", new MouseEventArgs());
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Go to Next set of page and check whether the current page is 4 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "EllipsisButtonClickHandler", "NextPage", new MouseEventArgs());
+        Assert.Equal(4, cut.Instance.CurrentPage);
+
+        //Go to Previous set of page and check whether the current page is 1 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "EllipsisButtonClickHandler", "PreviousPage", new MouseEventArgs());
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Go to clicked page number and check whether the current page is 3 or not.
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ItemClickHandler", new MouseEventArgs(), 3);
+        Assert.Equal(3, cut.Instance.CurrentPage);
+
+        await cut.Instance.GoToPageAsync(3);
+        Assert.Equal(3, cut.Instance.CurrentPage);
+
+    }  
+}
+
+
+<SfFixture @ref="fixture2" TestAsync="BasicRendering2" Description="Pager navigation via API methods">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    SfFixture fixture2 { get; set; }
+    public async Task BasicRendering2(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+
+        //Navigates to the given page number in the Pager
+        await cut.Instance.GoToPageAsync(3);
+        Assert.Equal(3, cut.Instance.CurrentPage);
+
+        //Navigates to the last page in the Pager
+        await cut.Instance.GoToLastPageAsync();
+        Assert.Equal(15, cut.Instance.CurrentPage);
+
+        //Navigates to the first page in the Pager
+        await cut.Instance.GoToFirstPageAsync();
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Navigate to the next page in the Pager
+        await cut.Instance.GoToNextPageAsync();
+        Assert.Equal(2, cut.Instance.CurrentPage);
+
+        //Navigate to the previous page in the Pager
+        await cut.Instance.GoToPreviousPageAsync();
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Used to update the page size of the Pager
+        await cut.Instance.UpdatePageSizeAsync(6);
+        Assert.Equal(6, cut.Instance.PageSize);
+
+        // Used to update the number of numeric elements shown in the Pager component
+        await cut.Instance.UpdateNumericItemsCountAsync(4);
+        Assert.Equal(4, cut.Instance.NumericItemsCount);
+        await cut.Instance.RefreshAsync();
+    }
+}
+
+<SfFixture @ref="fixture3" TestAsync="BasicRendering3" Description="Pager with template">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" CurrentPage="1" NumericItemsCount="3">
+            <Template>
+                @{
+                    var pageContext = (context as PagerTemplateContext);
+                    <div class="e-pagerContainer">
+                        <div class="@($"e-navigationStyle {EnablePreviousButton()}")">
+                            <a>Previous</a>
+                        </div>
+                        <div class="@($"e-navigationStyle {EnableNextButton()}")">
+                            <a>Next</a>
+                        </div>
+                    </div>
+                }
+            </Template>
+        </SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    SfFixture fixture3 { get; set; }
+    private bool backButtonDisabled = true;
+    private bool forwardButtonDisabled;
+    private string EnablePreviousButton() => backButtonDisabled ? "e-disabled disable-pointer" : "enable-pointer";
+    private string EnableNextButton() => forwardButtonDisabled ? "e-disabled disable-pointer" : "enable-pointer";
+    public async Task BasicRendering3(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        Assert.True(cut.Instance.Template != null, "Template should not be null");
+    }
+}
+
+<SfFixture @ref="fixture4" TestAsync="BasicRendering4" Description="Pager Keyboard Navigation">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture4 { get; set; }
+    public async Task BasicRendering4(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        var numericItem = cut.FindAll(".e-numericitem");
+        numericItem[1].Click();
+        await Task.Delay(1000);
+
+        //Navigate to the next page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Tab" }, 0, "" );
+        await Task.Delay(1000);
+        Assert.Equal(2, cut.Instance.CurrentPage);
+
+        //Navigate to the next page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "ArrowRight" }, 0, "" );
+        Assert.Equal(3, cut.Instance.CurrentPage);
+
+        //Navigate to the previous page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "ArrowLeft" }, 0, "" );
+        Assert.Equal(2, cut.Instance.CurrentPage);
+
+        //Navigate to the first page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Home" }, 0, "" );
+        Assert.Equal(1, cut.Instance.CurrentPage);
+
+        //Navigate to the last page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "End" }, 0, "" );
+        Assert.Equal(15, cut.Instance.CurrentPage);
+
+        //Navigate to previous set of page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "AltPageUp" }, 0, "" );
+
+        //Navigate to next set of page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "AltPageDown" }, 0, "" );
+
+        //Navigate to the next page in the Pager
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "" );
+
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "EllipsisButtonClickHandler", "NextPage", new MouseEventArgs());
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "" );
+
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "EllipsisButtonClickHandler", "Previous", new MouseEventArgs());
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "" );
+    }
+}
+
+<SfFixture @ref="fixture5" TestAsync="BasicRendering5" Description="Pager with persistence enabled">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3" EnablePersistence="true"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture5 { get; set; }
+    public async Task BasicRendering5(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        await cut.Instance.GoToPageAsync(3);
+        Assert.Equal(3, cut.Instance.CurrentPage);
+        string localStorageKey = "{\"currentPage\":1,\"currentFocus\":\"-1\",\"totalItemCount\":75,\"numericItemsCount\":3,\"pageSize\":5,\"dropdownValue\":0}";
+        PagerReflection.InvokeVoidMethod(cut.Instance, "PersistProperties", localStorageKey);
+    }
+}
+
+<SfFixture @ref="fixture6" TestAsync="BasicRendering6" Description="Pager with RTL enabled">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture6 { get; set; }
+    public async Task BasicRendering6(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        PagerReflection.SetInternalProperty(cut.Instance, "EnableRtl", true);
+        await cut.Instance.RefreshAsync();
+        PagerReflection.InvokeVoidMethod(cut.Instance, "ComponentDispose");
+    }
+}
+
+<SfFixture @ref="fixture7" TestAsync="BasicRendering7" Description="Item Click Handler">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3" ShowPagerMessage="true"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture7 { get; set; }
+    public async Task BasicRendering7(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        //Item click handler will be triggered when we click on the next icon in the pager.
+        var nextIcon = cut.FindAll(".e-icon-next");
+        nextIcon[0].Click();
+
+        //Item click handler will be triggered when we click on the last icon in the pager.
+        var lastIcon = cut.FindAll(".e-icon-last");
+        lastIcon[0].Click();
+
+        //Item click handler will be triggered when we click on the previous icon in the pager.
+        var previousIcon = cut.FindAll(".e-icon-prev");
+        previousIcon[0].Click();
+        
+        //Item click handler will be triggered when we click on the first icon in the pager.
+        var firstIcon = cut.FindAll(".e-icon-first");
+        firstIcon[0].Click();
+
+        //Item click handler will be triggered when we click on the next set of page in the pager.
+        var rightDots = cut.FindAll(".e-np.e-spacing");
+        rightDots[0].Click();
+
+        //Item click handler will be triggered when we click on the previous set of page in the pager.
+        var leftDots = cut.FindAll(".e-pp.e-spacing");
+        leftDots[0].Click();       
+    }
+}
+
+<SfFixture @ref="fixture8" TestAsync="UpdatePropertyMethod" Description="UpdateProperty Method - Property Binding Coverage">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="8" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture8 { get; set; }
+    public async Task UpdatePropertyMethod(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+
+        // Test 1: UpdateProperty - When public and private values are equal
+        // Should return publicValue without any changes to directParameters
+        object result1 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "CurrentPage", 5, 5);
+        Assert.Equal(5, result1);
+
+        // Test 2: UpdateProperty - When public and private values differ but not rerendering
+        // Should return privateValue since IsRerendering is false and IsRendered is true
+        object result2 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "CurrentPage", 5, 3);
+        Assert.Equal(3, result2);
+
+        // Test 3: UpdateProperty - Different property names
+        // Test with PageSize property
+        object result3 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "PageSize", 10, 10);
+        Assert.Equal(10, result3);
+
+        // Test 4: UpdateProperty - NumericItemsCount property with different values
+        object result4 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "NumericItemsCount", 4, 3);
+        Assert.NotNull(result4);
+
+        // Test 5: UpdateProperty - With string property value
+        object result5 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "ExternalMessage", "Test Message", "Old Message");
+        Assert.NotNull(result5);
+
+        // Test 6: UpdateProperty - With null values
+        object result6 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "ExternalMessage", null, "Old Value");
+        Assert.NotNull(result6);
+
+        // Test 7: UpdateProperty - Multiple calls with same property should update correctly
+        object result7a = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "CurrentPage", 7, 6);
+        object result7b = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "CurrentPage", 8, 7);
+        Assert.NotNull(result7a);
+        Assert.NotNull(result7b);
+
+        // Test 8: UpdateProperty - With zero values
+        object result8 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "CurrentPage", 0, 1);
+        Assert.Equal(1, result8);
+
+
+        // Test 9: UpdateProperty - PropertyChanges dictionary should be updated
+        // Call UpdateProperty and verify result is returned
+        object result9 = PagerReflection.InvokeMethod<object>(cut.Instance, "UpdateProperty", "PageSize", 15, 5);
+        Assert.NotNull(result9);
+
+        await Task.CompletedTask;
+    }
+}
+
+<SfFixture @ref="fixture9" TestAsync="BasicRendering9" Description="Pager Blur handler">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+@code {
+    SfFixture fixture9 { get; set; }
+    public async Task BasicRendering9(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        var firstIcon = cut.FindAll(".e-icon-first");
+        firstIcon[0].Blur();
+        await cut.InvokeAsync(() => cut.Instance.IsMobileDevice(true));
+    }
+}
+
+<SfFixture @ref="fixture10" TestAsync="BasicRendering10" Description="Enter key combination from Ellipsis">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    SfFixture fixture10 { get; set; }
+
+    public async Task BasicRendering10(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        var rightDots = cut.FindAll(".e-np.e-spacing");
+        rightDots[0].Click();
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "");
+        Assert.Equal(7, cut.Instance.CurrentPage);
+
+        var leftDots = cut.FindAll(".e-pp.e-spacing");
+        leftDots[0].Click();
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "");
+        Assert.Equal(1, cut.Instance.CurrentPage);
+    }
+}
+
+<SfFixture @ref="fixture11" TestAsync="BasicRendering11" Description="Enter key combination from previous and next button">
+    <ComponentUnderTest>
+        <SfPager TotalItemsCount="75" PageSize="5" NumericItemsCount="3"></SfPager>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    SfFixture fixture11 { get; set; }
+
+    public async Task BasicRendering11(Fixture fixture)
+    {
+        var cut = fixture.GetComponentUnderTest<SfPager>();
+        var pageSize = cut.Instance.PageSize;
+        Assert.True(pageSize > 0, "Page size should be greater than 0");
+        Assert.Equal(5, pageSize);
+        var nextIcon = cut.FindAll(".e-icon-next");
+        nextIcon[0].Click();
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "");
+        Assert.Equal(3, cut.Instance.CurrentPage);
+
+        var previousIcon = cut.FindAll(".e-icon-prev");
+        previousIcon[0].Click();
+        await PagerReflection.InvokeAsyncMethod(cut.Instance, "ProcessPagerKeyDown", new KeyboardEventArgs { Key = "Enter" }, 0, "");
+        Assert.Equal(1, cut.Instance.CurrentPage);
+    }
+}

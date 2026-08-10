@@ -1,0 +1,18 @@
+@page "/ExtendedMode/ToolbarItem/IfStatement"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfToolbar OverflowMode="OverflowMode.Extended">
+    <ToolbarItems>
+        <ToolbarItem Text="Cut" TooltipText="Cut"></ToolbarItem>
+        @if (ShowItem)
+        {
+            <ToolbarItem Text="Copy" TooltipText="Copy"></ToolbarItem>
+        }
+        <ToolbarItem Text="Paste" TooltipText="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+    public bool ShowItem = false;
+}

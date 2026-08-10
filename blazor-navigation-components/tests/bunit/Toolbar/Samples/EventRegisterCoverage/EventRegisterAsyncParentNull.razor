@@ -1,0 +1,15 @@
+@namespace Syncfusion.Blazor.Tests.Toolbar.Samples.EventRegisterCoverage
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Navigations.Internal
+
+@* This component tests the branch where Parent is null *@
+<SfToolbar>
+    <EventRegisterAsync Name="TestEvent" Handler="@Handler"></EventRegisterAsync>
+    <ToolbarItems>
+        <ToolbarItem Text="Cut"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+    private Func<Task, object, Task> Handler = async (task, args) => { await Task.CompletedTask; };
+}

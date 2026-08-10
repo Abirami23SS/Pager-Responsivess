@@ -1,0 +1,15 @@
+﻿@page "/ExtendedMode/ToolbarItem/ToolbarItemType"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfToolbar OverflowMode="OverflowMode.Extended">
+    <ToolbarItems>
+        <ToolbarItem Type="ItemType.Button" Text="Cut"></ToolbarItem>
+        <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+        <ToolbarItem Type="ItemType.Input">
+            <Template>
+                <div><input id="Search" placeholder="Search" type="search" /></div>
+            </Template>
+        </ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>

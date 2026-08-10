@@ -1,0 +1,43 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div id="parent">
+    <div class="w-50 bg-info" id="child" @onclick:stopPropagation="true" @oncontextmenu:stopPropagation="true">right click</div>
+</div>
+
+<SfButton @onclick="OpenContextMenu_parent">Open parent</SfButton>
+<SfButton @onclick="OpenContextMenu_child">Open child</SfButton>
+
+<SfContextMenu Target="#parent" @ref="contextMenuObj" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="ParentItem 1"></MenuItem>
+        <MenuItem Text="ParentItem 2"></MenuItem>
+        <MenuItem Text="ParentItem 3"></MenuItem>
+        <MenuItem Text="ParentItem 4"></MenuItem>
+        <MenuItem Text="ParentItem 5"></MenuItem>
+    </MenuItems>
+</SfContextMenu>
+
+<SfContextMenu Target="#child" @ref="contextMenuObj1" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Child 1"></MenuItem>
+        <MenuItem Text="Child 2"></MenuItem> 
+        <MenuItem Text="Child 3"></MenuItem>
+    </MenuItems>
+</SfContextMenu>
+
+@code{
+    SfContextMenu<MenuItem> contextMenuObj;
+    private void OpenContextMenu_parent(MouseEventArgs e)
+    {
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+    }
+
+    SfContextMenu<MenuItem> contextMenuObj1;
+    private void OpenContextMenu_child(MouseEventArgs e)
+    {
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+    }    
+}

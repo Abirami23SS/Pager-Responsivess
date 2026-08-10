@@ -1,0 +1,34 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="control-section">
+    <div class="contextmenu-control">
+        <SfButton @onclick="OpenContextMenu">Open ContextMenu</SfButton>
+        <div id="contextmenutarget">Right click/Touch</div>
+        <SfContextMenu @ref="contextMenuObj" Target="@target" TValue="MenuItem" id="contextmenu1" aria-label="cmenu1">
+            <MenuItems>
+                <MenuItem Text="Cut"></MenuItem>
+                <MenuItem Text="Copy"></MenuItem>
+                <MenuItem Text="Paste">
+                    <MenuItems>
+                        <MenuItem Text="Paste Text"></MenuItem>
+                        <MenuItem Text="Paste Special"></MenuItem>
+                    </MenuItems>
+                </MenuItem>
+            </MenuItems>
+        </SfContextMenu>
+    </div>
+</div>
+
+@code{
+
+    SfContextMenu<MenuItem> contextMenuObj;
+    private string target = "#contextmenutarget";
+    private void OpenContextMenu(MouseEventArgs e)
+    {
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+        target = "#target";
+    }
+}

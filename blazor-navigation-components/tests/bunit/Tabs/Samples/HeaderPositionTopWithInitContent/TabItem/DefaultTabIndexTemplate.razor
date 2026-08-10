@@ -1,0 +1,30 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/DefaultTabIndexTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Default TabIndex</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Default TabIndex"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Another Tab</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Another Tab"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Another content</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

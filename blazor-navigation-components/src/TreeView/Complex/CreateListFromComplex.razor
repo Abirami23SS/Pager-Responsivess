@@ -1,0 +1,56 @@
+@namespace Syncfusion.Blazor.Navigations.Internal
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Web.Virtualization;
+@typeparam TValue
+@inherits SfOwningComponentBase
+
+@{
+    int nodeLevel = TreeNodeLevel != 1 ? TreeNodeLevel : 1;
+    TreeParent.ChildCount = ListData.Count();
+    if (nodeLevel != 1 && TreeParent.IsNodeRendered)
+    {
+        TreeParent.NodeLen = 0;
+    }
+    int index = 0;
+}
+
+@if (!TreeParent.EnableVirtualization)
+{
+    <ul @attributes="GetAttributes()">
+        @foreach (TValue item in ListData)
+        {
+            FieldsValueMapping<List<TValue>> mappedData = GetMappedData(item);
+            TreeItemCreatedArgs<TValue> itemCreatingArgs = InvokeTreeItemCreating(item, nodeLevel);
+            if (itemCreatingArgs?.TreeOptions?.TreeViewFields != null)
+            {
+                MapSettings(ListModel, true);
+                mappedData = GetMappedData(item);
+            }
+            if (itemCreatingArgs != null)
+            {
+                <ComplexListItems @key="@(item)" ListData="@(item)" TValue="TValue" TreeNodeLevel="@nodeLevel" TreeOptions="itemCreatingArgs.TreeOptions" MappedData="mappedData" ListModel="ListModel" Index="@index" />
+            }
+            index++;
+        }
+    </ul>
+}
+else
+{
+    <div @attributes="GetAttributes()">
+        <Virtualize Items="ListData?.ToList()" Context="item" OverscanCount="5" >
+            @{
+                FieldsValueMapping<List<TValue>> mappedData = GetMappedData(item);
+                TreeItemCreatedArgs<TValue> itemCreatingArgs = InvokeTreeItemCreating(item, nodeLevel);
+                if (itemCreatingArgs?.TreeOptions?.TreeViewFields != null)
+                {
+                    MapSettings(ListModel, true);
+                    mappedData = GetMappedData(item);
+                }
+            }
+            <ComplexListItems @key="@(item)" ListData="@(item)" TValue="TValue" TreeNodeLevel="@nodeLevel" TreeOptions="itemCreatingArgs?.TreeOptions" MappedData="mappedData" ListModel="ListModel" Index="@index" />
+            @{
+                index++;
+            }
+        </Virtualize>
+    </div>
+}

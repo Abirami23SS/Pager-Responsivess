@@ -1,0 +1,1 @@
+npm install && gulp script-gn && gulp ship-scripts && gulp update-config && gulp generate-nuget --option Release --project Syncfusion.Blazor.DocumentEditor

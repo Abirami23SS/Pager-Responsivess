@@ -1,0 +1,15 @@
+﻿@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfStepper ShowTooltip=true>
+    <ChildContent>
+        <StepperSteps>
+            <StepperStep IconCss="e-icons e-folder" Text="Step1" IsValid="true"></StepperStep>
+            <StepperStep IconCss="e-icons e-folder" Text="Step2"></StepperStep>
+            <StepperStep IconCss="e-icons e-folder" Text="Step3" Optional=true></StepperStep>
+            <StepperStep IconCss="e-icons e-folder" Text="Step4" IsValid="true"></StepperStep>
+            <StepperStep IconCss="e-icons e-folder" Text="Step5"></StepperStep>
+        </StepperSteps>
+    </ChildContent>
+    <TooltipTemplate><span>@context.Text</span></TooltipTemplate>
+</SfStepper>

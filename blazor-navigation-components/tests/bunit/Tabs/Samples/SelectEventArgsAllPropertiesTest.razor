@@ -1,0 +1,69 @@
+@page "/Tabs/SelectEventArgsAllPropertiesTest"
+
+@using Syncfusion.Blazor.Navigations
+
+<div id="selectEventArgsTest">
+    <SfTab @ref="tab" Selecting="@OnTabSelecting" Selected="@OnTabSelected">
+        <TabItems>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 1"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 1</ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 2"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 2</ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 3"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 3</ContentTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+
+    <span id="isSwiped">IsSwiped: @isSwiped</span>
+    <span id="isInteracted">IsInteracted: @isInteracted</span>
+    <span id="eventName">EventName: @eventName</span>
+    <span id="preventFocus">PreventFocus: @preventFocus</span>
+    <span id="previousIndex">PreviousIndex: @previousIndex</span>
+    <span id="selectedIndex">SelectedIndex: @selectedIndex</span>
+</div>
+
+@code {
+    SfTab tab;
+    bool isSwiped;
+    bool isInteracted;
+    string eventName;
+    bool preventFocus;
+    int previousIndex;
+    int selectedIndex;
+
+    private Task OnTabSelecting(SelectingEventArgs args)
+    {
+        // Access all SelectingEventArgs getter properties
+        isSwiped = args.IsSwiped;
+        isInteracted = args.IsInteracted;
+        eventName = args.Name ?? string.Empty;
+        previousIndex = args.PreviousIndex;
+        selectedIndex = args.SelectedIndex;
+        return Task.CompletedTask;
+    }
+
+    private Task OnTabSelected(SelectEventArgs args)
+    {
+        // Access all SelectEventArgs getter properties to ensure coverage
+        // This covers: IsSwiped, IsInteracted, Name, PreventFocus, PreviousIndex, SelectedIndex
+        isSwiped = args.IsSwiped;
+        isInteracted = args.IsInteracted;
+        eventName = args.Name ?? string.Empty;
+        preventFocus = args.PreventFocus;
+        previousIndex = args.PreviousIndex;
+        selectedIndex = args.SelectedIndex;
+        return Task.CompletedTask;
+    }
+}

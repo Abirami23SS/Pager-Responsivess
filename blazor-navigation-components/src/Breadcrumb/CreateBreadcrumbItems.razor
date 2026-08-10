@@ -1,0 +1,236 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Navigations.Internal
+
+@inherits SfOwningComponentBase
+
+@{
+    if (parent.OverflowMode == BreadcrumbOverflowMode.Wrap)
+    {
+        if (Items[0] != null)
+        {
+            <ol class="e-breadcrumb-first-ol">
+                <CascadingValue Value="@this">
+                    <CreateBreadcrumbItem Item="Items[0]" Index="0"></CreateBreadcrumbItem>
+                </CascadingValue>
+            </ol>
+        }
+        @if (!(parent.ActiveItem != null && (Items[0].Url == parent.ActiveItem || Items[0].Text == parent.ActiveItem)))
+        {
+            <ol class="e-breadcrumb-wrapped-ol">
+                @for (var i = 1; i < Items.Count; i++)
+                {
+                    BreadcrumbItem item = Items[i];
+                    int index = i;
+                    <li class="e-breadcrumb-item-wrapper">
+                        <ol>
+                            @if (i != Items.Count)
+                            {
+                                <BreadcrumbSeparator PreviousIndex="@(i - 1)"></BreadcrumbSeparator>
+                            }
+                            <CascadingValue Value="@this">
+                            <CreateBreadcrumbItem Item="item" Index="index"></CreateBreadcrumbItem>
+                            </CascadingValue>
+                        </ol>
+                    </li>
+                    @if (parent.ActiveItem != null && (item.Url == parent.ActiveItem || item.Text == parent.ActiveItem))
+                    {
+                        break;
+                    }
+                }
+            </ol>
+        }
+
+    }
+    else
+    {
+<ol>
+    @{bool isCollapsed = false;
+        @if (parent.OverflowMode == BreadcrumbOverflowMode.Collapsed && collapsed && parent._maxItems > 0 && Items.Count > parent._maxItems)
+        {
+            isCollapsed = true;
+        }
+        bool isHiddenOverflowMode = parent.OverflowMode == BreadcrumbOverflowMode.Hidden;
+        @for (var i = 0; i < Items.Count; i++)
+        {
+            if (isCollapsed && (i != 0 && i != Items.Count - 1))
+            {
+                continue;
+            }
+            else if (isHiddenOverflowMode && parent._maxItems > 0 && (i < startCount || i > endCount) && i != 0)
+            {
+                continue;
+            }
+            else if (parent.OverflowMode == BreadcrumbOverflowMode.Menu && ((i >= startCount && i <= startCount + endCount - parent._maxItems && endCount >= parent._maxItems && parent._maxItems > 0) || parent._maxItems == 0))
+            {
+                if (!parent.PopupItems.Contains(Items[i]) && i <= endCount)
+                {
+                    parent.PopupItems.Add(Items[i]);
+                }
+                if (parent._maxItems == 0 && i == 0)
+                {
+                    <li @ref="menu" id="@menuId" aria-label="breadcrumb-menu-button" class="e-icons e-breadcrumb-menu" tabindex="0" @onclick="togglePopup" @onkeyup='(e) => { if (e.Key == "Enter") { togglePopup(); } }'>
+                        <span class="e-breadcrumb-menu-item">breadcrumb-menu-button</span>
+                    </li>
+                }
+                else if (startCount == i && endCount >= parent._maxItems && parent._maxItems > 0)
+                {
+                    <li @ref="menu" id="@menuId" aria-label="breadcrumb-menu-button" class="e-icons e-breadcrumb-menu" tabindex="0" @onclick="togglePopup" @onkeyup='(e) => { if (e.Key == "Enter") { togglePopup(); } }'>
+                        <span class="e-breadcrumb-menu-item">breadcrumb-menu-button</span>
+                    </li>
+                    <BreadcrumbSeparator PreviousIndex="i"></BreadcrumbSeparator>
+                }
+                continue;
+            }
+            BreadcrumbItem item = Items[i];
+            int index = i;
+            <CascadingValue Value="@this">
+                <CreateBreadcrumbItem Item="item" Index="index"></CreateBreadcrumbItem>
+            </CascadingValue>
+            @if (parent.ActiveItem != null && (item.Url == parent.ActiveItem || item.Text == parent.ActiveItem))
+            {
+                break;
+            }
+            if (i != ((parent._maxItems > 0 && isHiddenOverflowMode) ? endCount : Items.Count - 1))
+            {
+                <BreadcrumbSeparator PreviousIndex="i"></BreadcrumbSeparator>
+            }
+            if (i == 0)
+            {
+                if (isCollapsed)
+                {
+                    <li class="e-icons e-breadcrumb-collapsed" aria-label="breadcrumb-collapsed-button" tabindex="0" @onkeyup='(e) => { if (e.Key == "Enter") { Expand(); } }' @onclick="Expand"></li>
+                    <BreadcrumbSeparator PreviousIndex="i"></BreadcrumbSeparator>
+                }
+                else if (isHiddenOverflowMode && startCount > 1 && parent._maxItems > 0)
+                {
+                    <BreadcrumbSeparator PreviousIndex="i"></BreadcrumbSeparator>
+                }
+            }
+        }
+    }
+</ol>
+
+        if (parent.OverflowMode == BreadcrumbOverflowMode.Menu && parent.PopupItems != null && parent.PopupItems.Count > 0 && renderPopup)
+        {
+            <div @ref="popup" id="@popupId" class="@($"{popupClass} e-hidden-popup")" @onclick:stopPropagation>
+                <ul tabindex="0" role="menu">
+                    @for (var i = 0; i < parent.PopupItems.Count; i++)
+                    {
+                        BreadcrumbItem item = parent.PopupItems[i];
+                        int index = i;
+                        <CascadingValue Value="@this">
+                            <CreateBreadcrumbItem Item="item" Index="index"></CreateBreadcrumbItem>
+                        </CascadingValue>
+                    }
+                </ul>
+            </div>
+        }
+    }
+}
+
+@code {
+    private bool collapsed { get; set; } = true;
+    private string popupClass { get; set; } = "e-breadcrumb-popup";
+    internal bool renderPopup { get; set; }
+    private ElementReference popup { get; set; }
+    private ElementReference menu { get; set; }
+    private readonly string menuId = SfBaseUtils.GenerateID("sf-breadcrumb-menu");
+    private readonly string popupId = SfBaseUtils.GenerateID("sf-breadcrumb-popup");
+    internal int? startCount { get; set; } = null;
+    internal int endCount { get; set; } = 0;
+
+    [CascadingParameter]
+    private SfBreadcrumb parent { get; set; }
+
+    /// <exclude/>
+    /// <summary>
+    /// Gets or sets the list of Breadcrumb items.
+    /// </summary>
+    [Parameter]
+    public List<BreadcrumbItem> Items { get; set; }
+
+    private void Expand()
+    {
+        if (collapsed)
+        {
+            collapsed = false;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (Items != null && Items.Count > 0)
+        {
+            if (parent.OverflowMode == BreadcrumbOverflowMode.Hidden && parent._maxItems > 0)
+            {
+                startCount = Items.Count - (parent._maxItems - 1);
+                endCount = Items.Count - 1;
+            }
+            else if (parent.OverflowMode == BreadcrumbOverflowMode.Menu && parent._maxItems >= 0)
+            {
+                startCount = parent._maxItems > 1 ? 1 : 0;
+                if (parent.ActiveItem != null)
+                {
+                    endCount = Items.FindIndex(item => (item.Url == parent.ActiveItem || item.Text == parent.ActiveItem));
+                }
+                else
+                {
+                    endCount = Items.Count - 1;
+                }
+            }
+            if(parent.EnableRtl)
+            {
+                popupClass = SfBaseUtils.AddClass(popupClass, "e-rtl");
+            }
+            if (parent.BreadcrumbClass.Contains("e-icon-right"))
+            {
+                popupClass = SfBaseUtils.AddClass(popupClass, "e-icon-right");
+            }
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (renderPopup)
+        {
+            await parent.InvokeMethod("sfBlazor.Breadcrumb.openPopup", parent.dataId, menu, popup);
+        }
+    }
+
+    private void togglePopup()
+    {
+        renderPopup = !renderPopup;
+    }
+
+    /// <exclude/>
+    /// <summary>
+    /// Closes the popup if it is opened when the <c>OverflowMode</c> is <c>Menu</c>.
+    /// </summary>
+    public void ClosePopup()
+    {
+        if (renderPopup)
+        {
+            renderPopup = false;
+            StateHasChanged();
+        }
+    }
+
+    internal void UpdateStateHasChanged()
+    {
+        StateHasChanged();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            parent = null;
+            Items = null;
+        }
+    }
+}

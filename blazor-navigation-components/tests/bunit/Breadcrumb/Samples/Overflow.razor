@@ -1,0 +1,67 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="sample">
+    <SfBreadcrumb EnableNavigation="false" ActiveItem="@MenuActiveItem" MaxItems="3" OverflowMode="BreadcrumbOverflowMode.Menu">
+        <BreadcrumbItems>
+            <BreadcrumbItem Text="Home" Url="./"/>
+            <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"/>
+            <BreadcrumbItem Text="Default" Url="./breadcrumb/default"/>
+            <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"/>
+            <BreadcrumbItem Text="Navigation" Url="./breadcrumb/navigation"/>
+            <BreadcrumbItem Text="Overflow" Url="./breadcrumb/overflow"/>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+    <br/>
+    <SfBreadcrumb EnableNavigation="false" ActiveItem="@HiddenActiveItem" MaxItems="3" OverflowMode="BreadcrumbOverflowMode.Hidden">
+        <BreadcrumbItems>
+            <BreadcrumbItem Text="Home" Url="./"/>
+            <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"/>
+            <BreadcrumbItem Text="Default" Url="./breadcrumb/default"/>
+            <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"/>
+            <BreadcrumbItem Text="Navigation" Url="./breadcrumb/navigation"/>
+            <BreadcrumbItem Text="Overflow" Url="./breadcrumb/overflow"/>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+    <br/>
+    <SfBreadcrumb EnableNavigation="false" ActiveItem="@CollapsedActiveItem" MaxItems="3" OverflowMode="BreadcrumbOverflowMode.Collapsed">
+        <BreadcrumbItems>
+            <BreadcrumbItem Text="Home" Url="./"/>
+            <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"/>
+            <BreadcrumbItem Text="Default" Url="./breadcrumb/default"/>
+            <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"/>
+            <BreadcrumbItem Text="Navigation" Url="./breadcrumb/navigation"/>
+            <BreadcrumbItem Text="Overflow" Url="./breadcrumb/overflow"/>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+    <br/>
+    <SfBreadcrumb EnableNavigation="false" ActiveItem="@WrapActiveItem" OverflowMode="BreadcrumbOverflowMode.Wrap" style="width:255px">
+        <BreadcrumbItems>
+            <BreadcrumbItem Text="Home" Url="./"/>
+            <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"/>
+            <BreadcrumbItem Text="Default" Url="./breadcrumb/default"/>
+            <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"/>
+            <BreadcrumbItem Text="Navigation" Url="./breadcrumb/navigation"/>
+            <BreadcrumbItem Text="Overflow" Url="./breadcrumb/overflow"/>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+    <br/>
+        <SfBreadcrumb EnableNavigation="false" ActiveItem="@ScrollActiveItem" OverflowMode="BreadcrumbOverflowMode.Scroll" style="width:300px">
+            <BreadcrumbItems>
+                <BreadcrumbItem Text="Home" Url="./"/>
+                <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"/>
+                <BreadcrumbItem Text="Default" Url="./breadcrumb/default"/>
+                <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons"/>
+                <BreadcrumbItem Text="Navigation" Url="./breadcrumb/navigation"/>
+                <BreadcrumbItem Text="Overflow" Url="./breadcrumb/overflow"/>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+</div>
+@code {
+    private string MenuActiveItem = "Overflow";
+    private string HiddenActiveItem = "Overflow";    
+    private string CollapsedActiveItem = "Overflow";
+    private string WrapActiveItem = "Overflow";
+    private string ScrollActiveItem = "Overflow";
+}

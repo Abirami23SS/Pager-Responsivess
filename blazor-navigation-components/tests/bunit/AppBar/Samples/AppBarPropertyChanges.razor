@@ -1,0 +1,57 @@
+@page "/AppBar/Samples/AppBarPropertyChanges"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.DropDowns
+
+<SfDropDownList TValue="AppBarMode" TItem="DropDownData" @bind-Value="@HeightMode" DataSource="@heightModeData" FloatLabelType="FloatLabelType.Always" Placeholder="AppBar Mode" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="BarMode"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="AppBarColor" TItem="DropDownData" @bind-Value="@ColorMode" DataSource="@colorData" FloatLabelType="FloatLabelType.Always" Placeholder="AppBarColor" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="AppbarColorMode"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="AppBarPosition" TItem="DropDownData" @bind-Value="@PositionMode" DataSource="@positionData" FloatLabelType="FloatLabelType.Always" Placeholder="AppBarPosition" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="PositionMode"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfAppBar Mode="@HeightMode" ColorMode="@ColorMode" Position="@PositionMode" IsSticky="@Sticky" CssClass="@cssClass">
+    <SfButton CssClass="e-inherit" IconCss="e-icons e-home"></SfButton>
+    <AppBarSpacer></AppBarSpacer>
+    <SfButton CssClass="e-inherit" IconCss="e-icons e-cut"></SfButton>
+</SfAppBar>
+
+@code {
+    public bool Sticky { get; set; } = false;
+    public string cssClass { get; set; } = "light-bg";
+    public AppBarMode HeightMode { get; set; } = AppBarMode.Regular;
+    public AppBarColor ColorMode { get; set; } = AppBarColor.Light;
+    public AppBarPosition PositionMode { get; set; } = AppBarPosition.Top;
+    List<DropDownData> heightModeData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Regular", BarMode = AppBarMode.Regular },
+        new DropDownData { Name = "Prominent", BarMode = AppBarMode.Prominent },
+        new DropDownData { Name = "Dense", BarMode = AppBarMode.Dense }
+    };
+    List<DropDownData> colorData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Light", AppbarColorMode = AppBarColor.Light },
+        new DropDownData { Name = "Dark", AppbarColorMode = AppBarColor.Dark },
+        new DropDownData { Name = "Primary", AppbarColorMode = AppBarColor.Primary },
+        new DropDownData { Name = "Inherit", AppbarColorMode = AppBarColor.Inherit }
+    };
+    List<DropDownData> positionData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Top", PositionMode = AppBarPosition.Top },
+        new DropDownData { Name = "Bottom", PositionMode = AppBarPosition.Bottom }
+    };
+    public class DropDownData
+    {
+        public string Name { get; set; }
+        public AppBarMode BarMode { get; set; }
+        public AppBarColor AppbarColorMode { get; set; }
+        public AppBarPosition PositionMode { get; set; }
+    }
+}

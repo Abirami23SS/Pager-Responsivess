@@ -1,0 +1,200 @@
+﻿@namespace Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Internal;
+@using Syncfusion.Blazor.Popups;
+@inject ISyncfusionStringLocalizer Localizer
+@inherits SfBaseComponent
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<nav class="@ROOT @stepperClass @(Linear ? "e-linear" : "")" @ref=stepperElement @attributes="htmlAttr" id=@ID>
+    <div class="e-stepper-progressbar">
+        <div class="e-progressbar-value" data-sf-style="--progress-value:@(0)%; transition-delay:@(Animation.Enable ? Animation.Delay : 0)ms"></div>
+    </div>
+    <ol class="e-stepper-steps">
+        @if (Steps != null && Steps.Count > 0)
+        {
+            foreach (StepperStep step in Steps)
+            {
+                int index = Steps.IndexOf(step);
+                isDefaultStep = RenderDefault(index);
+                string content = !String.IsNullOrEmpty(step.Label) ? step.Label : !String.IsNullOrEmpty(step.Text) ? step.Text : null;
+                tooltipContent.Add(content);
+                bool updateText = true;
+                bool isOptional = step.Optional;
+                string listId = @ID + "-step-" + (index + 1);
+                <li id="@listId" class="@ITEMCONTAINER @(UpdateLiClass(step, index, isDefaultStep))" data-sf-style="max-width:@(Orientation == StepperOrientation.Horizontal ? 100 / Steps.Count + "%" : "unset")">
+                    @if (!isDefaultStep)
+                    {
+                        if (Template == null)
+                        {
+                            bool hasIconCss = !String.IsNullOrEmpty(step.IconCss);
+                            bool hasText = !String.IsNullOrEmpty(step.Text);
+                            bool hasLabel = !String.IsNullOrEmpty(step.Label);
+                            bool isHorizontal = Orientation == StepperOrientation.Horizontal;
+                            bool isLabelStart = LabelPosition.ToString().ToLowerInvariant() == "start";
+                            bool isIndicator = StepType == StepperType.Indicator;
+                            bool isLabel = StepType == StepperType.Label;
+                            if ((hasIconCss || hasText) && ((!hasText && !hasLabel) || !isLabel))
+                            {
+                                if (hasText && hasIconCss && !hasLabel && isHorizontal)
+                                {
+                                    <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == null ? step.IconCss : step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")"></span>
+                                }
+                                else
+                                {
+                                    if (hasLabel && !isHorizontal && isLabelStart && !isIndicator)
+                                    {
+                                        <span class="@LABELCSS e-label-@UpdateLabelClass()">
+                                            <span class="e-label" aria-disabled="@(step.Disabled ? "true" : null)">@(step.Label)</span>
+                                            @if (isOptional)
+                                            {
+                                                <span class="@OPTIONAL">@(Localizer.GetText("Stepper_Optional") ?? "Optional")</span>
+                                                isOptional = false;
+                                            }
+                                        </span>
+                                        hasLabel = false;
+                                    }
+                                    if (hasIconCss)
+                                    {
+                                        <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == null ? step.IconCss : step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")"></span>
+                                    }
+                                    else if (hasText && !(hasLabel && isIndicator))
+                                    {
+                                        updateText = false;
+                                        <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == null ? "" : step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")">@(step.IsValid == null ? step.Text : "")</span>
+                                    }
+                                    
+                                }
+                            }
+                            if (hasText && !hasLabel && !(hasIconCss && isIndicator) && updateText)
+                            {
+                                if (!hasIconCss && (isIndicator || isLabel))
+                                {
+                                    if (step.IsValid == null)
+                                    {
+                                        <span class="@STEPPERSTEP e-step-content">@(step.Text)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")"></span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (StepType != StepperType.Default)
+                                    {
+                                        <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == null ? "" : step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")">@(step.IsValid == null ? step.Text : "")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@TEXTCSS e-text">@(step.Text)</span>
+                                    }
+                                }
+                            }
+                            if (hasLabel && !(hasIconCss && isIndicator))
+                            {
+                                if (!hasIconCss && isIndicator)
+                                {
+                                    if (step.IsValid == null)
+                                    {
+                                        <span class="@STEPPERSTEP e-step-content">@(step.Label)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@STEPPERSTEP @ICONCSS @(step.IsValid == true ? "e-icons e-check" : "e-icons e-circle-info")"></span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (((hasIconCss || hasText) && !isLabel) && ((isHorizontal && (isLabelStart || LabelPosition.ToString().ToLowerInvariant() == "end")) ||
+                                        (!isHorizontal && (LabelPosition.ToString().ToLowerInvariant() == "top" || LabelPosition.ToString().ToLowerInvariant() == "bottom"))))
+                                    {
+                                        <span class="@TEXTCSS e-text">@(step.Label)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@LABELCSS e-label-@UpdateLabelClass()">
+                                            <span class="e-label" aria-disabled="@(step.Disabled ? "true" : null)">@(step.Label)</span>
+                                            @if (step.IsValid != null && ((!hasIconCss && !hasText) || isLabel))
+                                            {
+                                                <span class="e-step-validation-icon @(step.IsValid == true ? "e-icons e-circle-check" : "e-icons e-circle-info")"></span>
+                                            }
+                                            @if (isOptional && (hasIconCss || hasText) && ("e-label-after" == "e-label-" + @UpdateLabelClass() || "e-label-before" == "e-label-" + @UpdateLabelClass()))
+                                            {
+                                                <span class="@OPTIONAL">@(Localizer.GetText("Stepper_Optional") ?? "Optional")</span>
+                                                isOptional = false;
+                                            }
+                                        </span>
+                                    }
+                                }
+                            }
+                            if (IsInitialRender)
+                            {
+                                UpdateStepperStatus(index, step, false);
+                                if (step.Status != StepperStatus.NotStarted && activeStep == index)
+                                {
+                                    status = GetStepperStatusString(step.Status);
+                                    statusIndex = index;
+                                }
+                            }
+                            else if (!IsInitialRender && activeStep == index)
+                            {
+                                if (stepStatus)
+                                {
+                                    status = GetStepperStatusString(step.Status);
+                                    statusIndex = index;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            @Template(step);
+                        }
+                    }
+                    else
+                    {
+                        if (StepType == StepperType.Indicator)
+                        {
+                            <span class="@STEPPERSTEP e-icons @(step.IsValid == null ? "e-step-indicator" : step.IsValid == true ? "e-check " + @ICONCSS : "e-circle-info " + @ICONCSS)"></span>
+                        }
+                        else
+                        {
+                            <span class="@STEPPERSTEP @(step.IsValid == null ? "e-step-content" : ICONCSS + " e-icons " + (step.IsValid == true ? "e-check" : "e-circle-info"))">
+                                @(step.IsValid == null ? (index + 1) : "")
+                            </span>
+                        }
+                    }
+                    @if (isOptional)
+                    {
+                        <span class="@OPTIONAL">@(Localizer.GetText("Stepper_Optional") ?? "Optional")</span>
+                    }
+                    @if (ShowTooltip && !String.IsNullOrEmpty(content))
+                    {
+                        string target = '#' + @listId;
+                        <SfTooltip WindowCollision="true" TargetContainer="@($"#{ID}")" Target="@target" OpensOn="Hover" CssClass="e-stepper-tooltip" Position="Position.TopCenter">
+                            <ContentTemplate>
+                                @if (TooltipTemplate != null)
+                                {
+                                    @TooltipTemplate(step)
+                                }
+                                else
+                                {
+                                    @content
+                                }
+                            </ContentTemplate>
+                        </SfTooltip>
+                    }
+                </li>
+            }
+        }
+    </ol>
+</nav>
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>

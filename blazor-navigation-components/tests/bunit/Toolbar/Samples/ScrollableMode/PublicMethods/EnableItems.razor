@@ -1,0 +1,27 @@
+﻿@page "/ScrollableMode/PublicMethods/EnableItems"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+
+<SfButton OnClick="@Enable" Content="Enable"></SfButton>
+
+<SfToolbar @ref="ToolbarObj">
+    <ToolbarItems>
+        <ToolbarItem PrefixIcon="e-cut-icon tb-icons" Text="Cut"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-copy-icon tb-icons" Text="Copy" Disabled="@enable"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-paste-icon tb-icons" Text="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+
+    SfToolbar ToolbarObj;
+    List<ToolbarItem> source;
+    public bool enable = true;
+    public void Enable()
+    {
+        enable = false;
+        ToolbarObj.EnableItems(new List<int>() { 1 }, true);
+    }
+}

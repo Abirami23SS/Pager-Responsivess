@@ -1,0 +1,170 @@
+@page "/Samples/Carousel/PropertyChanges"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+
+<SfCheckBox @bind-Checked="@AutoPlay" Label="AutoPlay" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@EnableTouchSwipe" Label="EnableTouchSwipe" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@Loop" Label="Loop" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@ShowIndicators" Label="ShowIndicators" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@PauseOnHover" Label="PauseOnHover" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@EnableRtl" Label="EnableRtl" CssClass="property-checkbox"></SfCheckBox>
+<SfCheckBox @bind-Checked="@ShowPlayButton" Label="ShowPlayButton" CssClass="property-checkbox"></SfCheckBox>
+
+<SfDropDownList TValue="CarouselAnimationEffect" TItem="DropDownData" @bind-Value="@AnimationEffect" DataSource="@animationEffectData" FloatLabelType="FloatLabelType.Always" Placeholder="Animation Effect" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Effect"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="CarouselButtonVisibility" TItem="DropDownData" @bind-Value="@ButtonVisibility" DataSource="@buttonVisibilityData" FloatLabelType="FloatLabelType.Always" Placeholder="Button Visibility" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Visibility"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="int" TItem="DropDownData" @bind-Value="@Interval" DataSource="@intervalData" FloatLabelType="FloatLabelType.Always" Placeholder="Interval" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Interval"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="string" TItem="DropDownData" @bind-Value="@Height" DataSource="@heightData" FloatLabelType="FloatLabelType.Always" Placeholder="Height" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Value"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="string" TItem="DropDownData" @bind-Value="@Width" DataSource="@widthData" FloatLabelType="FloatLabelType.Always" Placeholder="Width" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Value"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfDropDownList TValue="string" TItem="DropDownData" @bind-Value="@CssClass" DataSource="@cssData" FloatLabelType="FloatLabelType.Always" Placeholder="Css Class" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Value"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<SfNumericTextBox @bind-Value="@SelectedIndex" FloatLabelType="FloatLabelType.Always" Placeholder="SelectedIndex" Width="100px"></SfNumericTextBox>
+
+<div class="carousel-container">
+    <SfCarousel Height="@Height" Width="@Width" AnimationEffect="@AnimationEffect" AutoPlay="@AutoPlay" ButtonsVisibility="@ButtonVisibility" CssClass="@("e-carousel-" + CssClass)" EnableRtl="@EnableRtl" EnableTouchSwipe="@EnableTouchSwipe" Interval="@Interval" Loop="@Loop" PauseOnHover="@PauseOnHover" ShowPlayButton="@ShowPlayButton" @bind-SelectedIndex="@SelectedIndex" ShowIndicators="@ShowIndicators">
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/cardinal.png" alt="cardinal" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/hunei.png" alt="hunei" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/costa-rica.png" alt="costa-rica" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/kaohsiung.png" alt="kaohsiung" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+        <CarouselItem>
+            <figure class="img-container">
+                <img src="https://ej2.syncfusion.com/demos/src/carousel/images/bee-eater.png" alt="bee-eater" style="height:100%;width:100%;" />
+            </figure>
+        </CarouselItem>
+    </SfCarousel>
+</div>
+
+<style>
+    .carousel-container {
+        margin: 0 auto 2em;
+        max-width: 550px;
+        height: 350px;
+        background-color: #f5f5f5;
+        padding: 1rem;
+        margin-top: 15px;
+    }
+    .property-checkbox {
+        margin-right: 15px;
+        margin-bottom: 20px;
+    }
+    .e-carousel-light {
+        background-color: ivory
+    }
+    .e-carousel-dark {
+        background-color:lightgray;
+    }
+    .e-carousel-transparent {
+        background-color: inherit;
+    }
+    .e-carousel-light .e-carousel-navigators,
+    .e-carousel-dark .e-carousel-navigators,
+    .e-carousel-transparent .e-carousel-navigators {
+        margin-left: 24px;
+        margin-right: 0px;
+        width: calc(100% - 3rem);
+    }
+    .e-carousel-light.e-rtl .e-carousel-navigators,
+    .e-carousel-dark.e-rtl .e-carousel-navigators,
+    .e-carousel-transparent.e-rtl .e-carousel-navigators {
+        margin-right: 24px;
+        margin-left: 0px;
+    }
+</style>
+
+@code {
+    public string Height { get; set; } = "100%";
+    public string Width { get; set; } = "100%";
+    public CarouselAnimationEffect AnimationEffect { get; set; } = CarouselAnimationEffect.Slide;
+    public CarouselButtonVisibility ButtonVisibility { get; set; } = CarouselButtonVisibility.Visible;
+    public string CssClass { get; set; } = "transparent";
+    public bool AutoPlay { get; set; } = false;
+    public bool EnableRtl { get; set; } = false;
+    public bool EnableTouchSwipe { get; set; } = true;
+    public int Interval { get; set; } = 5000;
+    public bool Loop { get; set; } = true;
+    public bool ShowPlayButton { get; set; } = false;
+    public int SelectedIndex { get; set; } = 0;
+    public bool ShowIndicators { get; set; } = true;
+    public bool PauseOnHover { get; set; } = true;
+
+    List<DropDownData> animationEffectData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Slide", Effect = CarouselAnimationEffect.Slide  },
+        new DropDownData { Name = "Fade", Effect = CarouselAnimationEffect.Fade },
+        new DropDownData { Name = "None", Effect = CarouselAnimationEffect.None }
+    };
+    List<DropDownData> buttonVisibilityData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Visible", Visibility = CarouselButtonVisibility.Visible },
+        new DropDownData { Name = "VisibleOnHover", Visibility = CarouselButtonVisibility.VisibleOnHover },
+        new DropDownData { Name = "Hidden", Visibility = CarouselButtonVisibility.Hidden }
+    };
+    List<DropDownData> intervalData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "2000", Interval = 2000 },
+        new DropDownData { Name = "3000", Interval = 3000 },
+        new DropDownData { Name = "5000", Interval = 5000 },
+        new DropDownData { Name = "8000", Interval = 8000 }
+    };
+    List<DropDownData> heightData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "100%", Value = "100%" },
+        new DropDownData { Name = "auto", Value = "auto" },
+        new DropDownData { Name = "350px", Value = "350px" }
+    };
+    List<DropDownData> widthData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "100%", Value = "100%" },
+        new DropDownData { Name = "auto", Value = "auto" },
+        new DropDownData { Name = "520px", Value = "520px" }
+    };
+    List<DropDownData> cssData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Transparent", Value = "transparent" },
+        new DropDownData { Name = "Dark", Value = "dark" },
+        new DropDownData { Name = "Light", Value = "light" }
+    };
+    public class DropDownData
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public int Interval { get; set; }
+        public CarouselAnimationEffect Effect { get; set; }
+        public CarouselButtonVisibility Visibility { get; set; }
+    }
+}

@@ -1,0 +1,22 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfButton @onclick="OpenContextMenu">Open</SfButton>
+<div id="contextmenutarget">Right click/Touch</div>
+
+<SfContextMenu @ref="contextMenuObj" Target="#contextmenutarget" EnableRtl="true" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Cut" IconCss="e-cm-icons e-cut"></MenuItem>
+        <MenuItem Text="Copy" IconCss="e-cm-icons e-copy"></MenuItem>
+    </MenuItems>
+</SfContextMenu>
+
+@code{
+    SfContextMenu<MenuItem> contextMenuObj;
+    private void OpenContextMenu(MouseEventArgs e)
+    {
+        contextMenuObj.Open(e.ClientX, e.ClientY);
+    }
+}

@@ -1,0 +1,50 @@
+@typeparam TValue;
+@typeparam TItem;
+@namespace Syncfusion.Blazor.Navigations.Internal
+
+@if (ContainerClass.Contains(POPUP))
+{
+    <div class="@ContainerClass">
+        <ul class="@MenuClass" role="@MENUROLE" tabindex="@ZERO" data-sf-style="@Style"
+            @onkeydown="@(async (e) =>
+                {
+                    var firstItem = Items.FirstOrDefault();
+                    if (itemRef != null && firstItem != null)
+                    {
+                        await itemRef.KeyDownHandler(firstItem, e, true);
+                    }
+                })">
+            <CreateMenuItem @ref="itemRef" TValue="TValue" TItem="TItem" Items="@Items"></CreateMenuItem>
+        </ul>
+    </div>
+}
+else
+{
+    <ul class="@MenuClass" role="@MENUROLE" tabindex="@ZERO"
+        @onkeydown="@(async (e) =>
+            {
+                var firstItem = Items.FirstOrDefault();
+                if (menuItemRef != null && firstItem != null)
+                {
+                    await menuItemRef.KeyDownHandler(firstItem, e, true);
+                }
+            })">
+        <CreateMenuItem @ref="menuItemRef" TValue="TValue" TItem="TItem" Items="@Items"></CreateMenuItem>
+    </ul>
+}
+
+@code {
+    [CascadingParameter]
+    private List<TValue>? Parent { get; set; }
+    [Parameter]
+    public List<TItem> Items { get; set; }
+    [Parameter]
+    public string MenuClass { get; set; }
+    [Parameter]
+    public string ContainerClass { get; set; }
+    [Parameter]
+    public string Style { get; set; }
+
+    private CreateMenuItem<TValue, TItem>? itemRef;
+    private CreateMenuItem<TValue, TItem>? menuItemRef;
+}

@@ -1,0 +1,45 @@
+﻿@page "/ScrollableMode/Default/ItemsProperty"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfToolbar Items="@ToolbarItems">
+
+</SfToolbar>
+
+@code {
+
+    List<ToolbarItem> ToolbarItems = new List<ToolbarItem>()
+    {
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-cut",
+        Text = "Cut",
+        TooltipText = "Cut"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-copy",
+        Text = "Copy",
+        TooltipText = "Copy"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-paste",
+        Text = "Paste",
+        TooltipText = "Paste"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-bold",
+        Text = "Bold",
+        TooltipText = "Bold"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-underline",
+        Text = "Underline",
+        TooltipText = "Underline"
+        }
+    };
+
+}

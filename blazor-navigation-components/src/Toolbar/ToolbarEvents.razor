@@ -1,0 +1,65 @@
+@namespace Syncfusion.Blazor.Navigations
+
+@code {
+    [CascadingParameter]
+    internal SfToolbar Parent { get; set; }
+
+    /// <summary>
+    /// Triggers an event when clicking a <see cref="SfToolbar"/> element.
+    /// </summary>
+    /// <value>
+    /// An event callback function.
+    /// </value>
+    /// <remarks>
+    /// The event arguments contain information about the clicked element.
+    /// </remarks>
+    /// <example>
+    /// The following code example shows how to obtain the clicked element text in the <c>Clicked</c> event handler.
+    /// <code><![CDATA[
+    /// <SfToolbar>
+    ///     <ToolbarEvents Clicked="ToolbarClicked"></ToolbarEvents>
+    ///     <ToolbarItems>
+    ///         <ToolbarItem Text="Cut" TooltipText="Cut"></ToolbarItem>
+    ///         <ToolbarItem Text="Copy" TooltipText="Copy"></ToolbarItem>
+    ///         <ToolbarItem Text="Paste" TooltipText="Paste"></ToolbarItem>
+    ///     </ToolbarItems>
+    /// </SfToolbar>
+    /// @code {
+    ///     public void ToolbarClicked(ClickEventArgs args)
+    ///     {
+    ///         string clickedText = args.Item.Text;
+    ///     }
+    /// }
+    /// ]]></code>
+    /// </example>
+    [Parameter]
+    public EventCallback<ClickEventArgs> Clicked { get; set; }
+
+    /// <summary>
+    /// Triggers an event after the <see cref="SfToolbar"/> component has finished rendering during initial loading.
+    /// </summary>
+    /// <value>
+    /// An event callback function.
+    /// </value>
+    [Parameter]
+    public EventCallback<object> Created { get; set; }
+
+    /// <summary>
+    /// Triggers an event after the <see cref="SfToolbar"/> component is destroyed.
+    /// </summary>
+    /// <value>
+    /// An event callback function.
+    /// </value>
+    [Parameter]
+    public EventCallback<object> Destroyed { get; set; }
+
+    /// <summary>
+    /// Method invoked when the component is ready to start.
+    /// </summary>
+    /// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this.Parent.Delegates = this;
+    }
+}

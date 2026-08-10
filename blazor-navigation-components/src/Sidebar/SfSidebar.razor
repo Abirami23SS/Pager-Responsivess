@@ -1,0 +1,13 @@
+﻿@using Syncfusion.Blazor.Internal;
+@using Microsoft.AspNetCore.Components.Web;
+@namespace Syncfusion.Blazor.Navigations
+@inherits SfBaseComponent;
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<div @ref="@element" @attributes="attributes">@ChildContent</div>

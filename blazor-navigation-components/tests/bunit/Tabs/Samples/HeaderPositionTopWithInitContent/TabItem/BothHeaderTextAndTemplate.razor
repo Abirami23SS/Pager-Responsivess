@@ -1,0 +1,30 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/BothHeaderTextAndTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Template Header</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="This text should not show"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Template Header 2</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="This text should not show either"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content 2</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

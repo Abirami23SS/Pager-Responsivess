@@ -1,0 +1,21 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/NullHeaderTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Custom Template</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div>Content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ContentTemplate>
+                <div>Content without header</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

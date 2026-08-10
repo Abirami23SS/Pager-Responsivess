@@ -1,0 +1,51 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+@inject NavigationManager navigationManager;
+
+<br />
+<div><b>Using tag directive</b></div>
+<br />
+<SfBreadcrumb ItemClicked="@ItemClicked" ItemRendering="@ItemRendering">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Items" Url="./breadcrumb/items"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+<br />
+<div><b>Template for specific item</b></div>
+<br />
+<SfBreadcrumb>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem>
+            <SfChip>
+                <ChipItems>
+                    <ChipItem Text="Breadcrumb" @onclick='() => chipClick("./breadcrumb")'></ChipItem>
+                </ChipItems>
+            </SfChip>
+        </BreadcrumbItem>
+        <BreadcrumbItem Text="Items" Url="./breadcrumb/items"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+
+@code {
+    public void chipClick(string Url)
+    {
+        navigationManager.NavigateTo(Url);
+    }
+    private void ItemClicked(BreadcrumbClickedEventArgs args)
+    {
+        var item = args.Item;
+    }
+    private void ItemRendering(BreadcrumbItemRenderingEventArgs args)
+    {
+        // BreadcrumbClickedEventArgs dummyArgs = new BreadcrumbClickedEventArgs { Item = args.Item };
+        var item = args.Item?.Text;
+    }
+}

@@ -1,0 +1,12 @@
+﻿@page "/counter"
+
+
+<h2>Pager Standalone</h2>
+@using Syncfusion.Blazor.Navigations
+
+<SfPager TotalItemsCount="1000" PageSizes=@pagesizes PageSize="5" NumericItemsCount="15" ShowAllInPageSizes="true">
+</SfPager>
+
+@code {
+    public List<int> pagesizes = new List<int> { 5, 10, 12, 20 };
+}

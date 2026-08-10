@@ -1,0 +1,14 @@
+﻿@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfStepper ActiveStep="1">
+    <StepperSteps>
+        <StepperStep IconCss="e-icons e-folder"></StepperStep>
+        <StepperStep @ref="stepperStatus" IconCss="e-icons e-cut"></StepperStep>
+        <StepperStep IconCss="e-icons e-copy"></StepperStep>
+    </StepperSteps>
+</SfStepper>
+
+@code {
+    public StepperStep stepperStatus;
+}

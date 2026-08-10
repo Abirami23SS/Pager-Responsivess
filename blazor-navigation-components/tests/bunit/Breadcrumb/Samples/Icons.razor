@@ -1,0 +1,24 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfBreadcrumb EnableNavigation="false">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../" IconCss="@folder"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb" IconCss="@folder"></BreadcrumbItem>
+        <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons" IconCss="@folder"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+<br />
+<SfBreadcrumb class="e-icon-right">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../" IconCss="@folder"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb" IconCss="@folder"></BreadcrumbItem>
+        <BreadcrumbItem Text="Icons" Url="./breadcrumb/icons" IconCss="@folder"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+@code {
+    private string iconPosition { get; set; } = "e-icon-right";
+    private string folder = "e-bicons e-folder";
+}

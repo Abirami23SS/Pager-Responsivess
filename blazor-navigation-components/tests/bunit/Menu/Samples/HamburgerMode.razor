@@ -1,0 +1,75 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+    <div class="menu-control">
+        <div id='layoutcontainer' class="@clsName">
+            <div class="speaker">
+                <div class="camera"></div>
+            </div>
+            <div class="layout">
+                <div id="container">
+                    <SfMenu @ref="MenuObj" TValue="MenuItem" HamburgerMode="@Mode" Title=@title ShowItemOnClick="true">
+                        <MenuItems>
+                        <MenuItem Text="Accessories">
+                            <MenuItems>
+                                <MenuItem Text="Mobile">
+                                    <MenuItems>
+                                        <MenuItem Text="Headphones"></MenuItem>
+                                        <MenuItem Text="Batteries"></MenuItem>
+                                        <MenuItem Text="Memory Cards"></MenuItem>
+                                    </MenuItems>
+                                </MenuItem>
+                                <MenuItem Text="Laptops"></MenuItem>
+                                <MenuItem Text="Desktop PC">
+                                    <MenuItems>
+                                        <MenuItem Text="Pendrives"></MenuItem>
+                                        <MenuItem Text="External Hard Disks"></MenuItem>
+                                    </MenuItems>
+                                </MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                        <MenuItem Text="Fashion">
+                            <MenuItems>
+                                <MenuItem Text="Men"></MenuItem>
+                                <MenuItem Text="Women"></MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                        <MenuItem Text="Home & Living">
+                            <MenuItems>
+                                <MenuItem Text="Furniture"></MenuItem>
+                                <MenuItem Text="Decor"></MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                        <MenuItem Text="Entertainment">
+                            <MenuItems>
+                                <MenuItem Text="Televisions"></MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                        <MenuItem Text="Contact Us"></MenuItem>
+                        <MenuItem Text="Help"></MenuItem>
+                    </MenuItems>
+                    </SfMenu>
+                </div>
+            </div>
+            <div class="outerButton"></div>
+        </div>
+    </div>
+
+    <SfButton IsPrimary="true" CssClass="e-hamb-btn" @onclick="click">Click</SfButton>
+
+@code {
+    public string clsName = "deviceLayout";
+    [Parameter]
+    public string title { get; set; }="Menu";
+    private SfMenu<MenuItem> MenuObj;
+    private bool Mode { get; set; } = true;
+    private async Task click()
+    {
+        await MenuObj.OpenAsync();
+        var index = MenuObj.GetItemIndex(new MenuItem { Text = "Accessories" });
+        await MenuObj.CloseAsync();
+        await Task.Delay(200);
+        Mode = false;
+    }
+}

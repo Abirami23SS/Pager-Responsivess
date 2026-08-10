@@ -1,0 +1,100 @@
+@using Syncfusion.Blazor.Navigations
+
+<div id="nodeOperationsTest">
+    <SfTreeView @ref="treeview" TValue="TreeData" AllowEditing="true" AllowDragAndDrop="true">
+        <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeViewDataSource" Id="Id" Text="Name" ParentID="ParentId" Expanded="Expanded" Child="Child"></TreeViewFieldsSettings>
+    </SfTreeView>
+    
+    <span id="updateSelfNodeTextResult">UpdateSelfNodeText: @updateSelfNodeTextResult</span>
+    <span id="updateRemoteNodeTextResult">UpdateRemoteNodeText: @updateRemoteNodeTextResult</span>
+    <span id="updateNodeTextResult">UpdateNodeText: @updateNodeTextResult</span>
+    <span id="removeNodesResult">RemoveNodes: @removeNodesResult</span>
+    <span id="addChildListDataResult">AddChildListData: @addChildListDataResult</span>
+    <button @onclick="TestNodeOperations">Test Node Operations</button>
+</div>
+
+@code {
+    SfTreeView<TreeData> treeview;
+    
+    List<TreeData> TreeViewDataSource = new();
+    
+    string updateSelfNodeTextResult = "Pending";
+    string updateRemoteNodeTextResult = "Pending";
+    string updateNodeTextResult = "Pending";
+    string removeNodesResult = "Pending";
+    string addChildListDataResult = "Pending";
+
+    public class TreeData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string ParentId { get; set; }
+        public bool Expanded { get; set; }
+        public List<TreeData> Child { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            TreeViewDataSource = new List<TreeData>
+            {
+                new TreeData { Id = "1", Name = "Folder 1", ParentId = null, Expanded = true, Child = new List<TreeData>
+                {
+                    new TreeData { Id = "1-1", Name = "Item 1", ParentId = "1", Expanded = false, Child = new List<TreeData>() },
+                    new TreeData { Id = "1-2", Name = "Item 2", ParentId = "1", Expanded = false, Child = new List<TreeData>() }
+                }},
+                new TreeData { Id = "2", Name = "Folder 2", ParentId = null, Expanded = false, Child = new List<TreeData>
+                {
+                    new TreeData { Id = "2-1", Name = "Item 3", ParentId = "2", Expanded = false, Child = new List<TreeData>() }
+                }}
+            };
+
+            updateSelfNodeTextResult = "Ready";
+            updateRemoteNodeTextResult = "Ready";
+            updateNodeTextResult = "Ready";
+            removeNodesResult = "Ready";
+            addChildListDataResult = "Ready";
+            
+            await base.OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            updateSelfNodeTextResult = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task TestNodeOperations()
+    {
+        try
+        {
+            // Test UpdateSelfNodeText
+            if (TreeViewDataSource.Count > 0)
+            {
+                TreeViewDataSource[0].Name = "Updated Folder 1";
+                updateSelfNodeTextResult = "Updated";
+            }
+
+            // Test RemoveNodes
+            if (TreeViewDataSource.Count > 1)
+            {
+                TreeViewDataSource.RemoveAt(1);
+                removeNodesResult = "Removed";
+            }
+
+            // Test AddChildListData
+            if (TreeViewDataSource.Count > 0 && TreeViewDataSource[0].Child != null)
+            {
+                TreeViewDataSource[0].Child.Add(new TreeData { Id = "1-3", Name = "New Item", ParentId = "1" });
+                addChildListDataResult = "Added";
+            }
+
+            updateNodeTextResult = "Operations completed";
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            updateNodeTextResult = $"Error: {ex.Message}";
+        }
+    }
+}

@@ -1,0 +1,24 @@
+@namespace Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Navigations.Internal;
+@using Microsoft.AspNetCore.Components;
+@using Syncfusion.Blazor.Internal;
+@inherits SfBaseComponent;
+@typeparam TValue;
+
+@{
+    SyncfusionService.ComponentCount += SyncfusionService.ComponentCount >= 0 && SyncfusionService.ComponentCount <= SyncfusionBlazorService.MAXCOMPCOUNT ? 1 : 0;
+}
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<div @ref="element" @attributes="@attributes">
+    <CascadingValue Value="@this">
+        @ChildContent
+        <ListGeneration @ref="ListReference" TValue="TValue"></ListGeneration>
+    </CascadingValue>
+</div>

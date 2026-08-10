@@ -1,0 +1,30 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/IconPositionBottomWithTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Twitter</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Twitter" IconCss="e-twitter" IconPosition="bottom"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Twitter content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Facebook</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Facebook" IconCss="e-facebook" IconPosition="bottom"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Facebook content</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

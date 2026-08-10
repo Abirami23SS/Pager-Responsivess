@@ -1,0 +1,59 @@
+@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Tabs.Samples
+
+<div id="removeEventTest">
+    <button id="removeTabBtn" @onclick="@RemoveTabItem">Remove Tab</button>
+    <SfTab @ref="tab" Items="@tabItems" Removed="@OnTabRemoved">
+    </SfTab>
+
+    <span id="removeEventName">RemoveEventName: @removeEventName</span>
+    <span id="removedIndex">RemovedIndex: @removedIndex</span>
+    <span id="removeCancel">RemoveCancel: @removeCancel</span>
+</div>
+
+@code {
+    public SfTab tab;
+    public List<TabItem> tabItems = new();
+
+    public string removeEventName = "Pending";
+    public int removedIndex = -1;
+    public bool removeCancel = false;
+
+    protected override void OnInitialized()
+    {
+        // Create initial sample tab items
+        tabItems = new List<TabItem>
+        {
+            new TabItem { Header = new TabHeader { Text = "Tab 1" }, Content = "Content 1" },
+            new TabItem { Header = new TabHeader { Text = "Tab 2" }, Content = "Content 2" },
+            new TabItem { Header = new TabHeader { Text = "Tab 3" }, Content = "Content 3" },
+            new TabItem { Header = new TabHeader { Text = "Tab 4" }, Content = "Content 4" }
+        };
+    }
+
+    private async Task RemoveTabItem()
+    {
+        // Remove a tab using the public RemoveTab method
+        if (tab != null && tabItems.Count > 0)
+        {
+            int removeIndex = tabItems.Count - 1;
+            await tab.RemoveTab(removeIndex);
+            if (removeIndex < tabItems.Count)
+            {
+                tabItems.RemoveAt(removeIndex);
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnTabRemoved(RemoveEventArgs args)
+    {
+        // Access and store all RemoveEventArgs getter properties
+        // This covers: Name, RemovedIndex, Cancel
+        removeEventName = args.Name ?? "TabRemoved";
+        removedIndex = args.RemovedIndex;
+        removeCancel = args.Cancel;
+
+        await Task.CompletedTask;
+    }
+}

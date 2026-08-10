@@ -1,0 +1,41 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/CloseIconClickTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Removable Tab 1</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Removable Tab 1"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content 1</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Removable Tab 2</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Removable Tab 2"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content 2</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Removable Tab 3</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Removable Tab 3"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content 3</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

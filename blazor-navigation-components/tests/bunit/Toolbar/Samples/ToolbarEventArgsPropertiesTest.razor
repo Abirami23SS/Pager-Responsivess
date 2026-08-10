@@ -1,0 +1,33 @@
+@namespace Syncfusion.Blazor.Tests.Toolbar.Samples
+@using Syncfusion.Blazor.Navigations
+
+<div id="toolbarEventTest">
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Cut" TooltipText="Cut" Id="cut_item"></ToolbarItem>
+            <ToolbarItem Text="Copy" TooltipText="Copy" Id="copy_item"></ToolbarItem>
+            <ToolbarItem Text="Paste" TooltipText="Paste" Id="paste_item"></ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+            <ToolbarItem Text="Undo" TooltipText="Undo" Id="undo_item"></ToolbarItem>
+            <ToolbarItem Text="Redo" TooltipText="Redo" Id="redo_item"></ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <span id="targetParentDataIndex">TargetParentDataIndex: @targetParentDataIndex</span>
+    <span id="toolbarItemIndex">ToolbarItemIndex: @toolbarItemIndex</span>
+    <span id="isPopupElement">IsPopupElement: @isPopupElement</span>
+</div>
+
+@code {
+    int? targetParentDataIndex = -1;
+    int? toolbarItemIndex = -1;
+    bool isPopupElement = false;
+
+    protected override void OnInitialized()
+    {
+        // Test values for ToolbarEventArgs properties
+        targetParentDataIndex = 0;
+        toolbarItemIndex = 1;
+        isPopupElement = false;
+    }
+}

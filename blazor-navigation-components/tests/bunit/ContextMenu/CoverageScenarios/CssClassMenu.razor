@@ -1,0 +1,14 @@
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfContextMenu @ref="ContextMenu" TValue="MenuItem" CssClass="e-custom-context-menu e-another-class">
+    <MenuItems>
+        <MenuItem Text="Cut"></MenuItem>
+        <MenuItem Text="Copy"></MenuItem>
+    </MenuItems>
+</SfContextMenu>
+
+@code {
+    public SfContextMenu<MenuItem> ContextMenu { get; set; }
+}

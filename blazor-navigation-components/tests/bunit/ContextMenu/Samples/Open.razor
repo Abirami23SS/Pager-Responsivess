@@ -1,0 +1,61 @@
+﻿@inject IJSRuntime JSRuntime;
+
+@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<button id="btn" class="e-btn" @onclick="OpenMenu">Open ContextMenu</button>
+<button id="btnclose" class="e-btn" @onclick="CloseMenu">Close ContextMenu</button>
+<SfContextMenu @ref="contextMenu" CssClass="@CustomCls" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Cut"></MenuItem>
+        <MenuItem Text="Copy"></MenuItem>
+        <MenuItem Text="Paste">
+            <MenuItems>
+                <MenuItem Text="Paste Text"></MenuItem>
+                <MenuItem Text="Paste Special"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+    </MenuItems> 
+    <MenuAnimationSettings Effect="MenuEffect.FadeIn" Duration="800"></MenuAnimationSettings>
+    <MenuEvents TValue="MenuItem" Opened="@OpenHandler" Closed="@ClosedHandler"></MenuEvents>
+</SfContextMenu>
+
+@code{
+    SfContextMenu<MenuItem> contextMenu;
+
+    private string CustomCls = "e-hide-menu";
+
+    private async Task OpenMenu()
+    {
+        if (contextMenu.CssClass == "e-hide-menu")
+            contextMenu.Open(0, 0);
+          await contextMenu.OpenAsync(0, 0);
+    }
+    private void CloseMenu()
+    {
+        if (contextMenu.CssClass == "")
+            contextMenu.Close();
+    }
+    private async Task OpenHandler(OpenCloseMenuEventArgs<MenuItem> e)
+    {
+        if (CustomCls == "e-hide-menu")
+        {
+            Offset offset = await JSRuntime.InvokeAsync<Offset>("calculatePosition", "btn");
+            CustomCls = "";
+            contextMenu.Open(offset.Left, offset.Top);
+        }
+    }
+
+    private void ClosedHandler(OpenCloseMenuEventArgs<MenuItem> e)
+    {
+        if (e.ParentItem == null)
+            CustomCls = "e-hide-menu";
+    }
+
+    private class Offset
+    {
+        public int Left { get; set; }
+        public int Top { get; set; }
+    }
+}

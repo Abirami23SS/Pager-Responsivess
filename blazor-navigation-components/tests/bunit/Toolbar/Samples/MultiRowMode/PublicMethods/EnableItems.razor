@@ -1,0 +1,24 @@
+﻿@page "/MultiRowMode/PublicMethods/EnableItems"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+<SfButton @onclick="EnableToolbarItems" Content="Enable Toolbar Items"></SfButton>
+
+<SfToolbar @ref="ToolbarObj" OverflowMode="OverflowMode.MultiRow">
+    <ToolbarItems>
+        <ToolbarItem PrefixIcon="e-cut-icon tb-icons" Text="Cut" Disabled="@CutIcon"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-copy-icon tb-icons" Text="Copy"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-paste-icon tb-icons" Text="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+    SfToolbar ToolbarObj;
+    public bool CutIcon { get; set; } = true;
+
+    private void EnableToolbarItems()
+    {
+        CutIcon = !CutIcon;
+    }
+}

@@ -1,0 +1,36 @@
+@page "/Tabs/SelectEventArgsIsSwipedTest"
+
+@using Syncfusion.Blazor.Navigations
+
+<div id="isSwipedTest">
+    <SfTab @ref="tab" Selected="@OnTabSelected">
+        <TabItems>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 1"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 1</ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <ChildContent>
+                    <TabHeader Text="Tab 2"></TabHeader>
+                </ChildContent>
+                <ContentTemplate>Content 2</ContentTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+
+    <span id="isSwipedValue">IsSwiped: @isSwiped</span>
+</div>
+
+@code {
+    SfTab tab;
+    bool isSwiped;
+
+    private Task OnTabSelected(SelectEventArgs args)
+    {
+        // Access IsSwiped property
+        isSwiped = args.IsSwiped;
+        return Task.CompletedTask;
+    }
+}

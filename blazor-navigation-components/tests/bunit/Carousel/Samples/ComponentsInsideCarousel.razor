@@ -1,0 +1,184 @@
+@page "/Samples/Carousel/ComponentAsChid"
+
+@using Syncfusion.Blazor.Navigations
+
+<div class="control-container">
+    <SfCarousel @ref="@CarouselRef" AutoPlay="false" SelectedIndex="@CarouselIndex" SelectedIndexChanged="@SelectedIndexChanged">
+        <CarouselItem>
+            <div class="child-container">
+                <p>Move to Selected Index:</p>
+                <input type="number" value="@CarouselIndex" @onchange="@OnChange" min="0" max="6" placeholder="Type Selected Index Value" style="width: 300px" />
+                <p>Click to navigate component rendered slide</p>
+                <ul class="child-items">
+                    <li @onclick="@(() =>SelectedIndexChanged(1))">Accordion</li>
+                    <li @onclick="@(() =>SelectedIndexChanged(2))">Tab</li>
+                    <li @onclick="@(() =>SelectedIndexChanged(3))">Toolbar</li>
+                    <li @onclick="@(() =>SelectedIndexChanged(4))">Treeview</li>
+                    <li @onclick="@(() =>SelectedIndexChanged(5))">Breadcurmb</li>
+                </ul>
+                <p href="">Kindly refer the <a href="https://blazor.syncfusion.com/demos/carousel/default-functionalities">demos</a> and <a href="https://blazor.syncfusion.com/documentation/carousel/getting-started">documentation</a> links for carousel</p>
+            </div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="child-container">
+                <SfAccordion ExpandMode="ExpandMode.Single">
+                    <AccordionItems>
+                        <AccordionItem Header="Margeret Peacock" Content="Margeret Peacock was born on Saturday , 01 December 1990. Now lives at Coventry House Miner Rd., London,UK. Margeret Peacock holds a position of Sales Coordinator in our WA department, (Seattle USA). Joined our company on Saturday , 01 May 2010"></AccordionItem>
+                        <AccordionItem Header="Laura Callahan" Content="Laura Callahan was born on Tuesday , 06 November 1990. Now lives at Edgeham Hollow Winchester Way, London,UK. Laura Callahan holds a position of Sales Coordinator in our WA department, (Seattle USA). Joined our company on Saturday , 01 May 2010"></AccordionItem>
+                        <AccordionItem Header="Albert Dodsworth" Content="Albert Dodsworth was born on Thursday , 19 October 1989. Now lives at 4726 - 11th Ave. N.E., Seattle,USA.Albert Dodsworth holds a position of Sales Representative in our WA department, (Seattle USA). Joined our company on Friday , 01 May 2009"></AccordionItem>
+                    </AccordionItems>
+                </SfAccordion>
+            </div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="child-container">
+                <SfTab>
+                    <TabItems>
+                        <TabItem Content="Twitter is an online social networking service that enables users to send and read short 140-charactermessages called tweets.Registered users can read and post tweets, but those who are unregistered can only readthem.Users access Twitter through the website interface, SMS or mobile device app Twitter Inc. is based in SanFrancisco and has more than 25 offices around the world.Twitter was created in March 2006 by Jack Dorsey,Evan Williams, Biz Stone, and Noah Glass and launched in July 2006. The service rapidly gained worldwide popularity,with more than 100 million users posting 340 million tweets a day in 2012.The service also handled 1.6 billionsearch queries per day.">
+                            <ChildContent>
+                                <TabHeader Text="Twitter"></TabHeader>
+                            </ChildContent>
+                        </TabItem>
+                        <TabItem Content="Facebook is an online social networking service headquartered in Menlo Park, California. Its website waslaunched on February 4, 2004, by Mark Zuckerberg with his Harvard College roommates and fellow students EduardoSaverin, Andrew McCollum, Dustin Moskovitz and Chris Hughes.">
+                            <ChildContent>
+                                <TabHeader Text="Facebook"></TabHeader>
+                            </ChildContent>
+                        </TabItem>
+                        <TabItem Content="WhatsApp Messenger is a proprietary cross-platform instant messaging client for smartphones that operatesunder a subscription business model.It uses the Internet to send text messages, images, video, user location andaudio media messages to other users using standard cellular mobile numbers. As of February 2016, WhatsApp had a userbase of up to one billion,[10] making it the most globally popular messaging application.WhatsApp Inc., based inMountain View, California, was acquired by Facebook Inc.on February 19, 2014, for approximately US$19.3 billion.">
+                            <ChildContent>
+                                <TabHeader Text="Whatsapp"></TabHeader>
+                            </ChildContent>
+                        </TabItem>
+                    </TabItems>
+                </SfTab>
+            </div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="child-container">
+                <SfToolbar CssClass="toolbar-child">
+                    <ToolbarItems>
+                        <ToolbarItem Text="Cut"></ToolbarItem>
+                        <ToolbarItem Text="Copy"></ToolbarItem>
+                        <ToolbarItem Text="Paste"></ToolbarItem>
+                        <ToolbarItem></ToolbarItem>
+                        <ToolbarItem Text="Bold"></ToolbarItem>
+                        <ToolbarItem Text="Underline"></ToolbarItem>
+                        <ToolbarItem Text="Italic"></ToolbarItem>
+                        <ToolbarItem Text="Color-Picker"></ToolbarItem>
+                    </ToolbarItems>
+                </SfToolbar>
+            </div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="child-container">
+                <SfTreeView TValue="MailItem">
+                    <TreeViewFieldsSettings TValue="MailItem" Id="Id" DataSource="@MyFolder" Text="FolderName" ParentID="ParentId" HasChildren="HasSubFolders" Expanded="Expanded"></TreeViewFieldsSettings>
+                </SfTreeView>
+            </div>
+        </CarouselItem>
+        <CarouselItem>
+            <div class="child-container">
+                <SfBreadcrumb>
+                    <BreadcrumbItems>
+                        <BreadcrumbItem IconCss="e-icons e-home" Url="https://blazor.syncfusion.com/demos/" />
+                        <BreadcrumbItem Text="Components" Url="https://blazor.syncfusion.com/demos/datagrid/overview" />
+                        <BreadcrumbItem Text="Navigations" Url="https://blazor.syncfusion.com/demos/menu-bar/default-functionalities" />
+                        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb/default-functionalities" />
+                    </BreadcrumbItems>
+                </SfBreadcrumb>
+            </div>
+        </CarouselItem>
+    </SfCarousel>
+</div>
+
+<style>
+    .control-container {
+        background-color: #adb5bd;
+        height: 500px;
+        margin: 0 auto;
+        width: 600px;
+    }
+
+    .child-container {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30%;
+    }
+
+    .toolbar-child,
+    .e-breadcrumb {
+        margin-top: 49%;
+    }
+
+    .child-container .child-items li {
+        color: #0366d6;
+    }
+
+    .child-container .child-items li:hover {
+        color: #0366d6;
+        text-decoration:underline;
+    }
+</style>
+
+@code{
+    private SfCarousel CarouselRef;
+    private int CarouselIndex = 0;
+    private void OnChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        if (args.Value != null && (string)args.Value != string.Empty)
+        {
+            CarouselIndex = Convert.ToInt32(args.Value);
+        }
+    }
+    private void SelectedIndexChanged(int args)
+    {
+        CarouselIndex = args;
+    }
+    List<MailItem> MyFolder = new List<MailItem>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        MyFolder.Add(new MailItem
+        {
+            Id = "1",
+            FolderName = "Inbox",
+            HasSubFolders = true,
+            Expanded = true
+        });
+        MyFolder.Add(new MailItem
+        {
+            Id = "2",
+            ParentId = "1",
+            FolderName = "Categories",
+            Expanded = true,
+            HasSubFolders = true
+        });
+        MyFolder.Add(new MailItem
+        {
+            Id = "3",
+            ParentId = "2",
+            FolderName = "Primary"
+        });
+        MyFolder.Add(new MailItem
+        {
+            Id = "4",
+            ParentId = "2",
+            FolderName = "Social"
+        });
+        MyFolder.Add(new MailItem
+        {
+            Id = "5",
+            ParentId = "2",
+            FolderName = "Promotions"
+        });
+    }
+    public class MailItem
+    {
+        public string Id { get; set; }
+        public string ParentId { get; set; }
+        public string FolderName { get; set; }
+        public bool Expanded { get; set; }
+        public bool HasSubFolders { get; set; }
+    }
+}

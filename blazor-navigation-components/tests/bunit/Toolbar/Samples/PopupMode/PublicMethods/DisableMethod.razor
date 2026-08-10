@@ -1,0 +1,26 @@
+﻿@page "/PopupMode/PublicMethods/DisableMethod"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+<SfButton OnClick="@Disable" Content="Disable"></SfButton>
+
+<SfToolbar @ref="ToolbarObj">
+    <ToolbarItems>
+        <ToolbarItem PrefixIcon="e-cut-icon tb-icons" Text="Cut"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-copy-icon tb-icons" Text="Copy" Disabled="@disable"></ToolbarItem>
+        <ToolbarItem PrefixIcon="e-paste-icon tb-icons" Text="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+
+    public SfToolbar ToolbarObj;
+    List<ToolbarItem> source;
+    public bool disable = false;
+    public async Task Disable()
+    {
+        disable = true;
+        await ToolbarObj.DisableAsync(true);
+    }
+}

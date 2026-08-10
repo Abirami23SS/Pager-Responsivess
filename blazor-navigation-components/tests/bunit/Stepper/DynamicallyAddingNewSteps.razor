@@ -1,0 +1,34 @@
+@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<button @onclick="clicked">Add Steps</button>
+
+Step changing event is called : @isCalled
+<div style="margin-top: 40px">
+    
+    <SfStepper StepChanging="@onChange">
+        <StepperSteps>
+            @foreach(var step in StepperList)
+            {
+                <StepperStep></StepperStep>
+            }
+        </StepperSteps>
+    </SfStepper>
+</div>
+
+@code {
+    private bool isCalled {get;set;} = false;
+    private List<StepperStep> StepperList = new List<StepperStep>() {
+        new StepperStep() { IsValid = true, Text = "Step 1"  },
+        new StepperStep() { IsValid = false, Text = "Step 2"  },
+        new StepperStep() { IsValid = true, Text = "Step 3"  }
+    };
+
+    private void clicked() {
+        StepperList.Add(new StepperStep() { IsValid = true, Text = "Step 4"  });
+    }
+
+    private void onChange() {
+        isCalled = true;
+    }
+}

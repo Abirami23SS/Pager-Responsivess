@@ -1,0 +1,30 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/InvalidIconPositionTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Invalid Position</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Invalid Position" IconCss="e-icon" IconPosition="invalid"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Another Invalid</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Another Invalid" IconCss="e-icon" IconPosition=""></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Another content</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

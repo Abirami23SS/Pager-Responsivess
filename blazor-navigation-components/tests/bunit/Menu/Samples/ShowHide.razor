@@ -1,0 +1,41 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+@using Syncfusion.Blazor.Buttons
+
+<SfMenu TValue="MenuItem">
+    <MenuEvents TValue="MenuItem" Created="@Created"></MenuEvents>
+    <MenuItems>
+        <MenuItem Text="Events">
+            <MenuItems>
+                <MenuItem Text="Conferences" HtmlAttributes="@htmlAttributes"></MenuItem>
+                <MenuItem Text="Music" Hidden="@hideItem"></MenuItem>
+                <MenuItem Text="Workshops" Hidden="@hideItem"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text="Movies" Hidden="@hideItem">
+            <MenuItems>
+                <MenuItem Text="Now Showing"></MenuItem>
+                <MenuItem Text="Coming Soon"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+    </MenuItems>
+</SfMenu>
+<SfButton @onclick="ShowItems">Show all items</SfButton>
+
+@code {
+    private bool hideItem;
+    private Dictionary<string, object> htmlAttributes = new Dictionary<string, object> {
+        {"title", "Buttons" }, {"class", "e-menu-custom"}
+    };
+    public void Created()
+    {
+        hideItem = true;
+    }
+
+    public void ShowItems()
+    {
+        hideItem = false;
+    }
+}

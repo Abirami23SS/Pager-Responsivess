@@ -1,0 +1,8 @@
+﻿@namespace Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Navigations.Internal;
+@typeparam TValue;
+@inherits TreeViewFieldOptions<TValue>;
+
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>

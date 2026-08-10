@@ -1,0 +1,33 @@
+﻿@using Syncfusion.Blazor.Navigations.Internal
+
+@namespace Syncfusion.Blazor.Navigations
+
+@inherits SfBaseComponent
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+@{
+    if (htmlAttributes == null)
+    {
+        htmlAttributes = new Dictionary<string, object> { { "aria-label", "breadcrumb" } };
+    }
+    else if (htmlAttributes != null && !htmlAttributes.TryGetValue("aria-label", out var valueId))
+    {
+        htmlAttributes.Add("aria-label", "breadcrumb");
+    }
+}
+
+<nav @ref="Element" class="@BreadcrumbClass" @attributes="htmlAttributes" aria-disabled=@(Disabled ? "true": "false")>
+    <CascadingValue Value="@this">
+        @ChildContent
+        @if (Items != null && Items.Count > 0)
+        {
+            <CreateBreadcrumbItems Items="Items" @ref="child"></CreateBreadcrumbItems>
+        }
+    </CascadingValue>
+</nav>

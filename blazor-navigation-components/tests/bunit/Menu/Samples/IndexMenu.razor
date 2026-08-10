@@ -1,0 +1,55 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfToolbar  OverflowMode="OverflowMode.Popup">
+    <ToolbarItems>
+        <ToolbarItem Type="ItemType.Button" Text="Cut"></ToolbarItem>
+        <ToolbarItem>
+            <Template>
+                <SfMenu TValue="MenuItem">
+                    <MenuEvents TValue="MenuItem" ItemSelected="ItemSelectedHandler" OnClose="BeforeClose"></MenuEvents>
+                    <MenuItems>
+                        <MenuItem Text="File">
+                            <MenuItems>
+                                <MenuItem Text="Edit"></MenuItem>
+                                <MenuItem Text="Delete"></MenuItem>
+                                <MenuItem Text="Move"></MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                    </MenuItems>
+                </SfMenu>
+            </Template>
+        </ToolbarItem>
+        <ToolbarItem>
+            <Template>
+                <SfMenu TValue="MenuItem">
+                    <MenuEvents TValue="MenuItem"  ItemSelected="ItemSelectedHandler" OnClose="BeforeClose" ></MenuEvents>
+                    <MenuItems>
+                        <MenuItem Text="Edit">
+                            <MenuItems>
+                                <MenuItem Text="Cut"></MenuItem>
+                                <MenuItem Text="Copy"></MenuItem>
+                                <MenuItem Text="Paste"></MenuItem>
+                            </MenuItems>
+                        </MenuItem>
+                    </MenuItems>
+                </SfMenu>
+            </Template>
+        </ToolbarItem>
+
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+
+    private async Task BeforeClose()
+    {
+        await Task.Delay(2000);
+    }
+    private async Task ItemSelectedHandler(MenuEventArgs<MenuItem> args)
+    {
+        await Task.Delay(500);
+
+    }
+}

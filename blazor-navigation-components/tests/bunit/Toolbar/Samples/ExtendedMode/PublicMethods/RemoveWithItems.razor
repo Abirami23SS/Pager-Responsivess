@@ -1,0 +1,39 @@
+﻿@page "/ExtendedMode/PublicMethods/RemoveWithItems"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+<SfButton OnClick="@RemoveItem" Content="Add Item"></SfButton>
+<SfToolbar @ref="ToolbarObj" Items="@ToolbarItems">
+
+</SfToolbar>
+
+@code {
+    SfToolbar ToolbarObj;
+
+    List<ToolbarItem> ToolbarItems = new List<ToolbarItem>()
+    {
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-cut",
+        Text = "Cut",
+        TooltipText = "Cut"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-copy",
+        Text = "Copy",
+        TooltipText = "Copy"
+        },
+        new ToolbarItem
+        {
+        PrefixIcon = "e-icons e-paste",
+        Text = "Paste",
+        TooltipText = "Paste"
+        }
+    };
+    public async Task RemoveItem()
+    {
+        await ToolbarObj.RemoveItems(2);
+    }
+}

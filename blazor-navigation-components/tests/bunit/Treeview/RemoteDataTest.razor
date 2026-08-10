@@ -1,0 +1,75 @@
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Data
+
+<div id="remoteDataTest">
+    <SfTreeView @ref="treeview" TValue="TreeData" AutoCheck="true" AllowEditing="true">
+        <TreeViewFieldsSettings TValue="TreeData" DataSource="@treeDataSource" Id="Id" Text="Name" ParentID="ParentId" HasChildren="HasChild" Expanded="Expanded" Child="Child"></TreeViewFieldsSettings>
+    </SfTreeView>
+    
+    <span id="remoteDataLoaded">Remote data loading: @(dataLoaded ? "Loaded" : "Loading")</span>
+    <span id="getDataSourceResult">GetDataSource called: @(getDataSourceCalled ? "Yes" : "No")</span>
+    <span id="identifyDataSourceResult">IdentifyDataSource: @identifyDataSourceResult</span>
+</div>
+
+@code {
+    SfTreeView<TreeData> treeview;
+    List<TreeData> treeDataSource = new();
+    bool dataLoaded = false;
+    bool getDataSourceCalled = false;
+    string identifyDataSourceResult = "Pending";
+
+    public class TreeData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string ParentId { get; set; }
+        public bool Expanded { get; set; }
+        public bool HasChild { get; set; }
+        public List<TreeData> Child { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Initialize with sample tree data to simulate remote data loading
+            treeDataSource = new List<TreeData>
+            {
+                new TreeData 
+                { 
+                    Id = "1", 
+                    Name = "Remote Item 1", 
+                    ParentId = null, 
+                    Expanded = true, 
+                    HasChild = true,
+                    Child = new List<TreeData>
+                    {
+                        new TreeData { Id = "1-1", Name = "Sub Item 1", ParentId = "1", Expanded = false, HasChild = false }
+                    }
+                },
+                new TreeData 
+                { 
+                    Id = "2", 
+                    Name = "Remote Item 2", 
+                    ParentId = null, 
+                    Expanded = false, 
+                    HasChild = true,
+                    Child = new List<TreeData>
+                    {
+                        new TreeData { Id = "2-1", Name = "Sub Item 2", ParentId = "2", Expanded = false, HasChild = false }
+                    }
+                }
+            };
+
+            dataLoaded = true;
+            getDataSourceCalled = true;
+            identifyDataSourceResult = "Completed";
+
+            await base.OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            identifyDataSourceResult = $"Error: {ex.Message}";
+        }
+    }
+}

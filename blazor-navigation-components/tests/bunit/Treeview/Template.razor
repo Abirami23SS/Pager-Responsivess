@@ -1,0 +1,699 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@inherits TestComponentBase
+@namespace Syncfusion.Blazor.Tests.Treeview
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering" Description="Template for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_showCheckbox" Description="Template with checkbox for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" ShowCheckBox="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Rtl" Description="Template with Rtl for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Rtl_showcheckbox" Description="Template with Rtl and checkbox for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" ShowCheckBox="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_CssClass" Description="Template_CssClass for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" CssClass="custom">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>} }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Id" Description="Template_Id for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" CssClass="custom" ID="tree">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>} }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Disabled" Description="Template_Disabled for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" Disabled="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>} }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Autocheck" Description="TemplateRendering_Autocheck for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" AutoCheck="true" ShowCheckBox="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Fullrownavigable" Description="TemplateRendering_Fullrownavigable for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" FullRowNavigable="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_Fullrowselect" Description="Template_fullrowselect for Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" FullRowSelect="false">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>} }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_RTL_CssClass" Description="TemplateRendering_RTL_CssClass for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" CssClass="custom">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_RTL_Disabled" Description="TemplateRendering_RTL_Disabled for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" Disabled="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_RTL_ID" Description="TemplateRendering_RTL_ID for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" ID="tree">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_RTL_loadOndemand" Description="TemplateRendering_RTL_loadOndemand for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" LoadOnDemand="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+
+<SfFixture @ref="fixture" TestAsync="TemplateRendering_RTL_fullrownavigable" Description="TemplateRendering_RTL_fullrownavigable for Self Treeview component">
+    <ComponentUnderTest>
+        <SfTreeView TValue="TreeData" EnableRtl="true" FullRowNavigable="true">
+            <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+            <TreeViewTemplates TValue="TreeData">
+                <NodeTemplate>
+                    <div>
+                        <div class="treeviewdiv">
+                            <div style="float:left">
+                                <span class="treeName">@((context as TreeData).Name)</span>
+                            </div>
+                            @{
+                                @if (((context as TreeData).Count) != null)
+                                {
+                                    <div style="margin-right: 5px; float:right">
+                                        <span class="treeCount e-badge e-badge-primary">@((context as TreeData).Count)</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </NodeTemplate>
+            </TreeViewTemplates>
+        </SfTreeView>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code{
+    SfFixture fixture { get; set; }
+    List<TreeData> TreeDataSource { get; set; } = new List<TreeData> {
+        new TreeData()
+        {
+            Code = "NA",
+            Name = "North America",
+            Expanded = true,
+            Child = new List<TreeData>()
+        {
+                new TreeData { Code = "USA", Name = "United States of America", Selected = true },
+                new TreeData { Code = "CUB", Name = "Cuba" },
+                new TreeData { Code = "MEX", Name = "Mexico" },
+            },
+            Link = "https://blazor.syncfusion.com/demos/"
+        },
+        new TreeData()
+        {
+            Code = "AF",
+            Name = "Africa",
+            Child = new List<TreeData>()
+            {
+                 new TreeData { Code = "NGA", Name = "Nygeria" },
+                 new TreeData { Code = "EGY", Name = "Egypt" },
+                 new TreeData { Code = "ZAF", Name = "South Africa" },
+            },
+        },
+        new TreeData()
+        {
+            Code = "AS",
+            Name = "Asia",
+            Child = new List<TreeData>()
+        {
+                new TreeData { Code = "CHN", Name = "China" },
+                new TreeData { Code = "IND", Name = "India" },
+                new TreeData { Code = "JPN", Name = "Japan" },
+            },
+        },
+        new TreeData()
+         {
+            Code = "EU",
+            Name = "Europe",
+            Child = new List<TreeData>()
+        {
+                new TreeData { Code = "DNK", Name = "Denmark" },
+                new TreeData { Code = "AUT", Name = "Austria" },
+                new TreeData { Code = "FIN", Name = "Finland" },
+            },
+        },
+
+        new TreeData()
+         {
+            Code = "SA",
+            Name = "South America",
+            Child = new List<TreeData>()
+        {
+                new TreeData { Code = "BRA", Name = "Brazil" },
+                new TreeData { Code = "COL", Name = "Colombia" },
+                new TreeData { Code = "ARG", Name = "Argentina" },
+            },
+        },
+        new TreeData()
+        {
+            Code = "OC",
+            Name = "Oceania",
+            Child = new List<TreeData>()
+        {
+                new TreeData { Code = "AUS", Name = "Australia" },
+                new TreeData { Code = "NZL", Name = "Newzealand" },
+                new TreeData { Code = "WSM", Name = "Samoa" },
+            },
+        },
+        new TreeData()
+        {
+             Code = "AN",
+             Name = "Antartica",
+             Child = new List<TreeData>()
+         {
+                new TreeData { Code = "BVT", Name = "Bouvet Island" },
+                new TreeData { Code = "ATF", Name = "French Southern Lands" },
+             },
+        }
+    };
+
+
+    public class TreeData
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public bool Expanded { get; set; }
+        public bool Expand { get; set; }
+        public bool Select { get; set; }
+        public bool Selected { get; set; }
+        public string Link { get; set; }
+        public List<TreeData> Child;
+        public string Count { get; set; } = "12";
+    }
+
+    async Task TemplateRendering(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+
+    }
+
+    async Task TemplateRendering_showCheckbox(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var li = rootEle.QuerySelectorAll("li");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        var checkbox_element = li[0].QuerySelector(".e-checkbox-wrapper");
+        Assert.NotNull(checkbox_element);
+    }
+
+    async Task TemplateRendering_Rtl(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "CssClass property working properly initial case");
+    }
+
+    async Task TemplateRendering_Rtl_showcheckbox(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var li = rootEle.QuerySelectorAll("li");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        var checkbox_element = li[0].QuerySelector(".e-checkbox-wrapper");
+        Assert.NotNull(checkbox_element);
+        treeview.Find(".e-rtl");
+    }
+
+    async Task TemplateRendering_CssClass(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("custom"), "CssClass property working properly initial case");
+    }
+
+    async Task TemplateRendering_Id(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        treeview.Find("#tree");
+        fixture.Dispose();
+    }
+
+    async Task TemplateRendering_Disabled(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-disabled"));
+        Assert.Contains("e-disabled", rootEle.ClassName);
+    }
+
+    async Task TemplateRendering_Autocheck(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+
+        treeview.SetParametersAndRender(("CheckedNodes", new string[] { "NA", "AF" }));
+
+
+        var liElements_1 = treeview.FindAll("li");
+        var liLength = treeview.FindAll("li").Count;
+        for (var i = 0; i < liLength; i++)
+        {
+            var checkboEle = liElements_1[i].QuerySelector(".e-text-content .e-checkbox-wrapper .e-check");
+            if (i < 5)
+            {
+                Assert.True(checkboEle != null, "AutoCheck property is working properly");
+            }
+            else
+            {
+                Assert.True(checkboEle == null, "AutoCheck property is working properly");
+            }
+        }
+
+    }
+
+    async Task TemplateRendering_Fullrownavigable(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+
+        treeview.Find(".e-navigable");
+
+    }
+
+    async Task TemplateRendering_Fullrowselect(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElement = rootEle.QuerySelectorAll("li");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.DoesNotContain("e-fullrow-wrap", rootEle.ClassName);
+
+    }
+
+    async Task TemplateRendering_RTL_CssClass(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "Disabled property working properly initial case");
+        Assert.True(rootEle.ClassList.Contains("custom"), "CssClass property working properly initial case");
+
+    }
+
+    async Task TemplateRendering_RTL_Disabled(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "Disabled property working properly initial case");
+        Assert.True(rootEle.ClassList.Contains("e-disabled"), "Disabled property working properly initial case");
+
+    }
+
+    async Task TemplateRendering_RTL_ID(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "Disabled property working properly initial case");
+        var treeid = treeview.Instance.ID;
+        Assert.Equal("tree", treeid);
+
+    }
+
+    async Task TemplateRendering_RTL_loadOndemand(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "Disabled property working properly initial case");
+        var liLength = treeview.FindAll("li").Count;
+
+        Assert.True(10 == liLength, "Number of li elements are not generated properly");
+
+    }
+
+    async Task TemplateRendering_RTL_fullrownavigable(Fixture fixture)
+    {
+        var treeview = fixture.GetComponentUnderTest<SfTreeView<TreeData>>();
+        await Task.Delay(200);
+        var rootEle = treeview.Find(".e-treeview");
+
+        var liElements = rootEle.QuerySelectorAll(".e-badge-primary");
+        Assert.True(10 == liElements.Length, "Total number of Li items");
+
+        Assert.True(rootEle.ClassList.Contains("e-rtl"), "Disabled property working properly initial case");
+        treeview.Find(".e-navigable");
+
+    }
+
+}

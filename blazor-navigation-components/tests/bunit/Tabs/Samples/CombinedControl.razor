@@ -1,0 +1,147 @@
+﻿@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Layouts
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Navigations
+
+<SfTab @bind-SelectedItem="@SelectedItem">
+    <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Grid"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfGrid DataSource="@Orders" Height="600px">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(Order.OrderID) HeaderText="Order ID" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                        <GridColumn Field=@nameof(Order.CustomerID) HeaderText="Customer Name" Width="150"></GridColumn>
+                        <GridColumn Field=@nameof(Order.OrderDate) HeaderText=" Order Date" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right" Width="130"></GridColumn>
+                        <GridColumn Field=@nameof(Order.Freight) HeaderText="Freight" Format="C2" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Accordion"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfAccordion ExpandMode="ExpandMode.Single">
+                    <AccordionItems>
+                        <AccordionItem @bind-Expanded="Expanded" Header="Margeret Peacock" Content="Margeret Peacock was born on Saturday , 01 December 1990. Now lives at Coventry House Miner Rd., London,UK. Margeret Peacock holds a position of Sales Coordinator in our WA department, (Seattle USA). Joined our company on Saturday , 01 May 2010"></AccordionItem>
+                        <AccordionItem Header="Laura Callahan" Content="Laura Callahan was born on Tuesday , 06 November 1990. Now lives at Edgeham Hollow Winchester Way, London,UK. Laura Callahan holds a position of Sales Coordinator in our WA department, (Seattle USA). Joined our company on Saturday , 01 May 2010"></AccordionItem>
+                        <AccordionItem Header="Albert Dodsworth" Content="Albert Dodsworth was born on Thursday , 19 October 1989. Now lives at 4726 - 11th Ave. N.E., Seattle,USA.Albert Dodsworth holds a position of Sales Representative in our WA department, (Seattle USA). Joined our company on Friday , 01 May 2009"></AccordionItem>
+                    </AccordionItems>
+                </SfAccordion>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Toolbar"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfToolbar Width="500px">
+                    <ToolbarItems>
+                        <ToolbarItem Type="ItemType.Button" Text="Cut"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Copy"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Paste"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Bold"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Underline"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Italic"></ToolbarItem>
+                        <ToolbarItem Type="ItemType.Button" Text="Color-Picker"></ToolbarItem>
+                    </ToolbarItems>
+                </SfToolbar>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Splitter"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfSplitter Height="200px" Width="80%">
+                    <SplitterPanes>
+                        <SplitterPane>
+                            <ContentTemplate>
+                                <div class="content">
+                                    <h3 class="h3">Grid</h3>
+                                    <span>The ASP.NET DataGrid control, or DataTable is a feature-rich control used to display data in a tabular format.</span>
+                                </div>
+                            </ContentTemplate>
+                        </SplitterPane>
+                        <SplitterPane>
+                            <ContentTemplate>
+                                <div class="content">
+                                    <h3 class="h3">Schedule</h3>
+                                    <span>The ASP.NET Scheduler, a.k.a. event calendar, facilitates almost all calendar features, thus allowing users to manage their time efficiently</span>
+                                </div>
+                            </ContentTemplate>
+                        </SplitterPane>
+                        <SplitterPane>
+                            <ContentTemplate>
+                                <div class="content">
+                                    <h3 class="h3">Chart</h3>
+                                    <span>ASP.NET charts, a well-crafted easy-to-use charting package, is used to add beautiful charts in web and mobile applications</span>
+                                </div>
+                            </ContentTemplate>
+                        </SplitterPane>
+                    </SplitterPanes>
+                </SfSplitter>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Dialog"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <SfButton OnClick="@OpenDialog" Content="Open Dialog"></SfButton>
+                <SfDialog Width="250px" Height="300px" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+                    <DialogTemplates>
+                        <Header> Dialog </Header>
+                        <Content> This is a Dialog with button and primary button </Content>
+                    </DialogTemplates>
+                    <DialogButtons>
+                        <DialogButton Content="OK" IsPrimary="true" OnClick="@CloseDialog" />
+                        <DialogButton Content="Cancel" OnClick="@CloseDialog" />
+                    </DialogButtons>
+                </SfDialog>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>
+<style>
+    .content {
+        padding: 10px;
+    }
+</style>
+@code{
+    private bool Expanded { get; set; } = true;
+    public int SelectedItem { get; set; }
+    private List<Order> Orders { get; set; }
+    private bool IsVisible { get; set; }
+    private void OpenDialog()
+    {
+        IsVisible = true;
+    }
+    private void CloseDialog()
+    {
+        IsVisible = false;
+    }
+    protected override void OnInitialized()
+    {
+        Orders = Enumerable.Range(1, 75).Select(x => new Order()
+        {
+            OrderID = 1000 + x,
+            CustomerID = (new string[] { "ALFKI", "ANANTR", "ANTON", "BLONP", "BOLID" })[new Random().Next(5)],
+            Freight = 2.1 * x,
+            OrderDate = DateTime.Now.AddDays(-x),
+        }).ToList();
+    }
+    public class Order
+    {
+        public int? OrderID { get; set; }
+        public string CustomerID { get; set; }
+        public DateTime? OrderDate { get; set; }
+        public double? Freight { get; set; }
+    }
+}

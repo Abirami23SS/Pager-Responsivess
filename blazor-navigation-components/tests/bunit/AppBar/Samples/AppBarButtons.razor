@@ -1,0 +1,18 @@
+@page "/AppBar/Samples/AppBarButtons"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.SplitButtons
+
+<SfAppBar>
+    <SfButton CssClass="e-inherit" IconCss="e-icons e-menu"></SfButton>
+    <SfDropDownButton CssClass="e-inherit" Content="Products">
+        <DropDownMenuItems>
+            <DropDownMenuItem Text="Developer"></DropDownMenuItem>
+            <DropDownMenuItem Text="Analytics"></DropDownMenuItem>
+            <DropDownMenuItem Text="Reporting"></DropDownMenuItem>
+            <DropDownMenuItem Text="E-Signature"></DropDownMenuItem>
+            <DropDownMenuItem Text="Help Desk"></DropDownMenuItem>
+        </DropDownMenuItems>
+    </SfDropDownButton>
+</SfAppBar>

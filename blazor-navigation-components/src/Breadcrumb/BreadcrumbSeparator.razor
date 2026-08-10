@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Components
+
+@namespace Syncfusion.Blazor.Navigations.Internal
+
+@inherits SfOwningComponentBase
+
+<li class="e-breadcrumb-separator">
+    @if (parent != null && parent.BreadcrumbTemplates != null && parent.BreadcrumbTemplates.SeparatorTemplate != null)
+    {
+        @parent.BreadcrumbTemplates.SeparatorTemplate((parent.Items[PreviousIndex], parent.Items[PreviousIndex + 1]))
+    }
+    else
+    {
+        <span>/</span>
+    }
+</li>
+
+@code {
+    [CascadingParameter]
+    private SfBreadcrumb parent { get; set; }
+
+    /// <exclude/>
+    /// <summary>
+    /// Gets or sets the index of Breadcrumb's item which is rendered before the separator.
+    /// </summary>
+    [Parameter]
+    public int PreviousIndex { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await BeforeItemCreation();
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task BeforeItemCreation()
+    {
+        BreadcrumbItemRenderingEventArgs eventArgs = new BreadcrumbItemRenderingEventArgs { Item = null };
+        if (parent != null && parent.ItemRendering.HasDelegate)
+        {
+            await parent.ItemRendering.InvokeAsync(eventArgs);
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            parent = null;
+        }
+    }
+
+}

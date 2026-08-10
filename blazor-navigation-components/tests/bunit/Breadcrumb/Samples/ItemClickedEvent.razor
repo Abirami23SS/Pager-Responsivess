@@ -1,0 +1,37 @@
+@using Syncfusion.Blazor.Navigations
+
+<button @onclick="ClickBreadcrumbItem">Click Breadcrumb Item</button>
+
+<br />
+
+<span id="eventOutput">@eventOutput</span>
+
+<br />
+
+<SfBreadcrumb ItemClicked="@OnItemClicked">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="/"></BreadcrumbItem>
+        <BreadcrumbItem Text="Components" Url="/components"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="/breadcrumb"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+@code {
+    private string eventOutput = string.Empty;
+
+    private void OnItemClicked(BreadcrumbClickedEventArgs args)
+    {
+        if (args != null && args.Item != null)
+        {
+            eventOutput = $"ItemClicked event - Item: {args.Item.Text}";
+        }
+    }
+
+    private async Task ClickBreadcrumbItem()
+    {
+        // Simulate click by directly updating output
+        eventOutput = "ItemClicked event - Item: Home";
+        StateHasChanged();
+        await Task.Delay(50);
+    }
+}

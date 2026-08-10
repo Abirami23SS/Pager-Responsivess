@@ -1,0 +1,172 @@
+@page "/Samples/Carousel/Template"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Inputs
+
+<SfDropDownList TValue="CarouselAnimationEffect" TItem="DropDownData" @bind-Value="@AnimationEffect" DataSource="@animationEffectData" FloatLabelType="FloatLabelType.Always" Placeholder="Animation Effect" Width="125px">
+    <DropDownListFieldSettings Text="Name" Value="Effect"></DropDownListFieldSettings>
+</SfDropDownList>
+
+<div class="carousel-sample">
+    <SfCarousel @ref="@CarouselRef" CssClass="templateCarousel" AnimationEffect="@AnimationEffect" ShowPlayButton="true">
+        <ChildContent>
+            <CarouselItem>
+                <Template>
+                    <figure class="img-container">
+                        <img src="https://ej2.syncfusion.com/demos/src/carousel/images/cardinal.png" alt="cardinal" style="height:100%;width:100%;" />
+                        <figcaption class="img-caption">Showing 1 of 5</figcaption>
+                    </figure>
+                </Template>
+            </CarouselItem>
+            <CarouselItem>
+                <Template>
+                    <figure class="img-container">
+                        <img src="https://ej2.syncfusion.com/demos/src/carousel/images/hunei.png" alt="hunei" style="height:100%;width:100%;" />
+                        <figcaption class="img-caption">Showing 2 of 5</figcaption>
+                    </figure>
+                </Template>
+            </CarouselItem>
+            <CarouselItem>
+                <Template>
+                    <figure class="img-container">
+                        <img src="https://ej2.syncfusion.com/demos/src/carousel/images/costa-rica.png" alt="costa-rica" style="height:100%;width:100%;" />
+                        <figcaption class="img-caption">Showing 3 of 5</figcaption>
+                    </figure>
+                </Template>
+            </CarouselItem>
+            <CarouselItem>
+                <Template>
+                    <figure class="img-container">
+                        <img src="https://ej2.syncfusion.com/demos/src/carousel/images/kaohsiung.png" alt="kaohsiung" style="height:100%;width:100%;" />
+                        <figcaption class="img-caption">Showing 4 of 5</figcaption>
+                    </figure>
+                </Template>
+            </CarouselItem>
+            <CarouselItem>
+                <Template>
+                    <figure class="img-container">
+                        <img src="https://ej2.syncfusion.com/demos/src/carousel/images/bee-eater.png" alt="bee-eater" style="height:100%;width:100%;" />
+                        <figcaption class="img-caption">Showing 5 of 5</figcaption>
+                    </figure>
+                </Template>
+            </CarouselItem>
+        </ChildContent>
+        <PreviousButtonTemplate>
+            <SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+                    <path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+                </svg>
+            </SfButton>
+        </PreviousButtonTemplate>
+        <NextButtonTemplate>
+            <SfButton CssClass="e-flat e-outline nav-btn" title="Next">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+                    <path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+                </svg>
+            </SfButton>
+        </NextButtonTemplate>
+        <PlayButtonTemplate>
+            <SfButton CssClass="e-flat e-round e-play-pause-icon" IconCss="@playPauseIcon" @onclick="@OnPlayClick" IsToggle="true"></SfButton>
+        </PlayButtonTemplate>
+        <IndicatorsTemplate>
+            <div class="indicator">
+                <img src="@("https://ej2.syncfusion.com/demos/src/carousel/images/" + indicatorImage[context.Index] + ".png")" alt="image" style="height:100%;width:100%;" />
+            </div>
+        </IndicatorsTemplate>
+    </SfCarousel>
+</div>
+@code{
+    public SfCarousel CarouselRef;
+    private List<string> indicatorImage = new List<string>() { "cardinal", "hunei", "costa-rica", "kaohsiung", "bee-eater" };
+    public CarouselAnimationEffect AnimationEffect { get; set; } = CarouselAnimationEffect.Slide;
+    private string playPauseIcon = "e-icons e-pause";
+    List<DropDownData> animationEffectData = new List<DropDownData>()
+    {
+        new DropDownData { Name = "Slide", Effect = CarouselAnimationEffect.Slide  },
+        new DropDownData { Name = "Fade", Effect = CarouselAnimationEffect.Fade },
+        new DropDownData { Name = "None", Effect = CarouselAnimationEffect.None }
+    };
+    private void OnPlayClick()
+    {
+        if (!CarouselRef.AutoPlay)
+        {
+            playPauseIcon = "e-icons e-pause";
+            CarouselRef.Play();
+        }
+        else
+        {
+            playPauseIcon = "e-icons e-play";
+            CarouselRef.Pause();
+        }
+    }
+    public class DropDownData
+    {
+        public string Name { get; set; }
+        public CarouselAnimationEffect Effect { get; set; }
+    }
+}
+<style>
+    .carousel-sample {
+        margin: 0 auto 2em;
+        max-width: 500px;
+        height: 350px;
+    }
+    .templateCarousel .e-carousel-items,
+    .templateCarousel .e-carousel-navigators {
+        height: calc(100% - 5rem);
+    }
+    .templateCarousel .e-carousel-navigators .e-previous,
+    .templateCarousel .e-carousel-navigators .e-next,
+    .templateCarousel .e-carousel-navigators .nav-btn {
+        padding: 0;
+    }
+    .templateCarousel .e-carousel-navigators .nav-btn:active,
+    .templateCarousel .e-carousel-navigators .nav-btn:focus,
+    .templateCarousel .e-carousel-navigators .nav-btn:hover {
+        background-color: transparent !important;
+        color: inherit;
+    }
+    .templateCarousel .e-carousel-navigators svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: square;
+        stroke-width: 8px;
+        height: 2rem;
+        vertical-align: middle;
+        width: 2rem;
+    }
+    .templateCarousel .e-carousel-navigators .e-previous svg {
+        transform: rotate(180deg);
+    }
+    .templateCarousel .e-carousel-indicators .e-indicator-bars .e-indicator-bar .indicator {
+        background-color: #ECECEC;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        height: 3.5rem;
+        margin: 0.5rem;
+        width: 5rem;
+    }
+    .templateCarousel .e-carousel-indicators .e-indicator-bars .e-indicator-bar.e-active .indicator {
+        background-color: #3C78EF;
+    }
+    .templateCarousel .e-carousel-items .e-carousel-item .img-container .img-caption {
+        color: rgba(255, 255, 255);
+        font-style: oblique;
+        font-size: 20px;
+        margin: 0;
+        left: 1.5rem;
+        position: absolute;
+        text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+        top: 1.5rem;
+    }
+    .templateCarousel .e-carousel-navigators .e-play-pause .e-btn:not(:disabled) {
+        border: 4px solid gray;
+    }
+    .templateCarousel .e-carousel-navigators .e-play-pause .e-btn:not(:disabled) .e-btn-icon {
+        color: gray;
+        font-size: 13px;
+        font-weight: bold;
+    }
+</style>

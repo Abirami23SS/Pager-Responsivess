@@ -1,0 +1,41 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/DisabledItemWithTemplate"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem Disabled="true">
+            <HeaderTemplate>
+                <div>Disabled Tab</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Disabled Tab"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Disabled content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <HeaderTemplate>
+                <div>Active Tab</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Active Tab"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Active content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem Disabled="false">
+            <HeaderTemplate>
+                <div>Another Tab</div>
+            </HeaderTemplate>
+            <ChildContent>
+                <TabHeader Text="Another Tab"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Another content</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

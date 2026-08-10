@@ -1,0 +1,189 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Navigations.Internal
+
+@inherits SfOwningComponentBase
+
+<li class=@itemClass @attributes="itemAttributes" aria-disabled=@(Item.Disabled ? "true": "false") @onclick="((MouseEventArgs e) => ItemClick(Item, e))">
+    @Item.ChildContent
+    @if (baseParent != null && baseParent.BreadcrumbTemplates != null && baseParent.BreadcrumbTemplates.ItemTemplate != null)
+    {
+        @baseParent.BreadcrumbTemplates.ItemTemplate(Item);
+    }
+    else
+    {
+        var attributes = (baseParent.Disabled || Item.Disabled) ? new Dictionary<string, object>() { { "tabindex", "-1" } } : null;
+        if (string.IsNullOrEmpty(Item.Text))
+        {
+            if (attributes == null)
+            {
+                attributes = new Dictionary<string, object>() { };
+            }
+            attributes.Add("aria-label", "home");
+        }
+        bool isIconLeft = Item.IconCss != null && (!itemClass.Contains("e-icon-right") && !baseParent.BreadcrumbClass.Contains("e-icon-right"));
+        bool isIconRight = Item.IconCss != null && (itemClass.Contains("e-icon-right") || baseParent.BreadcrumbClass.Contains("e-icon-right"));
+
+        RenderFragment ContentFragment =
+  @<text>
+            @if (isIconLeft || isIconRight)
+            {
+                if (isIconRight)
+                {
+                    @Item.Text
+                }
+                <span class="e-breadcrumb-icon @Item.IconCss"></span>
+                if (isIconLeft)
+                {
+                    @Item.Text
+                }
+            }
+            else
+            {
+                @Item.Text
+            }
+        </text>;
+
+        if (!baseParent.EnableActiveItemNavigation && isLastItem && !isLastItemInPopup)
+        {
+            <span class="e-breadcrumb-text">@ContentFragment</span>
+        }
+        else if (!baseParent.EnableNavigation)
+        {
+            <a class="e-breadcrumb-text" @attributes="attributes" href="@GetHref()" @onclick:preventDefault="true">
+                @ContentFragment
+            </a>
+        }
+        else
+        {
+            <a class="e-breadcrumb-text" @attributes="attributes" href="@Item.Url">
+                @ContentFragment
+            </a>
+        }
+    }
+</li>
+
+@code {
+    private string itemClass { get; set; }
+    private bool isLastItem { get; set; }
+    private bool isLastItemInPopup { get; set; }
+    private Dictionary<string, object> itemAttributes { get; set; }
+
+    [CascadingParameter]
+    private CreateBreadcrumbItems parent { get; set; }
+
+    [CascadingParameter]
+    private SfBreadcrumb baseParent { get; set; }
+
+    /// <exclude/>
+    /// <summary>
+    /// Gets or sets the item in the list of Breadcrumb items.
+    /// </summary>
+    [Parameter]
+    public BreadcrumbItem Item { get; set; }
+
+    /// <exclude/>
+    /// <summary>
+    /// Gets or sets the index of the item in the list of Breadcrumb items.
+    /// </summary>
+    [Parameter]
+    public int Index { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await BeforeItemCreation();
+        await base.OnParametersSetAsync();
+        itemClass = "e-breadcrumb-item" + (Item.Text == null ? " e-icon-item" : "");
+        isLastItem = (Index == ((baseParent._maxItems > 0 && baseParent.OverflowMode == BreadcrumbOverflowMode.Hidden) ? parent.endCount : parent.Items.Count - 1) || (baseParent.ActiveItem != null && (Item.Url == baseParent.ActiveItem || Item.Text == baseParent.ActiveItem)));
+        if (Item.itemHtmlAttributes != null)
+        {
+            if(Item.itemHtmlAttributes.ContainsKey("class"))
+            {
+                itemClass = SfBaseUtils.AddClass(itemClass, Item.itemHtmlAttributes["class"] as string);
+                Item.itemHtmlAttributes.Remove("class");
+            }
+            itemAttributes = new Dictionary<string, object>(Item.itemHtmlAttributes);
+        }
+        if (isLastItem)
+        {
+            itemAttributes.TryAdd("data-active-item", "");
+            itemAttributes.TryAdd("aria-current", "page");
+        }
+        if (Item.Disabled)
+        {
+            itemClass = SfBaseUtils.AddClass(itemClass, "e-disabled");
+        }
+        if (isLastItem && baseParent.OverflowMode == BreadcrumbOverflowMode.Menu && baseParent.PopupItems.Count > 0 && baseParent.PopupItems.Contains(Item))
+        {
+            isLastItemInPopup = true;
+        }
+    }
+
+    private string GetHref()
+    {
+        return baseParent.EnableNavigation ? Item.Url : "javascript:void(0);";
+    }
+
+    private async Task BeforeItemCreation()
+    {
+        BreadcrumbItemRenderingEventArgs eventArgs = new BreadcrumbItemRenderingEventArgs { Item = Item };
+        if (baseParent != null && baseParent.ItemRendering.HasDelegate)
+        {
+            await baseParent.ItemRendering.InvokeAsync(eventArgs);
+            if (eventArgs.Cancel)
+            {
+                parent.Items.Remove(Item);
+                parent.UpdateStateHasChanged();
+            }
+            baseParent._shouldRender = false;
+        }
+    }
+
+    private async Task ItemClick(BreadcrumbItem item, MouseEventArgs e)
+    {
+        if (baseParent.ItemClicked.HasDelegate)
+        {
+            await baseParent.ItemClicked.InvokeAsync(new BreadcrumbClickedEventArgs { Item = item });
+        }
+        if (baseParent.OverflowMode == BreadcrumbOverflowMode.Hidden && parent.endCount != 0)
+        {
+            int index = baseParent.Items.IndexOf(item);
+            if (parent.startCount > 1)
+            {
+                parent.startCount -= (parent.endCount - index);
+            }
+            parent.endCount = index;
+        }
+        if (baseParent.OverflowMode == BreadcrumbOverflowMode.Menu)
+        {
+            int index = baseParent.Items.IndexOf(item);
+            if (index <= parent.startCount)
+            {
+                parent.startCount = index;
+            }
+            parent.endCount = index;
+            if (parent.renderPopup)
+            {
+                parent.renderPopup = false;
+            }
+            baseParent.PopupItems.Clear();
+        }
+        if (baseParent.EnablePersistence)
+        {
+            await baseParent.InvokeMethod("window.localStorage.setItem", new object[] { baseParent.IdValue, item.Url });
+        }
+        await baseParent.UpdateActiveItem(item.Url == null ? item.Text : item.Url);
+        parent.UpdateStateHasChanged();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            parent = null;
+            baseParent = null;
+            Item = null;
+        }
+    }
+}

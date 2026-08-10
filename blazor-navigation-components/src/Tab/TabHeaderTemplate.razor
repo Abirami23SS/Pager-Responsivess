@@ -1,0 +1,47 @@
+﻿@namespace Syncfusion.Blazor.Navigations.Internal
+@inject ISyncfusionStringLocalizer Localizer
+
+<div class="e-tab-wrap" tabindex= "@Item.TabIndex" data-tabindex="@Item.TabIndex" role="tab" aria-selected="false" aria-disabled=@(Item.Disabled ? "true" : "false") >
+    <div class="e-text-wrap">
+        @if (Item.Header != null && !string.IsNullOrEmpty(Item.Header.IconCss) && (Item.Header.IconPosition == "left" || Item.Header.IconPosition == "top"))
+        {
+            <span class="e-icons e-tab-icon e-icon-@Item.Header.IconPosition @Item.Header.IconCss"></span>
+        }
+        @if ((Item.Header != null && !string.IsNullOrEmpty(Item.Header.Text)) || Item.HeaderTemplate != null)
+        {
+            <div class="e-tab-text" role="presentation">
+                @if (Item.HeaderTemplate != null)
+                {
+                    @Item.HeaderTemplate
+                }
+                else
+                {
+                    @Item.Header.Text
+                }
+            </div>
+        }
+        @if (Item.Header != null && !string.IsNullOrEmpty(Item.Header.IconCss) && (Item.Header.IconPosition == "right" || Item.Header.IconPosition == "bottom"))
+        {
+            <span class="e-icons e-tab-icon e-icon-@Item.Header.IconPosition @Item.Header.IconCss"></span>
+        }
+        <span class="e-icons e-close-icon" title="@Localizer.GetText("Tab_CloseButtonTitle")" @onclick="OnCloseIconClick" @onclick:preventDefault="true" @onclick:stopPropagation="true"></span>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    private SfTab parent { get; set; }
+
+    [Parameter]
+    public TabItem Item { get; set; }
+
+    private async Task OnCloseIconClick()
+    {
+        int index = parent.Items.IndexOf(Item);
+        if (index >= 0)
+        {
+            parent.IsPreventFocus = false;
+            await parent.RemoveTab(index);
+        }
+    }
+}

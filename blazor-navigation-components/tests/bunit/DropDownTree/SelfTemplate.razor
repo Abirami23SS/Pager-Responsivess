@@ -1,0 +1,205 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Data
+
+@inherits TestComponentBase
+@namespace Syncfusion.Blazor.Tests.DropDownTree
+
+<SfFixture @ref="fixture" Description="Template for Self DDT component" Test="TemplateRendering">
+    <ComponentUnderTest>
+        <SfDropDownTree TItem="EmployeeData" TValue="string" Placeholder="Select an employee" Width="500px">
+            <ChildContent>
+                <DropDownTreeField TItem="EmployeeData" DataSource="Data" ID="Id" Text="Name" HasChildren="HasChild" ParentID="PId"></DropDownTreeField>
+            </ChildContent>
+            <HeaderTemplate>
+                <div class="head"> Employee List </div>
+            </HeaderTemplate>
+            <ItemTemplate>
+                <div>
+                    <span class="ename">@((context as EmployeeData).Name) - </span>
+                    <span class="ejob" style="opacity: .60">@((context as EmployeeData).Job)</span>
+                </div>
+            </ItemTemplate>
+            <FooterTemplate>
+                <span class='foot'> Total number of employees:  @Data?.Count.ToString()</span>
+            </FooterTemplate>
+        </SfDropDownTree>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" Description="No Record Template for Self DDT component" Test="NoRecordTemplate">
+    <ComponentUnderTest>
+        <SfDropDownTree TItem="EmployeeData" TValue="string" Placeholder="Select an employee" Width="500px" CssClass="custom">
+            <ChildContent>
+                <DropDownTreeField TItem="EmployeeData" DataSource="NoData" ID="Id" Text="Name" HasChildren="HasChild" ParentID="PId"></DropDownTreeField>
+            </ChildContent>
+            <NoRecordsTemplate>
+                <span> NO DATA AVAILABLE</span>
+            </NoRecordsTemplate>
+        </SfDropDownTree>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" Description="Action Failure Template for Self DDT component" Test="ActionFailure">
+    <ComponentUnderTest>
+        <SfDropDownTree TValue="int?" TItem="ProductCategory" ID="remote" Placeholder="Select a name" Width="500px" OnActionFailure="Failure">
+    <ChildContent>
+        <DropDownTreeField TItem="ProductCategory" Query="@TreeQuery" ID="Id" ParentID="ParentId" Text="Name" HasChildren="HasChild" Expanded="Expanded">
+            <SfDataManager Url="https://blazor.syncfusion.com/services/production/api/treevie" CrossDomain="true" Adaptor="Syncfusion.Blazor.Adaptors.WebApiAdaptor"></SfDataManager>
+        </DropDownTreeField>
+    </ChildContent>
+    <ActionFailureTemplate>
+        <span>A request to fetch data is failed.</span>
+    </ActionFailureTemplate>
+</SfDropDownTree>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" Description="Action Failure without Template for Self DDT component" Test="ActionFailureWithoutTemplate">
+    <ComponentUnderTest>
+        <SfDropDownTree TValue="int?" TItem="ProductCategory" ID="remote" Placeholder="Select a name" Width="500px">
+                <DropDownTreeField TItem="ProductCategory" Query="@TreeQuery" ID="Id" ParentID="ParentId" Text="Name" HasChildren="HasChild" Expanded="Expanded">
+                    <SfDataManager Url="https://blazor.syncfusion.com/services/production/api/treevie" CrossDomain="true" Adaptor="Syncfusion.Blazor.Adaptors.WebApiAdaptor"></SfDataManager>
+                </DropDownTreeField>
+        </SfDropDownTree>
+    </ComponentUnderTest>
+</SfFixture>
+
+<SfFixture @ref="fixture" Description="Selected Item Template Template for Self DDT component" Test="SelectedTemplate">
+    <ComponentUnderTest>
+        <SfDropDownTree TItem="EmployeeData" TValue="string" Placeholder="Select an employee" Width="500px" Value="selecteditem" ShowCheckBox="true" Mode="DdtVisualMode.Custom">
+            <ChildContent>
+                <DropDownTreeField TItem="EmployeeData" DataSource="Data" ID="Id" Text="Name" HasChildren="HasChild" ParentID="PId" Selected="Selected" IsChecked="IsChecked"></DropDownTreeField>
+
+            </ChildContent>
+            <SelectedItemTemplate>
+
+                @if (context != null && context.Value != null && context.Value.Count > 0)
+                {
+                    string content = $"{context.Value.Count} item{(context.Value.Count == 1 ? "" : "s")} selected {context.Text}";
+                    @content
+                }
+            </SelectedItemTemplate>
+        </SfDropDownTree>
+    </ComponentUnderTest>
+</SfFixture>
+
+@code {
+    int i = 0;
+    List<EmployeeData> Data = new List<EmployeeData>
+    {
+        new EmployeeData() { Id = "1", Name = "Steven Buchanan", Job = "General Manager", HasChild = true, Expanded = true },
+        new EmployeeData() { Id = "2", PId = "1", Name = "Laura Callahan", Job = "Product Manager", HasChild = true },
+        new EmployeeData() { Id = "3", PId = "2", Name = "Andrew Fuller", Job = "Team Lead", HasChild = true },
+        new EmployeeData() { Id = "4", PId = "3", Name = "Anne Dodsworth", Job = "Developer" },
+        new EmployeeData() { Id = "10", PId = "3", Name = "Lilly", Job = "Developer" },
+        new EmployeeData() { Id = "5", PId = "1", Name = "Nancy Davolio", Job = "Product Manager", HasChild = true },
+        new EmployeeData() { Id = "6", PId = "5", Name = "Michael Suyama", Job = "Team Lead", HasChild = true },
+        new EmployeeData() { Id = "7", PId = "6", Name = "Robert King", Job = "Developer" },
+        new EmployeeData() { Id = "11", PId = "6", Name = "Mary", Job = "Developer" },
+        new EmployeeData() { Id = "9", PId = "1", Name = "Janet Leverling", Job = "HR"}
+    };
+    List<string> selecteditem = new() { "1" };
+    List<EmployeeData> NoData = new();
+    Query TreeQuery = new();
+    class ProductCategory
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public int? ParentId { get; set; }
+        public bool HasChild { get; set; }
+        public bool Expanded { get; set; }
+    }
+    class EmployeeData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Job { get; set; }
+        public bool HasChild { get; set; }
+        public bool Expanded { get; set; }
+        public string PId { get; set; }
+    }
+    SfFixture fixture { get; set; }
+
+    void TemplateRendering(Fixture fixture)
+    {
+        var dropdownTree = fixture.GetComponentUnderTest<SfDropDownTree<string, EmployeeData>>();
+        var containerEle = dropdownTree.Find("input").ParentElement;
+        containerEle.MouseDown();
+        var popupEle = dropdownTree.Find(".e-popup");
+        var jobCollection = popupEle.QuerySelectorAll(".e-list-item .ejob");
+        Assert.Equal(Data[0].Job, jobCollection[0].TextContent);
+        Assert.Contains(Data.Count.ToString(), popupEle.QuerySelector(".foot").TextContent);
+        Assert.Contains("Employee List", popupEle.QuerySelector(".head").TextContent);
+    }
+
+    void NoRecordTemplate(Fixture fixture)
+    {
+        var dropdownTree = fixture.GetComponentUnderTest<SfDropDownTree<string, EmployeeData>>();
+        var containerEle = dropdownTree.Find("input").ParentElement;
+        containerEle.MouseDown();
+        var popupEle = dropdownTree.Find(".e-popup");
+        Assert.Contains("NO DATA AVAILABLE", popupEle.QuerySelector(".e-ddt-nodata").TextContent);
+        var liCollection = popupEle.QuerySelectorAll(".e-list-item");
+        Assert.Equal(0, liCollection.Length);
+    }
+
+    void Failure(object args)
+    {
+        i++;
+        Assert.Equal(1, i);
+    }
+    void ActionFailure(Fixture fixture)
+    {
+        var dropdownTree = fixture.GetComponentUnderTest<SfDropDownTree<int?, ProductCategory>>();
+        var containerEle = dropdownTree.Find("input").ParentElement;
+        containerEle.MouseDown();
+        var popupEle = dropdownTree.Find(".e-popup");
+        Assert.Contains("A request to fetch data is failed.", popupEle.QuerySelector(".e-ddt-nodata").TextContent);
+        var liCollection = popupEle.QuerySelectorAll(".e-list-item");
+        Assert.Equal(0, liCollection.Length);
+    }
+
+    void ActionFailureWithoutTemplate(Fixture fixture)
+    {
+        var dropdownTree = fixture.GetComponentUnderTest<SfDropDownTree<int?, ProductCategory>>();
+        var containerEle = dropdownTree.Find("input").ParentElement;
+        containerEle.MouseDown();
+        var popupEle = dropdownTree.Find(".e-popup");
+        Assert.Contains("The Request Failed", popupEle.QuerySelector(".e-ddt-nodata").TextContent);
+        var liCollection = popupEle.QuerySelectorAll(".e-list-item");
+        Assert.Equal(0, liCollection.Length);
+    }
+
+    void SelectedTemplate(Fixture fixture)
+    {
+        var dropdownTree = fixture.GetComponentUnderTest<SfDropDownTree<string, EmployeeData>>();
+        var containerEle = dropdownTree.Find("input").ParentElement;
+        Assert.Contains("1 item selected Steven Buchanan", containerEle.QuerySelector(".e-chips-wrapper").TextContent);
+        dropdownTree.SetParametersAndRender(("Value", new List<string>() { "1","2" }));
+        containerEle = dropdownTree.Find("input").ParentElement;
+        Assert.Contains("2 items selected Steven Buchanan, Laura Callahan", containerEle.QuerySelector(".e-chips-wrapper").TextContent);
+    }
+}
+<style>
+    .custom .head {
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0 20px;
+        font-weight: bold;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .custom .foot {
+        line-height: 40px;
+        font-size: 14px;
+        margin: 0 auto;
+        padding: 0 20px;
+        font-weight: bold;
+    }
+
+    .custom .e-ddt-footer {
+        border-top: 1px solid #e0e0e0;
+    }
+</style>

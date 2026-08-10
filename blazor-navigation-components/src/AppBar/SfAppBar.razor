@@ -1,0 +1,14 @@
+﻿@namespace Syncfusion.Blazor.Navigations
+
+@inherits SfBaseComponent;
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<header class="@AppBarClass @CssClass" @attributes="htmlAttributes">
+    @ChildContent
+</header>

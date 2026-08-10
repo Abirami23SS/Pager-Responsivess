@@ -1,0 +1,165 @@
+﻿@using Syncfusion.Blazor.Internal
+@using Syncfusion.Blazor.Inputs.Internal
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Buttons.Internal;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Data;
+@using Syncfusion.Blazor.DropDowns.Internal;
+@using Syncfusion.Blazor.Spinner;
+@typeparam TValue
+@typeparam TItem
+@namespace Syncfusion.Blazor.Navigations
+@inherits SfBaseComponent
+@inject ISyncfusionStringLocalizer Localizer
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
+
+@if (!isDestroyed)
+{
+    <SfInputBase @ref="InputBaseObj" ShowClearButton="ShowClearButton" ID="@ID" Placeholder="@Placeholder" FloatLabelType="FloatLabelType" CssClass="@CssClass" Buttons="@(new List<string>(){DROPDOWNICON})" MouseContainerHandler="OnContainerClick" ContainerClass="@(CONTAINERCLASS + (ValueTemplate != null && Value != null && Value.Any() ? " e-show-chip" : ""))" Width="@Width" RootClass="@ROOTCLASS"
+                 Readonly="true" TabIndex="-1" ContainerAttr="GetContainerAttributes()"InputAttributes="inputAttributes" Autocomplete="Off" BindClearBtnEvents="@(()=>ClearAll())" EnablePersistence="EnablePersistence" HtmlAttributes="HtmlAttributes" EnableRtl="@SyncfusionService.options.EnableRtl" Enabled="!Disabled">
+        @if (AllowMultiSelection || ShowCheckBox)
+        {
+            <span class="e-chips-wrapper e-icon-hide">
+                <span class="e-chips-collection">
+                    @if (Mode != DdtVisualMode.Custom)
+                    {
+                        @foreach (ChipItems item in chipItems)
+                        {
+                            <span class="e-chips" data-value="@item.Value">
+                                <span class="e-chipcontent">
+                                    @item.Text
+                                </span>
+                                <span class="e-chips-close e-icons" @onmousedown="@(()=>RemoveChip(item.Value))"></span>
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="e-chips">
+                            <span class="e-chipcontent">
+                                @if (SelectedItemTemplate != null)
+                                {
+                                    @SelectedItemTemplate(new Navigations.SelectedItemTemplate<TValue>() { Value = Value, Text = Text })
+                                }
+                            </span>
+                        </span>
+                    }
+                </span>
+            </span>
+            @if (!TextWrap)
+            {
+                <span class="@OVERFLOWCLASS"></span>
+            }
+        }
+        @if (ValueTemplate != null && DataSource != null)
+        {
+            <span class="e-overflow e-show-text e-input-value e-icon-hide">
+                @{
+                    List<TItem> DataValueList = GetValueData();
+                    foreach (TItem dataValue in DataValueList)
+                    {
+                        @ValueTemplate(dataValue)
+                    }
+                }
+            </span>
+        }
+    </SfInputBase>
+
+    @if (showPopupTree)
+    {
+        <div class="@popupClass @CssClass" id="@(ID +"_options_"+ uniqueID)" role="region">
+            @if (AllowFiltering)
+            {
+                <div class="e-filter-wrap" id="@(ID + "_filter_wrap_"+ uniqueID)">
+                    <SfTextBox ID="@(ID+"_filter_"+ uniqueID)" ShowClearButton="true" Autocomplete="AutoComplete.Off" Placeholder="@FilterBarPlaceholder" aria-label="@(string.IsNullOrWhiteSpace(FilterBarPlaceholder) ? "Filter items" : FilterBarPlaceholder)" Input="FilterChangeHandler" Value="@filterValue" Focus="@(()=> internalExpandedNodes = expandedNodes = TreeObj?.ExpandedNodes)"></SfTextBox>
+                </div>
+            }
+            @if (HeaderTemplate != null)
+            {
+                <div class="e-ddt-header">
+                    @HeaderTemplate
+                </div>
+            }
+            @if (ShowCheckBox && ShowSelectAll && !GetPopupContentClass().Contains(NODATA))
+            {
+                bool isSelectAll = checkedNodes == null || overAllLiItems != checkedNodes.Length;
+                string selectContent = isSelectAll ? (Localizer.GetText(SELECT_ALL_kEY)) : (Localizer.GetText(UN_SELECT_ALL_kEY));
+                <div class="e-selectall-parent" tabindex="0" @onclick="OnSelectAllClick" @onclick:preventDefault>
+                    @SfCheckBox.CreateCheckBox(new CSSCheckBox() { Checked = isSelectAllChecked, Label = selectContent })
+                </div>
+            }
+            <div @ref="popupContentElement" class="@GetPopupContentClass()">
+                @if ((DataSource != null && !DataSource.Any() && DropDownTreeFields?.DataManager == null) || actionFailure || (filteredData != null && filteredData.Count == 0))
+                {
+                    <div class="e-ddt-nodata">
+                        @if (actionFailure)
+                        {
+                            if (ActionFailureTemplate != null)
+                            {
+                                @ActionFailureTemplate
+                            }
+                            else
+                            {
+                                @Localizer.GetText(THE_REQUEST_FAILED_KEY)
+                            }
+                        }
+                        else
+                        {
+                            if (NoRecordsTemplate != null)
+                            {
+                                @NoRecordsTemplate
+                            }
+                            else
+                            {
+                                @Localizer.GetText(NO_RECORD_KEY)
+                            }
+                        }
+                    </div>
+                }
+
+                <SfTreeView TValue="TItem" @ref="TreeObj" ID="@(ID + "_tree_"+ uniqueID)" CssClass="e-ddt" ShowCheckBox="ShowCheckBox" AllowMultiSelection="AllowMultiSelection" AutoCheck="AutoUpdateCheckState" LoadOnDemand="LoadOnDemand" ExpandOn="ExpandOn" SortOrder="SortOrder" @bind-SelectedNodes="@selectedNodes" @bind-CheckedNodes="@checkedNodes" ExpandedNodes="expandedNodes" EnablePersistence="EnablePersistence">
+                    @if (ItemTemplate != null)
+                    {
+                        <TreeViewTemplates TValue="TItem">
+                            <NodeTemplate>
+                                @ItemTemplate(context)
+                            </NodeTemplate>
+                        </TreeViewTemplates>
+                    }
+                    <TreeViewFieldsSettings TValue="TItem" DataSource="DataSource" Id="@DropDownTreeFields.ID" Text="@DropDownTreeFields.Text" Expanded="@DropDownTreeFields.Expanded" Child="@DropDownTreeFields.Child"
+                                            HasChildren="@DropDownTreeFields.HasChildren" HtmlAttributes="@DropDownTreeFields.HtmlAttributes" IconCss="@DropDownTreeFields.IconCss" ImageUrl="@DropDownTreeFields.ImageUrl"
+                                            ParentID="@DropDownTreeFields.ParentID" IsChecked="@DropDownTreeFields.IsChecked" Query="@DropDownTreeFields.Query" Selected="@DropDownTreeFields.Selected" Tooltip="@DropDownTreeFields.Tooltip"
+                                            TableName="@DropDownTreeFields.TableName">
+                    </TreeViewFieldsSettings>
+                    <TreeViewEventRegisterAsync Name="NodeChecking" Handler="BeforeCheck" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeSelecting" Handler="OnBeforeSelect" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeSelected" Handler="OnNodeSelected" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeChecked" Handler="OnNodeChecked" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeClicked" Handler="OnNodeClicked" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeExpanded" Handler="UpdateExpandedNodes" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeExpanding" Handler="OnNodeExpanding" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeCollapsing" Handler="OnNodeExpanding" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="OnKeyPress" Handler="OnKeyPress" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="NodeCollapsed" Handler="RefreshPopup" TValue="TItem"></TreeViewEventRegisterAsync>
+                    <TreeViewEventRegisterAsync Name="DataSourceChanged" Handler="OnDataSourceChanged" TValue="TItem"></TreeViewEventRegisterAsync>
+                </SfTreeView>
+            </div>
+            @if (FooterTemplate != null)
+            {
+                <div class="e-ddt-footer">
+                    @FooterTemplate
+                </div>
+            }
+        </div>
+    }
+}

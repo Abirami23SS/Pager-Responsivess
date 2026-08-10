@@ -1,0 +1,73 @@
+@using Syncfusion.Blazor.Navigations
+@using Microsoft.AspNetCore.Components.Web
+@namespace Syncfusion.Blazor.Tests.Treeview
+
+<button @onclick="OnClickHandler">Trigger KeyPress Event</button>
+<br/>
+<span id="keypress-event">@eventOutput</span>
+
+<SfTreeView TValue="TreeData" @ref="treeview">
+    <TreeViewEvents TValue="TreeData" OnKeyPress="@OnNodeKeyPress"></TreeViewEvents>
+    <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+</SfTreeView>
+
+@code {
+    string eventOutput = string.Empty;
+    SfTreeView<TreeData> treeview;
+    
+    List<TreeData> TreeDataSource = new List<TreeData> {
+        new TreeData()
+        {
+            Code = "NA",
+            Name = "North America",
+            Expanded = true,
+            Child = new List<TreeData>()
+            {
+                new TreeData { Code = "USA", Name = "United States of America", Selected = true },
+                new TreeData { Code = "CUB", Name = "Cuba" },
+                new TreeData { Code = "MEX", Name = "Mexico" },
+            }
+        },
+        new TreeData()
+        {
+            Code = "AF",
+            Name = "Africa",
+            Child = new List<TreeData>()
+            {
+                new TreeData { Code = "NGA", Name = "Nygeria" },
+                new TreeData { Code = "EGY", Name = "Egypt" },
+                new TreeData { Code = "ZAF", Name = "South Africa" },
+            },
+        }
+    };
+
+    private async Task OnClickHandler()
+    {
+        await Task.Delay(50);
+    }
+
+    private void OnNodeKeyPress(NodeKeyPressEventArgs args)
+    {
+        // Access all NodeKeyPressEventArgs getter properties to ensure coverage
+        if (args != null && args.NodeData != null)
+        {
+            eventOutput = $"OnKeyPress event: Cancel={args.Cancel}, " +
+                         $"Event={args.Event}, " +
+                         $"NodeData={args.NodeData}, " +
+                         $"Name={args.Name}, " +
+                         $"Action={args.Action}, " +
+                         $"Key={args.Key}";
+        }
+    }
+
+    public class TreeData
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public bool Expanded { get; set; }
+        public bool Expand { get; set; }
+        public bool Select { get; set; }
+        public bool Selected { get; set; }
+        public List<TreeData> Child;
+    }
+}

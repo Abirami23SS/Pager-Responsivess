@@ -1,0 +1,66 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="sample">
+    <div>
+        <SfBreadcrumb>
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="@homeIcon" Url="@homeUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Components" Url="@compUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Navigations" Url="@navUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Breadcrumb" Url="@breadUrl"></BreadcrumbItem>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+    <div>
+        <SfBreadcrumb>
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="@homeIcon" Url="@homeUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Components" Url="@compUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Navigations" Url="@navUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Breadcrumb" Url="@breadUrl"></BreadcrumbItem>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+    <div>
+        <SfBreadcrumb>
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="@homeIcon" Url="@homeUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Components" Url="@compUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Navigations" Url="@navUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Breadcrumb" Url="@breadUrl"></BreadcrumbItem>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+    <div>
+        <SfBreadcrumb>
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="@homeIcon"></BreadcrumbItem>
+                <BreadcrumbItem IconCss="@folderIcon"></BreadcrumbItem>
+                <BreadcrumbItem IconCss="@fileIcon"></BreadcrumbItem>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+    <div>
+        <SfBreadcrumb>
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="@homeIcon" Url="@homeUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Components" Url="@compUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Navigations" Url="@navUrl"></BreadcrumbItem>
+                <BreadcrumbItem Text="Breadcrumb" Url="@breadUrl"></BreadcrumbItem>
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+</div>
+
+@code {
+    private string homeIcon = "e-icons e-home";
+    private string folderIcon = "e-icons e-folder-open";
+    private string fileIcon = "e-icons e-file-new";
+
+    private string homeUrl = "https://blazor.syncfusion.com/demos/";
+    private string compUrl = "https://blazor.syncfusion.com/demos/datagrid/overview";
+    private string navUrl = "https://blazor.syncfusion.com/demos/menu-bar/default-functionalities";
+    private string breadUrl = "./breadcrumb/default-functionalities";
+}

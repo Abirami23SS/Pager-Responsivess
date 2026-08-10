@@ -1,0 +1,19 @@
+@namespace Syncfusion.Blazor.Tests.Toolbar.Samples.EventRegisterCoverage
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Navigations.Internal
+
+<SfToolbar>
+    <ToolbarEvents Clicked="@OnClicked"></ToolbarEvents>
+    <ToolbarItems>
+        <ToolbarItem Text="Cut"></ToolbarItem>
+        <ToolbarItem Text="Copy"></ToolbarItem>
+        <ToolbarItem Text="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+    private void OnClicked(ClickEventArgs args)
+    {
+        // Event handler for testing EventRegisterAsync
+    }
+}

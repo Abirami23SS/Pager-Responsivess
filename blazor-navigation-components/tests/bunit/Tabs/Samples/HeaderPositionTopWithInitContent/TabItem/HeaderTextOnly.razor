@@ -1,0 +1,24 @@
+@page "/HeaderPositionTopWithInitContent/TabItem/HeaderTextOnly"
+
+@using Syncfusion.Blazor.Navigations
+
+<SfTab LoadOn="ContentLoad.Init">
+    <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Twitter"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Twitter content</div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Facebook"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <div>Facebook content</div>
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

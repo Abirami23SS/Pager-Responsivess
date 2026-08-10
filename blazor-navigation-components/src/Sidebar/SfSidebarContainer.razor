@@ -1,0 +1,9 @@
+﻿@using Syncfusion.Blazor.Internal;
+@using Microsoft.AspNetCore.Components.Web;
+@namespace Syncfusion.Blazor.Navigations
+
+<div class="e-sidebarcontainer" tabindex="0" style="--sidebar-width: @Width">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+</div>

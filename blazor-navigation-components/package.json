@@ -1,0 +1,60 @@
+{
+	"name": "syncfusion-blazor-navigation",
+	"version": "17.1.5",
+	"description": "Syncfusion Blazor Navigation Components",
+	"author": "Syncfusion Inc.",
+	"license": "SEE LICENSE IN license",
+	"keywords": [
+		"blazor",
+		"blazor-navigaiton",
+		"navigation-components",
+		"syncfusion"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://gitea.syncfusion.com/individual_repo/blazor-navigaiton-components.git"
+	},
+	"config": {
+		"ghooks": {
+			"build": "gulp source-build"
+		}
+	},
+	"scripts": {
+		"build": "gulp bundle && gulp update-project-config && gulp individual-bundle && gulp source-build",
+		"gitleaks-test": "gulp code-leaks-analysis",
+		"generate-nuget": "gulp generate-nuget",
+		"publish": "gulp publish-nuget",
+		"coverage-analysis": "gulp coverage-local-analysis",
+		"code-analysis": "gulp show-codeanalysis-warnings",
+		"remove-markup-eval": "gulp prevent-xss"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.12.9",
+		"@babel/plugin-transform-runtime": "^7.12.1",
+		"@babel/preset-env": "^7.12.7",
+		"@rollup/plugin-commonjs": "^22.0.2",
+		"@rollup/plugin-node-resolve": "^13.3.0",
+		"babel-loader": "^8.2.1",
+		"ghooks": "^2.0.4",
+		"gulp": "^4.0.2",
+		"del": "^6.1.1",
+		"gulp-dotnet-cli": "^1.0.2",
+		"jsonpscriptsrc-webpack-plugin": "^1.0.0",
+		"require-dir": "^0.3.2",
+		"rollup": "^2.79.1",
+		"shelljs": "^0.8.5",
+		"typescript": "4.9.5",
+		"webpack": "^4.35.3",
+		"webpack-merge": "4.2.2",
+		"webpack-node-externals": "^1.7.2",
+		"webpack-stream": "^5.2.1",
+		"@syncfusion/ej2-base": "*",
+		"@syncfusion/ej2-popups": "*",
+		"@syncfusion/ej2-staging": "*"
+	},
+	"overrides": {
+		"glob-parent": "6.0.2",
+		"semver": "7.6.0",
+		"@types/node": "25.9.3"
+	}
+} 

@@ -1,0 +1,85 @@
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+<div id="sidebar-container-test">
+    <SfSidebarContainer @ref="sidebarContainer">
+        <SfSidebar @ref="sidebar" Width="300px">
+            <SfButton>Test Button</SfButton>
+        </SfSidebar>
+        <div class="e-content">
+            <p>@containerWidth</p>
+        </div>
+    </SfSidebarContainer>
+</div>
+
+@code{
+    private SfSidebarContainer sidebarContainer;
+    private SfSidebar sidebar;
+    private string containerWidth = "Initial";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && sidebarContainer != null)
+        {
+            // Access the Width property via reflection (getter coverage)
+            var widthProperty = typeof(SfSidebarContainer).GetProperty("Width", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            
+            if (widthProperty != null)
+            {
+                var currentWidth = widthProperty.GetValue(sidebarContainer);
+                containerWidth = currentWidth?.ToString() ?? "null";
+            }
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async Task TestSetWidthMethod()
+    {
+        // Test SetWidth with new width value (exercises: Width != sidebarWidth branch, Width = assignment, StateHasChanged)
+        var setWidthMethod = typeof(SfSidebarContainer).GetMethod("SetWidth", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (setWidthMethod != null)
+        {
+            setWidthMethod.Invoke(sidebarContainer, new object[] { "400px" });
+            
+            // Access the Width property to verify it was set
+            var widthProperty = typeof(SfSidebarContainer).GetProperty("Width", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            
+            if (widthProperty != null)
+            {
+                var newWidth = widthProperty.GetValue(sidebarContainer);
+                containerWidth = newWidth?.ToString() ?? "null";
+            }
+        }
+    }
+
+    public async Task TestSetWidthSameValue()
+    {
+        // Test SetWidth with same width value (exercises the condition: Width == sidebarWidth)
+        var setWidthMethod = typeof(SfSidebarContainer).GetMethod("SetWidth", 
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        
+        if (setWidthMethod != null)
+        {
+            // Get current width
+            var widthProperty = typeof(SfSidebarContainer).GetProperty("Width", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            
+            if (widthProperty != null)
+            {
+                var currentWidth = widthProperty.GetValue(sidebarContainer)?.ToString();
+                
+                // Call SetWidth with the same value
+                if (!string.IsNullOrEmpty(currentWidth))
+                {
+                    setWidthMethod.Invoke(sidebarContainer, new object[] { currentWidth });
+                    containerWidth = "same value called";
+                }
+            }
+        }
+    }
+}

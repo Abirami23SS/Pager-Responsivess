@@ -1,0 +1,20 @@
+@page "/AppBar/Samples/Menu"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+<SfAppBar>
+    <SfButton CssClass="e-inherit" IconCss="e-icons e-menu"></SfButton>
+    <SfMenu CssClass="e-inherit" TValue="MenuItem">
+        <MenuItems>
+            <MenuItem Text="Company">
+                <MenuItems>
+                    <MenuItem Text="About Us"></MenuItem>
+                    <MenuItem Text="Customers"></MenuItem>
+                    <MenuItem Text="Blog"></MenuItem>
+                    <MenuItem Text="Careers"></MenuItem>
+                </MenuItems>
+            </MenuItem>
+        </MenuItems>
+    </SfMenu>
+</SfAppBar>

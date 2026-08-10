@@ -1,0 +1,52 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfMenu TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text = "File" IconCss = "em-icons e-file">
+            <MenuItems>
+                <MenuItem Text= "Open" IconCss= "em-icons e-open"></MenuItem>
+                <MenuItem Text= "Save" IconCss= "em-icons e-save"></MenuItem>
+                <MenuItem Separator="true"></MenuItem>
+                <MenuItem Text= "Exit"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text = "Edit" IconCss = "em-icons e-edit">
+            <MenuItems>
+                <MenuItem Text= "Cut" IconCss= "em-icons e-cut"></MenuItem>
+                <MenuItem Text= "Copy" IconCss= "em-icons e-copy"></MenuItem>
+                <MenuItem Text= "Paste" IconCss= "em-icons e-paste"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text = "View">
+            <MenuItems>
+                <MenuItem Text= "Toolbars">
+                    <MenuItems>
+                        <MenuItem Text= "Menu Bar"></MenuItem>
+                        <MenuItem Text= "Bookmarks Toolbar"></MenuItem>
+                        <MenuItem Text= "Customize"></MenuItem>
+                    </MenuItems>
+                </MenuItem>
+                <MenuItem Text= "Zoom">
+                    <MenuItems>
+                        <MenuItem Text= "Zoom In"></MenuItem>
+                        <MenuItem Text= "Zoom Out"></MenuItem>
+                        <MenuItem Text= "Reset"></MenuItem>
+                    </MenuItems>
+                </MenuItem>
+                <MenuItem Text= "Full Screen"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text = "Tools">
+            <MenuItems>
+                <MenuItem Text= "Spelling & Grammar"></MenuItem>
+                <MenuItem Text= "Customize"></MenuItem>
+                <MenuItem Separator="true"></MenuItem>
+                <MenuItem Text= "Options"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+        <MenuItem Text= "Help"></MenuItem>
+    </MenuItems>
+</SfMenu>
+    

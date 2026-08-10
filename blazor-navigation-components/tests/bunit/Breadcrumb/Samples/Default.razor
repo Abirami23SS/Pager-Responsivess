@@ -1,0 +1,64 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div>
+    <SfBreadcrumb class=@html_attribute EnableNavigation=@enable_navigation EnableRtl=@rtl Width="200px">
+        <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Buttons" Url="./" HtmlAttributes="@htmlAttributes"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+</div>
+<div>
+    <SfBreadcrumb EnableRtl=true>
+        <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Buttons" Url="./"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+</div>
+
+<div>
+    <SfButton Content="Change Mode" @onclick="ChangeMode"></SfButton>
+    <SfBreadcrumb  Url="@url" EnableActiveItemNavigation="true">
+    </SfBreadcrumb>
+</div>
+
+<div>
+    <SfBreadcrumb EnableNavigation="false">
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Separator" Url="./breadcrumb/separatorandattribute"></BreadcrumbItem>
+    </BreadcrumbItems>
+    <BreadcrumbTemplates>
+        <SeparatorTemplate>
+            <span class="e-icons e-bullet-arrow"></span>
+        </SeparatorTemplate>
+    </BreadcrumbTemplates>
+</SfBreadcrumb>
+
+</div>
+
+@code{
+    [Parameter]
+    public bool rtl {get;set;}=false;
+    [Parameter]
+    public bool enable_navigation {get;set;}=false;
+    [Parameter]
+    public string html_attribute {get;set;}="e-breadcrumb-text";
+
+    private Dictionary<string, object> htmlAttributes = new Dictionary<string, object> {
+        {"title", "Buttons" }
+    };
+
+    private string url = "https://localhost:5001/breadcrumb/default1";
+    private void ChangeMode()
+    {
+        url = "https://localhost:5001/breadcrumb/icons";
+    }
+}

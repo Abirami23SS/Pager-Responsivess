@@ -1,0 +1,74 @@
+﻿@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfButton @onclick="OpenContextMenu">Open ContextMenu</SfButton>
+<div id="contextmenutarget">Right click</div>
+
+<SfContextMenu @ref="contextMenu" Target="#contextmenutarget" TValue="MenuItem">
+    <MenuItems>
+        <MenuItem Text="Cut" IconCss="e-cm-icons e-cut"></MenuItem>
+        <MenuItem Text="Copy" IconCss="e-cm-icons e-copy"></MenuItem>
+        <MenuItem Text="Paste" IconCss="e-cm-icons e-paste">
+            <MenuItems>
+                <MenuItem Text="Paste Text" IconCss="e-cm-icons e-pastetext"></MenuItem>
+                <MenuItem Text="Paste Special" IconCss="e-cm-icons e-pastespecial"></MenuItem>
+            </MenuItems>
+        </MenuItem>
+    </MenuItems>
+    <MenuEvents TValue="MenuItem" OnOpen="@BeforeOpenHandler" OnItemRender="@BeforeItemRenderHandler" OnClose="@BeforeCloseHandler" Created="@CreatedHandler" Opened="@OpenHandler" Closed="@CloseHandler" ItemSelected="@SelectHandler"></MenuEvents>
+</SfContextMenu>
+
+<div id="logs">@((MarkupString)eventLog)</div>
+
+<button class="e-btn" @onclick="OnClickHanlder">Clear Log</button>
+
+@code{
+    private string eventLog = "";
+    public SfContextMenu<MenuItem> contextMenu;
+        private void OpenContextMenu(MouseEventArgs e)
+    {
+        contextMenu.Open(e.ClientX, e.ClientY);
+    }
+
+    private void OnClickHanlder()
+    {
+        eventLog = "";
+    }
+
+    private void SelectHandler(MenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+
+    private void BeforeItemRenderHandler(MenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+
+    private void BeforeOpenHandler(BeforeOpenCloseMenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+
+    private void BeforeCloseHandler(BeforeOpenCloseMenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+
+    private void CreatedHandler()
+    {
+        eventLog += "<div>Triggered <b>Created</b> event</div>";
+    }
+
+    private void CloseHandler(OpenCloseMenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+
+    private void OpenHandler(OpenCloseMenuEventArgs<MenuItem> e)
+    {
+        eventLog += "<div>Triggered <b>" + e.Name + "</b> event</div>";
+    }
+}

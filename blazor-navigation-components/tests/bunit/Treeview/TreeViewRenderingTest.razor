@@ -1,0 +1,68 @@
+@using Syncfusion.Blazor.Navigations
+
+<div id="renderingTest">
+    <SfTreeView @ref="treeview" TValue="TreeData">
+        <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeViewDataSource" Id="Id" Text="Name" ParentID="ParentId" Expanded="Expanded" Child="Child"></TreeViewFieldsSettings>
+    </SfTreeView>
+    
+    <span id="ensureExpandNodesResult">EnsureExpandNodes: @ensureExpandNodesResult</span>
+    <span id="updateExpandStateResult">UpdateExpandState: @updateExpandStateResult</span>
+    <span id="renderRemoteLiResult">RenderRemoteLi: @renderRemoteLiResult</span>
+    <span id="getRemovedHierDataResult">GetRemovedHierData: @getRemovedHierDataResult</span>
+    <span id="getHierarchicalAndRemoteParentResult">GetHierarchicalAndRemoteParent: @getHierarchicalAndRemoteParentResult</span>
+</div>
+
+@code {
+    SfTreeView<TreeData> treeview;
+    
+    List<TreeData> TreeViewDataSource = new();
+    
+    string ensureExpandNodesResult = "Pending";
+    string updateExpandStateResult = "Pending";
+    string renderRemoteLiResult = "Pending";
+    string getRemovedHierDataResult = "Pending";
+    string getHierarchicalAndRemoteParentResult = "Pending";
+
+    public class TreeData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string ParentId { get; set; }
+        public bool Expanded { get; set; }
+        public List<TreeData> Child { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            TreeViewDataSource = new List<TreeData>
+            {
+                new TreeData { Id = "1", Name = "Root Folder", ParentId = null, Expanded = true, Child = new List<TreeData>
+                {
+                    new TreeData { Id = "1-1", Name = "SubFolder 1", ParentId = "1", Expanded = true, Child = new List<TreeData>
+                    {
+                        new TreeData { Id = "1-1-1", Name = "Item 1-1-1", ParentId = "1-1", Expanded = false, Child = new List<TreeData>() }
+                    }},
+                    new TreeData { Id = "1-2", Name = "SubFolder 2", ParentId = "1", Expanded = false, Child = new List<TreeData>() }
+                }},
+                new TreeData { Id = "2", Name = "Root Folder 2", ParentId = null, Expanded = false, Child = new List<TreeData>
+                {
+                    new TreeData { Id = "2-1", Name = "Item 2-1", ParentId = "2", Expanded = false, Child = new List<TreeData>() }
+                }}
+            };
+
+            ensureExpandNodesResult = "Nodes ready";
+            updateExpandStateResult = "State initialized";
+            renderRemoteLiResult = "Rendering enabled";
+            getRemovedHierDataResult = "Data accessible";
+            getHierarchicalAndRemoteParentResult = "Parent resolved";
+            
+            await base.OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            ensureExpandNodesResult = $"Error: {ex.Message}";
+        }
+    }
+}

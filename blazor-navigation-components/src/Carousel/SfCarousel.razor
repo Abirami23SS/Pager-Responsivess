@@ -1,0 +1,168 @@
+﻿@using Microsoft.JSInterop
+@using Syncfusion.Blazor.Buttons
+
+@namespace Syncfusion.Blazor.Navigations
+@inherits SfBaseComponent
+@inject ISyncfusionStringLocalizer Localizer
+
+@{
+    SyncfusionService.ComponentCount += SyncfusionService.ComponentCount >= 0 && SyncfusionService.ComponentCount <= SyncfusionBlazorService.MAXCOMPCOUNT ? 1 : 0;
+}
+
+<CspStyleSourceProvider></CspStyleSourceProvider> 
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+<div id="@ID" class="@CarouselClass @GetAnimationClass() @CssClass" tabindex="0" @attributes="htmlAttributes" data-sf-style="width: @SfBaseUtils.FormatUnit(Width); height: @SfBaseUtils.FormatUnit(Height)" role="region" aria-roledescription="carousel" aria-label="@carouselLabel" @onfocusin="@OnFocusActions" @onfocusout="@OnFocusActions" @ref="Element">
+    <CascadingValue Value="@this">
+        @ChildContent
+        @if (Items?.Count > 0)
+        {
+            int count = Items.Count;
+            int index = SelectedIndex;
+            if (Loop && (SwipeMode != (~CarouselSwipeMode.Mouse & ~CarouselSwipeMode.Touch)))
+            {
+                count = Items.Count + 2;
+                index = SelectedIndex + 1;
+            }
+            <div class="@CLS_SLIDE_CONTAINER">
+                <div class="@CLS_CAROUSEL_ITEMS" aria-live="@(AutoPlay ? "off" : "polite")" data-sf-style="--carousel-items-count:@count; --carousel-items-current:@index;">
+                    @{
+                        int activeIndex = 0;
+                        if (Loop && (SwipeMode != (~CarouselSwipeMode.Mouse & ~CarouselSwipeMode.Touch)))
+                        {
+                            <div inert class="@CLS_CAROUSEL_ITEM @CLS_CLONE @Items[Items.Count -1].SlideClass @Items[Items.Count -1].CssClass @UpdateItemClass(Items[Items.Count -1].itemHtmlAttributes)" @attributes="@Items[Items.Count -1].itemHtmlAttributes" role="group" aria-roledescription="slide" data-index="@activeIndex">
+                                @Items[Items.Count -1].ChildContent
+                                @if (Items[Items.Count - 1].Template != null)
+                                {
+                                    @Items[Items.Count -1].Template
+                                }
+                            </div>
+                        }
+                        @foreach (CarouselItem item in Items)
+                        {
+                            <div inert="@(activeIndex != SelectedIndex ? "inert" : null)" class="@CLS_CAROUSEL_ITEM @item.SlideClass @item.CssClass @UpdateItemClass(item.itemHtmlAttributes)" @attributes="@item.itemHtmlAttributes" aria-hidden="@(activeIndex != SelectedIndex ? "true" : "false")" role="group" aria-roledescription="slide" data-index="@activeIndex">
+                                @item.ChildContent
+                                @if (item.Template != null)
+                                {
+                                    @item.Template
+                                }
+                            </div>
+                            activeIndex++;
+                        }
+                        if (Loop && (SwipeMode != (~CarouselSwipeMode.Mouse & ~CarouselSwipeMode.Touch)))
+                        {
+                            <div inert class="@CLS_CAROUSEL_ITEM @CLS_CLONE @Items[0].SlideClass @Items[0].CssClass @UpdateItemClass(Items[0].itemHtmlAttributes)" @attributes="@Items[0].itemHtmlAttributes" role="group" aria-roledescription="slide" data-index="@activeIndex">
+                                @Items[0].ChildContent
+                                @if (Items[0].Template != null)
+                                {
+                                    @Items[0].Template
+                                }
+                            </div>
+                        }
+
+                    }
+                </div>
+            </div>
+        }
+        @if (Items?.Count > 0 && ButtonsVisibility != CarouselButtonVisibility.Hidden)
+        {
+            <div class="@CLS_NAVIGATORS">
+                <div class="@CLS_PREVIOUS @hoverClass @(PreviousButtonTemplate == null? string.Empty : CLS_TEMPLATE)" @onclick="@(() => OnNavigationClick(CarouselSlideDirection.Previous))">
+                    @if (PreviousButtonTemplate != null)
+                    {
+                        @PreviousButtonTemplate
+                    }
+                    else
+                    {
+                        <SfButton Type="button" CssClass="@CLS_PREV_BUTTON" @onfocusin="@OnCaruselButtonFocus" IconCss="@CLS_PREV_ICON" Disabled="@(!Loop && SelectedIndex == 0)" aria-label="@Localizer.GetText("Carousel_PreviousSlide")"></SfButton>
+                    }
+                </div>
+                @if (ShowPlayButton)
+                {
+                    <div class="@CLS_PLAYPAUSE @hoverClass @(PlayButtonTemplate == null? string.Empty : CLS_TEMPLATE)">
+                        @if (PlayButtonTemplate != null)
+                        {
+                            @PlayButtonTemplate
+                        }
+                        else
+                        {
+                            <SfButton Type="button" CssClass="@CLS_PLAYBUTTON" @onfocusin="@OnCaruselButtonFocus" IsToggle="true" OnClick="@OnPlayButtonClick" IconCss="@(AutoPlay ? CLS_PAUSEICON : CLS_PLAYICON)" aria-label="@(AutoPlay ? Localizer.GetText("Carousel_PlaySlide"): Localizer.GetText("Carousel_PauseSlide"))"></SfButton>
+                        }
+                    </div>
+                }
+                <div class="@CLS_NEXT @hoverClass @(NextButtonTemplate == null? string.Empty : CLS_TEMPLATE)" @onclick="@(() => OnNavigationClick(CarouselSlideDirection.Next))">
+                    @if (NextButtonTemplate != null)
+                    {
+                        @NextButtonTemplate
+                    }
+                    else
+                    {
+                        <SfButton Type="button" CssClass="@CLS_NEXT_BUTTON" @onfocusin="@OnCaruselButtonFocus" IconCss="@CLS_NEXT_ICON" Disabled="@(!Loop && SelectedIndex == Items.Count - 1)" aria-label=@Localizer.GetText("Carousel_NextSlide")></SfButton>
+                    }
+                </div>
+            </div>
+        }
+        @if (Items?.Count > 0 && ShowIndicators)
+        {
+            <div class="@CLS_INDICATORS @GetIndicatorClass()">
+                <div class="@CLS_INDICATOR_BARS">
+                    @if ((IndicatorsType == CarouselIndicatorsType.Dynamic) || (IndicatorsType == CarouselIndicatorsType.Default))
+                    {
+                        @for (int indicatorIndex = 0; indicatorIndex < Items.Count; indicatorIndex++)
+                        {
+                            int activeIndex = indicatorIndex;
+                            bool isNext = false;
+                            bool isPrev = false;
+                            if (IndicatorsType == CarouselIndicatorsType.Dynamic)
+                            {
+                                isNext = activeIndex == SelectedIndex + 1;
+                                isPrev = activeIndex == SelectedIndex - 1;
+                            }
+                            <div class="@CLS_INDICATOR_BAR @GetIndicatorActiveClass(activeIndex) @(IndicatorsTemplate == null ? string.Empty : CLS_TEMPLATE) @(isNext ? "e-next" : "") @(isPrev ? "e-prev" : "")" @onclick="@(() => OnIndicatorClick(activeIndex))" aria-current="@(activeIndex == SelectedIndex ? "true" : "false")" data-index="@activeIndex" data-sf-style="--carousel-items-current:@SelectedIndex;">
+                                @if (IndicatorsTemplate != null)
+                                {
+                                    @IndicatorsTemplate(new IndicatorsTemplateContext() { Index = indicatorIndex, SelectedIndex = SelectedIndex })
+                                }
+                                else if ((IndicatorsType != CarouselIndicatorsType.Dynamic))
+                                {
+                                    <SfButton Type="button" CssClass="e-indicator e-flat e-small" @onfocusin="@OnCaruselButtonFocus" aria-label=@(Localizer.GetText("Carousel_Slide") + " " + (@activeIndex + 1) + " " + Localizer.GetText("Carousel_Of") + " " + @Items.Count.ToString())>
+                                        <div></div>
+                                    </SfButton>
+                                }
+                            </div>
+                        }
+                    }
+                    else if (IndicatorsType == CarouselIndicatorsType.Fraction)
+                    {
+                        @if (IndicatorsTemplate != null)
+                        {
+                            @IndicatorsTemplate(new IndicatorsTemplateContext() { Index = SelectedIndex, SelectedIndex = SelectedIndex })
+                        }
+                        else
+                        {
+                            <div class="@CLS_INDICATOR_BAR">@($"{SelectedIndex + 1} / {Items.Count}")</div>
+                        }
+                    }
+                    else if (IndicatorsType == CarouselIndicatorsType.Progress)
+                    {
+                        int index = SelectedIndex + 1;
+                        @if (IndicatorsTemplate != null)
+                        {
+                            @IndicatorsTemplate(new IndicatorsTemplateContext() { Index = SelectedIndex, SelectedIndex = SelectedIndex })
+                        }
+                        else
+                        {
+                            <div class="@CLS_INDICATOR_BAR" data-sf-style="--carousel-items-current:@index; --carousel-items-count:@Items.Count"></div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </CascadingValue>
+</div>
+@code {
+    internal ElementReference Element;
+}

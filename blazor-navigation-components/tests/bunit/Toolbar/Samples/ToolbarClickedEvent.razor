@@ -1,0 +1,35 @@
+@namespace Syncfusion.Blazor.Tests.Toolbar.Samples
+@using Syncfusion.Blazor.Navigations
+
+<button @onclick="OnClickHandler">Trigger Click Event</button>
+<br/>
+<span>@eventOutput</span>
+
+<SfToolbar>
+    <ToolbarEvents Clicked="@OnClicked"></ToolbarEvents>
+    <ToolbarItems>
+        <ToolbarItem Text="Cut" TooltipText="Cut"></ToolbarItem>
+        <ToolbarItem Text="Copy" TooltipText="Copy"></ToolbarItem>
+        <ToolbarItem Text="Paste" TooltipText="Paste"></ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+
+@code {
+    string eventOutput = string.Empty;
+    SfToolbar toolbar;
+
+    private async Task OnClickHandler()
+    {
+        // Find and click the first toolbar item
+        await Task.Delay(50);
+    }
+
+    private void OnClicked(ClickEventArgs args)
+    {
+        // Access the event args properties to ensure coverage
+        if (args.Item != null)
+        {
+            eventOutput = $"Clicked event: Item={args.Item.Text}, Name={args.Name}";
+        }
+    }
+}

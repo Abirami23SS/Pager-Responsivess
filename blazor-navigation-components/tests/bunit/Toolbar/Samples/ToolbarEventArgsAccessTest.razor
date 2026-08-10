@@ -1,0 +1,84 @@
+@namespace Syncfusion.Blazor.Tests.Toolbar.Samples
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Navigations.Internal
+
+<div id="toolbarEventArgsAccessTest">
+    <SfToolbar @ref="toolbar" OverflowMode="OverflowMode.Extended">
+        <ToolbarEvents Clicked="OnToolbarClicked"></ToolbarEvents>
+        <ToolbarItems>
+            <ToolbarItem Text="Cut" TooltipText="Cut" Id="cut"></ToolbarItem>
+            <ToolbarItem Text="Copy" TooltipText="Copy" Id="copy"></ToolbarItem>
+            <ToolbarItem Text="Paste" TooltipText="Paste" Id="paste"></ToolbarItem>
+            <ToolbarItem Type="ItemType.Separator"></ToolbarItem>
+            <ToolbarItem Text="Undo" TooltipText="Undo" Id="undo"></ToolbarItem>
+            <ToolbarItem Text="Redo" TooltipText="Redo" Id="redo"></ToolbarItem>
+            <ToolbarItem Text="More" TooltipText="More Options" Type="ItemType.Button" Overflow="OverflowOption.Show">
+                <ToolbarItems>
+                    <ToolbarItem Text="NewFile" Id="newfile"></ToolbarItem>
+                    <ToolbarItem Text="OpenFile" Id="openfile"></ToolbarItem>
+                </ToolbarItems>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+
+    <button id="testButton" @onclick="TestEventArgsProperties">Test ToolbarEventArgs Properties</button>
+    <span id="targetParentDataIndexResult">TargetParentDataIndex: @targetParentDataIndexResult</span>
+    <span id="toolbarItemIndexResult">ToolbarItemIndex: @toolbarItemIndexResult</span>
+    <span id="isPopupElementResult">IsPopupElement: @isPopupElementResult</span>
+</div>
+
+@code {
+    public SfToolbar toolbar;
+    private string targetParentDataIndexResult = "N/A";
+    private string toolbarItemIndexResult = "N/A";
+    private string isPopupElementResult = "N/A";
+
+    private async Task OnToolbarClicked(ClickEventArgs args)
+    {
+        // Create ToolbarEventArgs to test property getters
+        var eventArgs = new ToolbarEventArgs();
+        
+        // Access and store property getters to test coverage
+        var targetParent = eventArgs.TargetParentDataIndex;
+        var toolbarItemIdx = eventArgs.ToolbarItemIndex;
+        var isPopup = eventArgs.IsPopupElement;
+        
+        targetParentDataIndexResult = targetParent?.ToString() ?? "null";
+        toolbarItemIndexResult = toolbarItemIdx?.ToString() ?? "null";
+        isPopupElementResult = isPopup.ToString();
+
+        await Task.Delay(100);
+        StateHasChanged();
+    }
+
+    private async Task TestEventArgsProperties()
+    {
+        // Test ToolbarEventArgs with different property values
+        var eventArgs1 = new ToolbarEventArgs()
+        {
+            TargetParentDataIndex = 2,
+            ToolbarItemIndex = 3,
+            IsPopupElement = true
+        };
+
+        targetParentDataIndexResult = eventArgs1.TargetParentDataIndex?.ToString() ?? "null";
+        toolbarItemIndexResult = eventArgs1.ToolbarItemIndex?.ToString() ?? "null";
+        isPopupElementResult = eventArgs1.IsPopupElement.ToString();
+
+        await Task.Delay(100);
+        StateHasChanged();
+
+        // Test with null values
+        var eventArgs2 = new ToolbarEventArgs()
+        {
+            TargetParentDataIndex = null,
+            ToolbarItemIndex = null,
+            IsPopupElement = false
+        };
+
+        // Access getters to ensure coverage
+        _ = eventArgs2.TargetParentDataIndex;
+        _ = eventArgs2.ToolbarItemIndex;
+        _ = eventArgs2.IsPopupElement;
+    }
+}

@@ -1,0 +1,24 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfBreadcrumb Disabled=@disabled>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Disabled" Url="./breadcrumb/disabled"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+<br/>
+<SfBreadcrumb>
+    <BreadcrumbItems>
+        <BreadcrumbItem Text="Home" Url="../"></BreadcrumbItem>
+        <BreadcrumbItem Disabled=true Text="Breadcrumb" Url="./breadcrumb"></BreadcrumbItem>
+        <BreadcrumbItem Text="Disabled" Url="./breadcrumb/disabled"></BreadcrumbItem>
+    </BreadcrumbItems>
+</SfBreadcrumb>
+
+@code {
+    [Parameter]
+    public bool disabled{get;set;}=true;
+}

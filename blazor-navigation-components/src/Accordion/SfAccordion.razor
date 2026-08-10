@@ -1,0 +1,27 @@
+﻿@using Syncfusion.Blazor.Navigations.Internal
+@namespace Syncfusion.Blazor.Navigations
+
+@inherits SfBaseComponent;
+
+@using Syncfusion.Blazor.Internal;
+
+@{
+    SyncfusionService.ComponentCount += SyncfusionService.ComponentCount >= 0 && SyncfusionService.ComponentCount <= SyncfusionBlazorService.MAXCOMPCOUNT ? 1 : 0;
+}
+
+<CspStyleSourceProvider></CspStyleSourceProvider>
+@if (!SyncfusionService.IsModuleInitComponentInitialized)
+{
+    SyncfusionService.IsModuleInitComponentInitialized = true;
+    <ModuleInitComponent></ModuleInitComponent>
+}
+
+<div id="@ID" @ref="Element" class="@AccordionClass" @attributes="@rootAttributes">
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    internal ElementReference Element;
+}

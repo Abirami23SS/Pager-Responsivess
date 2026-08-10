@@ -1,0 +1,24 @@
+﻿@namespace Syncfusion.Blazor.Navigations.Internal
+@typeparam TValue
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public Func<Task, object, Task> Handler { get; set; }
+
+    [CascadingParameter]
+    public SfTreeView<TValue> Parent { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        if (Parent != null)
+        {
+            if (Name == null)
+                throw new MissingMemberException($"Name must be provided to add event");
+            Parent.TreeViewEventAggregator.AddAsync(Name, Handler);
+        }
+    }
+}

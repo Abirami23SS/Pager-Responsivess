@@ -1,0 +1,68 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<div class="sample">
+    <div class="menu-control">
+        <SfMenu Items="@EmptyDataSource"> </SfMenu>
+    </div>
+
+    <div class="menu-control">
+        <SfMenu Items="@menuItems"></SfMenu>
+    </div>
+
+    <div class="menu-control">
+        <SfMenu Items="@MenuSelfMenuItems" TValue="CustomMenuItem">
+            <MenuEvents TValue="MenuItemModel" OnOpen="onOpen"></MenuEvents>
+            <MenuFieldSettings ItemId="Id" Text="Text" ParentId="ParentId"></MenuFieldSettings>
+        </SfMenu>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<CustomMenuItem> MenuSelfMenuItems { get; set; } = new List<CustomMenuItem>
+    {
+        new CustomMenuItem{ Id = "parent1", Text = "Events" },
+        new CustomMenuItem{ Id = "parent2", Text = "Movies" },
+        new CustomMenuItem{ Id = "parent3", Text = "Directory" },
+        new CustomMenuItem{ Id = "parent4", Text = "Queries", ParentId = "null"  },
+        new CustomMenuItem{ Id = "parent5", Text = "Services", ParentId = "null" },
+        new CustomMenuItem{ Id = "parent6", Text = "Conferences", ParentId = "parent1" },
+        new CustomMenuItem{ Id = "parent7", Text = "Music", ParentId = "parent1" },
+        new CustomMenuItem{ Id = "parent8", Text = "Workshops", ParentId = "parent1" },
+        new CustomMenuItem{ Id = "parent9", Text = "Now Showing", ParentId = "parent2" },
+        new CustomMenuItem{ Id = "parent10", Text = "Coming Soon", ParentId = "parent2" },
+        new CustomMenuItem{ Id = "parent10", Text = "Media Gallery", ParentId = "parent3" },
+        new CustomMenuItem{ Id = "parent11", Text = "Newsletters", ParentId = "parent3" },
+    };
+
+    public class CustomMenuItem
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+        public string ParentId { get; set; }
+    };
+
+
+    [Parameter]
+    public List<object> menuItems { get; set; } = new List<object>
+    {
+        new { Id= "parent1", Text= "Appliances" },
+        new { Id= "parent2", Text= "Accessories" },
+        new { Id= "parent3", Text= "Fashion" },
+        new { Id= "parent4", Text= "Home & Living" },
+        new { Id= "parent5", Text= "Entertainment" }
+    };
+
+    [Parameter]
+    public List<object> EmptyDataSource { get; set; } = new List<object>
+    {
+        //no Datasource
+    };
+
+    private void onOpen(BeforeOpenCloseMenuEventArgs<MenuItemModel> args)
+    {
+        var d = args;
+    }
+}

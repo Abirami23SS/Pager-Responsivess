@@ -1,0 +1,81 @@
+@using Syncfusion.Blazor.Navigations
+@namespace Syncfusion.Blazor.Tests.Treeview
+
+<button @onclick="OnClickHandler">@eventOutput</button>
+<br/>
+<span id="event">@eventOutput</span>
+
+<SfTreeView TValue="TreeData">
+    <TreeViewEvents TValue="TreeData" NodeClicked="@OnNodeClicked"></TreeViewEvents>
+    <TreeViewFieldsSettings TValue="TreeData" DataSource="@TreeDataSource" Id="Code" Text="Name" Child="@("Child")"></TreeViewFieldsSettings>
+</SfTreeView>
+
+@code {
+    string eventOutput = string.Empty;
+    List<TreeData> TreeDataSource = new List<TreeData> {
+        new TreeData()
+        {
+            Code = "NA",
+            Name = "North America",
+            Expanded = true,
+            Child = new List<TreeData>()
+            {
+                new TreeData { Code = "USA", Name = "United States of America", Selected = true },
+                new TreeData { Code = "CUB", Name = "Cuba" },
+                new TreeData { Code = "MEX", Name = "Mexico" },
+            },
+            Link = "https://blazor.syncfusion.com/demos/"
+        },
+        new TreeData()
+        {
+            Code = "AF",
+            Name = "Africa",
+            Child = new List<TreeData>()
+            {
+                new TreeData { Code = "NGA", Name = "Nygeria" },
+                new TreeData { Code = "EGY", Name = "Egypt" },
+                new TreeData { Code = "ZAF", Name = "South Africa" },
+            },
+        }
+    };
+
+    private async Task OnClickHandler()
+    {
+        await Task.Delay(50);
+    }
+
+    private void OnNodeClicked(NodeClickEventArgs args)
+    {
+        // Access all NodeClickEventArgs getter properties to ensure coverage
+        if (args != null && args.NodeData != null)
+        {
+            eventOutput = $"NodeClicked event: Name={args.Name}, " +
+                         $"NodeText={args.NodeData.Text}, " +
+                         $"Event={args.Event}, " +
+                         $"NodeData={args.NodeData}, " +
+                         $"Left={args.Left}, " +
+                         $"Top={args.Top}";
+        }
+    }
+
+    
+    public void TriggerNodeClick(NodeClickEventArgs args)
+    {
+        OnNodeClicked(args);
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    public class TreeData
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public bool Expanded { get; set; }
+        public bool Expand { get; set; }
+        public bool Select { get; set; }
+        public bool Selected { get; set; }
+        public string Link { get; set; }
+        public List<TreeData> Child;
+        public string Count { get; set; } = "12";
+    }
+}

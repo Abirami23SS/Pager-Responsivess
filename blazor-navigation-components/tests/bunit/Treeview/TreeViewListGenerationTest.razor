@@ -1,0 +1,233 @@
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Data
+@using Newtonsoft.Json.Linq
+@namespace Syncfusion.Blazor.Tests.TreeView.Samples
+
+<div id="listGenerationTest">
+    <SfTreeView @ref="treeview" TValue="TreeItem" AllowDragAndDrop="true" AllowEditing="false">
+        <TreeViewFieldsSettings TValue="TreeItem" 
+            DataSource="@dataSource" 
+            Id="Id" 
+            Text="Text" 
+            Child="Children"
+            ParentID="ParentId"
+            HasChildren="HasChildren"
+            Expanded="Expanded"
+            Selected="Selected">
+        </TreeViewFieldsSettings>
+    </SfTreeView>
+
+    <button id="loadHierarchicalBtn" @onclick="LoadHierarchicalData">Load Hierarchical Data</button>
+    <button id="loadSelfRefBtn" @onclick="LoadSelfReferentialData">Load Self-Referential Data</button>
+    <button id="expandNodeBtn" @onclick="ExpandNodeAction">Expand Node</button>
+    <button id="sortDataBtn" @onclick="SortDataAction">Sort Data</button>
+
+    <span id="hierarchicalLoaded">Hierarchical Loaded: @(hierarchicalDataLoaded ? "Yes" : "No")</span>
+    <span id="selfRefLoaded">SelfRef Loaded: @(selfRefDataLoaded ? "Yes" : "No")</span>
+    <span id="expandedState">Expanded: @expandedStatus</span>
+    <span id="sortedState">Sorted: @sortedStatus</span>
+    <span id="dataCount">Data Count: @dataSource.Count</span>
+    <span id="childCount">Child Count: @(dataSource.Count > 0 ? "HasChild" : "NoChild")</span>
+</div>
+
+@code {
+    public SfTreeView<TreeItem> treeview;
+    public List<TreeItem> dataSource = new();
+    public bool hierarchicalDataLoaded = false;
+    public bool selfRefDataLoaded = false;
+    public string expandedStatus = "Pending";
+    public string sortedStatus = "Pending";
+
+    public class TreeItem
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+        public string ParentId { get; set; }
+        public bool HasChildren { get; set; }
+        public bool Expanded { get; set; }
+        public bool Selected { get; set; }
+        public List<TreeItem> Children { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize with empty data
+        dataSource = new List<TreeItem>();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadHierarchicalData()
+    {
+        dataSource = new List<TreeItem>
+        {
+            new TreeItem
+            {
+                Id = "1",
+                Text = "Hierarchical Parent 1",
+                ParentId = null,
+                HasChildren = true,
+                Expanded = true,
+                Selected = false,
+                Children = new List<TreeItem>
+                {
+                    new TreeItem
+                    {
+                        Id = "1-1",
+                        Text = "Child 1-1",
+                        ParentId = "1",
+                        HasChildren = true,
+                        Expanded = false,
+                        Selected = false,
+                        Children = new List<TreeItem>
+                        {
+                            new TreeItem
+                            {
+                                Id = "1-1-1",
+                                Text = "Child 1-1-1",
+                                ParentId = "1-1",
+                                HasChildren = false,
+                                Expanded = false,
+                                Selected = false,
+                                Children = null
+                            }
+                        }
+                    },
+                    new TreeItem
+                    {
+                        Id = "1-2",
+                        Text = "Child 1-2",
+                        ParentId = "1",
+                        HasChildren = false,
+                        Expanded = false,
+                        Selected = false,
+                        Children = null
+                    }
+                }
+            },
+            new TreeItem
+            {
+                Id = "2",
+                Text = "Hierarchical Parent 2",
+                ParentId = null,
+                HasChildren = true,
+                Expanded = false,
+                Selected = false,
+                Children = new List<TreeItem>
+                {
+                    new TreeItem
+                    {
+                        Id = "2-1",
+                        Text = "Child 2-1",
+                        ParentId = "2",
+                        HasChildren = false,
+                        Expanded = false,
+                        Selected = false,
+                        Children = null
+                    }
+                }
+            }
+        };
+
+        hierarchicalDataLoaded = true;
+        await Task.Delay(100);
+        StateHasChanged();
+    }
+
+    private async Task LoadSelfReferentialData()
+    {
+        dataSource = new List<TreeItem>
+        {
+            new TreeItem
+            {
+                Id = "1",
+                Text = "Parent 1",
+                ParentId = null,
+                HasChildren = true,
+                Expanded = true,
+                Selected = false,
+                Children = null
+            },
+            new TreeItem
+            {
+                Id = "1-1",
+                Text = "Child 1-1",
+                ParentId = "1",
+                HasChildren = false,
+                Expanded = false,
+                Selected = false,
+                Children = null
+            },
+            new TreeItem
+            {
+                Id = "1-2",
+                Text = "Child 1-2",
+                ParentId = "1",
+                HasChildren = false,
+                Expanded = false,
+                Selected = false,
+                Children = null
+            },
+            new TreeItem
+            {
+                Id = "2",
+                Text = "Parent 2",
+                ParentId = null,
+                HasChildren = true,
+                Expanded = false,
+                Selected = false,
+                Children = null
+            },
+            new TreeItem
+            {
+                Id = "2-1",
+                Text = "Child 2-1",
+                ParentId = "2",
+                HasChildren = false,
+                Expanded = false,
+                Selected = false,
+                Children = null
+            }
+        };
+
+        selfRefDataLoaded = true;
+        await Task.Delay(100);
+        StateHasChanged();
+    }
+
+    private async Task ExpandNodeAction()
+    {
+        try
+        {
+            if (dataSource.Count > 0)
+            {
+                dataSource[0].Expanded = true;
+                expandedStatus = "Expanded";
+                await Task.Delay(100);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            expandedStatus = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SortDataAction()
+    {
+        try
+        {
+            if (dataSource.Count > 0)
+            {
+                var sorted = dataSource.OrderBy(x => x.Text).ToList();
+                dataSource = sorted;
+                sortedStatus = "Sorted";
+                await Task.Delay(100);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            sortedStatus = $"Error: {ex.Message}";
+        }
+    }
+}

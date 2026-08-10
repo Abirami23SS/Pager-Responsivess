@@ -1,0 +1,306 @@
+{
+  "projects": [
+    "src/Syncfusion.Blazor.Navigations.csproj"
+  ],
+  "BlazorScripts": {
+    "Navigations": {
+      "scripts": [
+        "navigationsbase",
+        "sf-sidebar",
+        "sf-accordion",
+        "sf-contextmenu",
+        "sf-menu",
+        "sf-tab",
+        "sf-toolbar",
+        "sf-treeview",
+        "sf-breadcrumb",
+        "sf-pager",
+        "sf-stepper",
+        "sf-carousel",
+        "sf-dropdowntree"
+      ]
+    }
+  },
+  "packages": {
+    "Accordion": {
+      "packageName": "Accordion",
+      "tsEntry": "sf-accordion",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-accordion.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Accordion",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "Breadcrumb": {
+      "packageName": "Breadcrumb",
+      "tsEntry": "sf-breadcrumb",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-breadcrumb.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Breadcrumb",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups"
+      }
+    },
+    "Carousel": {
+      "packageName": "Carousel",
+      "tsEntry": "sf-carousel",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-carousel.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Carousel",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "ContextMenu": {
+      "packageName": "ContextMenu",
+      "tsEntry": "sf-contextmenu",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-contextmenu.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.ContextMenu",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups",
+        "@syncfusion/ej2-navigations": "sf.navigations"
+      }
+    },
+    "DropDownTree": {
+      "packageName": "DropDownTree",
+      "tsEntry": "sf-dropdowntree",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-dropdowntree.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.DropDownTree",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups"
+      }
+    },
+    "Menu": {
+      "packageName": "Menu",
+      "tsEntry": "sf-menu",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-menu.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Menu",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups",
+        "@syncfusion/ej2-navigations": "sf.navigations"
+      }
+    },
+    "Pager": {
+      "packageName": "Pager",
+      "tsEntry": "sf-pager",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-pager.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Pager",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "Sidebar": {
+      "packageName": "Sidebar",
+      "tsEntry": "sf-sidebar",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-sidebar.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Sidebar",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "Stepper": {
+      "packageName": "Stepper",
+      "tsEntry": "sf-stepper",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-stepper.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Stepper",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "Tab": {
+      "packageName": "Tab",
+      "tsEntry": "sf-tab",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-tab.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Tab",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups"
+      }
+    },
+    "Toolbar": {
+      "packageName": "Toolbar",
+      "tsEntry": "sf-toolbar",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-toolbar.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.Toolbar",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-popups": "sf.popups",
+        "@syncfusion/ej2-navigations": "sf.navigations"
+      }
+    },
+    "TreeView": {
+      "packageName": "TreeView",
+      "tsEntry": "sf-treeview",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "sf-treeview.js",
+      "outputFormat": "iife",
+      "outputName": "sfBlazor.TreeView",
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base"
+      }
+    },
+    "NavigationsBase": {
+      "packageName": "NavigationsBase",
+      "tsEntry": "common/index",
+      "scriptsDir": "scripts",
+      "outputDir": "scripts/modules",
+      "outputFile": "navigationsbase.js",
+      "outputFormat": "iife",
+      "outputName": "navigationsbase",
+      "banner": "window.sf = window.sf || {};",
+      "footer": "window.sf.navigations = window.sf.base.extend({}, window.sf.navigations, navigationsbase({}));",
+      "withExportsParameter": true,
+      "externals": {
+        "@syncfusion/ej2-base": "sf.base",
+        "@syncfusion/ej2-lists": "sf.lists"
+      }
+    }
+  },
+  "blazorDependencies": {
+		"common": [
+			"common/h-scroll",
+			"common/v-scroll",
+			"common/menu-scroll"
+		]
+  },
+  "CRG": {
+    "SfAccordion": {
+      "dependencies": [
+        "sf-accordion.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfBreadcrumb": {
+      "dependencies": [
+        "popup.js",
+        "popupsbase.js",
+        "sf-breadcrumb.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfCarousel": {
+      "dependencies": [
+        "sf-carousel.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfContextMenu": {
+      "dependencies": [
+        "navigationsbase.js",
+        "popup.js",
+        "popupsbase.js",
+        "sf-contextmenu.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfDropDownTree": {
+      "dependencies": [
+        "sf-spinner.js",
+        "popupsbase.js",
+        "popup.js",
+        "sf-textbox.js",
+        "sf-treeview.js",
+        "sf-dropdowntree.js"
+      ],
+      "package": "DropDowns"
+    },
+    "SfMenu": {
+      "dependencies": [
+        "navigationsbase.js",
+        "sf-contextmenu.js",
+        "popup.js",
+        "popupsbase.js",
+        "sf-menu.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfPager": {
+      "dependencies": [
+        "sf-pager.js",
+        "sf-dropdownlist.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfSidebar": {
+      "dependencies": [
+        "sf-sidebar.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfStepper": {
+      "dependencies": [
+        "sf-stepper.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfTab": {
+      "dependencies": [
+        "navigationsbase.js",
+        "popupsbase.js",
+        "popup.js",
+        "sf-toolbar.js",
+        "sf-tab.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfToolbar": {
+      "dependencies": [
+        "navigationsbase.js",
+        "popupsbase.js",
+        "popup.js",
+        "sf-toolbar.js"
+      ],
+      "package": "Navigations"
+    },
+    "SfTreeView": {
+      "dependencies": [
+        "sf-textbox.js",
+        "sf-treeview.js"
+      ],
+      "package": "Navigations"
+    },
+    "bundleSettings": {
+      "exclude": [],
+      "include": [
+        "base.js",
+        "syncfusion-blazor.js"
+      ]
+    }
+  }
+}

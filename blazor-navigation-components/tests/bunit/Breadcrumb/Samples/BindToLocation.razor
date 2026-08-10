@@ -1,0 +1,13 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+@namespace Syncfusion.Blazor.Tests.Navigations
+
+<SfBreadcrumb>
+</SfBreadcrumb>
+
+<SfBreadcrumb Url=@url>
+</SfBreadcrumb>
+@code {
+  [Parameter]
+  public string url{get;set;} = "https://syncfusion.github.io/blazor-component/buttons/breadcrumb";
+}
