@@ -26,7 +26,7 @@
     bool IsCurrentFocusNull = string.IsNullOrEmpty(CurrentFocus);
 }
 
-<div @ref="element" id="@ID" data-role="pager" aria-label="Pager Container" tabindex="@EnsurePagerTabIndex()" @onkeydown="(async (KeyboardEventArgs e) => await ProcessPagerKeyDown(e))" @onkeydown:preventDefault="true" class="@GetClassNames()">
+<div @ref="element" id="@ID" data-role="pager" role="navigation" aria-label="Pager Container" tabindex="@EnsurePagerTabIndex()" @onkeydown="(async (KeyboardEventArgs e) => await ProcessPagerKeyDown(e))" @onkeydown:preventDefault="true" class="@GetClassNames()">
     <CascadingValue Value="@this">
         @ChildContent
     </CascadingValue>
